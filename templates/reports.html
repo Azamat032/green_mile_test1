@@ -1,0 +1,121 @@
+{% extends "basement/base.html" %}
+{% load static %}
+{% block content %}
+<section class="py-20 min-h-screen pt-32 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">{% if language == 'ru' %}Отчеты и карта посадок{% elif language == 'kz' %}Есептер мен отырғызу картасы{% else %}Reports and Planting Map{% endif %}</h2>
+            <div class="w-24 h-1 bg-green-600 mx-auto mb-6"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">{% if language == 'ru' %}Полная прозрачность нашей деятельности: интерактивная карта посадок и подробные отчеты о проделанной работе{% elif language == 'kz' %}Біздің қызметіміздің толық ашықтығы: отырғызудың интерактивті картасы және орындалған жұмыс туралы егжей-тегжейлі есептер{% else %}Full transparency of our activities: interactive planting map and detailed reports on the work done{% endif %}</p>
+        </div>
+        <div class="mb-12">
+            <div class="grid grid-cols-2 mb-8">
+                <button class="tab-button text-lg bg-gray-200 p-4 rounded-l-lg focus:bg-white focus:shadow-inner" onclick="showTab('map')">{% if language == 'ru' %}Карта посадок{% elif language == 'kz' %}Отырғызу картасы{% else %}Planting Map{% endif %}</button>
+                <button class="tab-button text-lg bg-gray-200 p-4 rounded-r-lg focus:bg-white focus:shadow-inner" onclick="showTab('reports')">{% if language == 'ru' %}PDF Отчеты{% elif language == 'kz' %}PDF Есептер{% else %}PDF Reports{% endif %}</button>
+            </div>
+            <!-- Map Tab -->
+            <div id="map" class="tab-content">
+                <div class="bg-white rounded-2xl p-8 shadow-lg mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">{% if language == 'ru' %}Интерактивная карта посадок{% elif language == 'kz' %}Отырғызудың интерактивті картасы{% else %}Interactive Planting Map{% endif %}</h3>
+                    <div class="bg-green-50 rounded-lg h-96 mb-6 flex items-center justify-center border-2 border-dashed border-green-200">
+                        <div class="text-center">
+                            <svg class="w-16 h-16 text-green-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <p class="text-gray-600 text-lg">{% if language == 'ru' %}Интерактивная карта с GPS координатами{% elif language == 'kz' %}GPS координаттары бар интерактивті карта{% else %}Interactive map with GPS coordinates{% endif %}</p>
+                            <p class="text-sm text-gray-500 mt-2">{% if language == 'ru' %}(Будет интегрирована на этапе разработки){% elif language == 'kz' %}(Дамыту сатысында интеграцияланады){% else %}(Will be integrated during development){% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {% for area in planting_areas %}
+                        <div class="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                            <div class="relative h-48">
+                                <img src="{{ area.image }}" alt="{{ area.name }}" class="w-full h-full object-cover">
+                                {% if area.status == 'completed' %}
+                                    <span class="absolute top-4 right-4 bg-green-100 text-green-800 border border-green-200 rounded px-2 py-1">
+                                        {% if language == 'ru' %}Завершено{% elif language == 'kz' %}Аяқталды{% else %}Completed{% endif %}
+                                    </span>
+                                {% elif area.status == 'in_progress' %}
+                                    <span class="absolute top-4 right-4 bg-yellow-100 text-yellow-800 border border-yellow-200 rounded px-2 py-1">
+                                        {% if language == 'ru' %}В процессе{% elif language == 'kz' %}Жүргізілуде{% else %}In Progress{% endif %}
+                                    </span>
+                                {% elif area.status == 'planned' %}
+                                    <span class="absolute top-4 right-4 bg-blue-100 text-blue-800 border border-blue-200 rounded px-2 py-1">
+                                        {% if language == 'ru' %}Запланировано{% elif language == 'kz' %}Жоспарланған{% else %}Planned{% endif %}
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-gray-900">{{ area.name }}</h3>
+                                    <div class="flex items-center text-gray-500">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        <span class="text-sm">{{ area.date }}</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div class="text-center p-3 bg-green-50 rounded-lg">
+                                        <svg class="w-6 h-6 text-green-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                        <div class="font-bold text-lg text-gray-900">{{ area.trees|floatformat:0 }}</div>
+                                        <div class="text-sm text-gray-600">{% if language == 'ru' %}деревьев{% elif language == 'kz' %}ағаш{% else %}trees{% endif %}</div>
+                                    </div>
+                                    <div class="text-center p-3 bg-green-50 rounded-lg">
+                                        <svg class="w-6 h-6 text-green-600 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        <div class="font-bold text-lg text-gray-900">{{ area.area }}</div>
+                                        <div class="text-sm text-gray-600">{% if language == 'ru' %}гектаров{% elif language == 'kz' %}гектар{% else %}hectares{% endif %}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-sm text-gray-600">
+                                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        {{ area.coordinates }}
+                                    </div>
+                                    <a href="#" class="text-green-600 hover:text-green-700 font-semibold">{% if language == 'ru' %}Подробнее{% elif language == 'kz' %}Толығырақ{% else %}Learn More{% endif %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Reports Tab -->
+            <div id="reports" class="tab-content hidden">
+                <div class="bg-white rounded-2xl p-8 shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">{% if language == 'ru' %}PDF Отчеты{% elif language == 'kz' %}PDF Есептер{% else %}PDF Reports{% endif %}</h3>
+                    <div class="space-y-6">
+                        {% for report in reports %}
+                            <div class="flex items-center justify-between p-4 border-b border-gray-200 hover:bg-green-50 transition-colors duration-300">
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900">{{ report.title }}</h4>
+                                    <div class="text-sm text-gray-600">
+                                        {% if report.type == 'annual' %}
+                                            <span>{% if language == 'ru' %}Годовой{% elif language == 'kz' %}Жылдық{% else %}Annual{% endif %}</span>
+                                        {% elif report.type == 'financial' %}
+                                            <span>{% if language == 'ru' %}Финансовый{% elif language == 'kz' %}Қаржылық{% else %}Financial{% endif %}</span>
+                                        {% elif report.type == 'environmental' %}
+                                            <span>{% if language == 'ru' %}Экологический{% elif language == 'kz' %}Экологиялық{% else %}Environmental{% endif %}</span>
+                                        {% endif %}
+                                        • 
+                                        <span>{{ report.date }}</span> • 
+                                        <span>{{ report.size }}</span> • 
+                                        <span>{{ report.downloads }} {% if language == 'ru' %}скачиваний{% elif language == 'kz' %}жүктеулер{% else %}downloads{% endif %}</span>
+                                    </div>
+                                </div>
+                                <a href="#" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors duration-300">{% if language == 'ru' %}Скачать PDF{% elif language == 'kz' %}PDF жүктеу{% else %}Download PDF{% endif %}</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+        document.getElementById(tabId).classList.remove('hidden');
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('bg-white', 'shadow-inner'));
+        document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('bg-white', 'shadow-inner');
+    }
+
+    showTab('map');
+</script>
+{% endblock content %}

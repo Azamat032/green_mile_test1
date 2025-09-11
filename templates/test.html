@@ -1,0 +1,13 @@
+{% extends "basement/base.html" %}
+{% load geojson_tags %}
+{% load leaflet_tags %}
+{% load static %}
+
+{% block header_section %}
+{%leaflet_js%}
+{%leaflet_css%}
+{% endblock header_section %}
+
+{% block content %}
+<h1 style="color:#009245">hei</h1>
+{% endblock content %}

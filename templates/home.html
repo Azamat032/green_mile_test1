@@ -1,0 +1,924 @@
+{% extends "basement/base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block header_section %}
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=de3329d4-ff91-43e7-a39c-42ee66b6557a&lang=ru_RU" type="text/javascript"></script>
+{% endblock header_section %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <section class="fixed-bg-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');">
+        <div class="scrolling-content">
+            <div class="container mx-auto px-4 py-12 sm:py-20">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <!-- Left side - Content -->
+                    <div class="bg-green-600 p-6 sm:p-8 rounded-xl text-white">
+                        <h1 class="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">{{ hero.mainText }}</h1>
+                        <p class="text-base sm:text-xl mb-6 sm:mb-8 text-gray-200">{{ hero.subText }}</p>
+                        <!-- Quick donation buttons -->
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-2 gap-3 mb-6">
+                                {% for donation in quick_donations %}
+                                    <button onclick="window.location.href='{% url 'main_app:certificate' %}'" type="button" class="bg-green-600 hover:bg-green-700 text-white border-2 border-green-500 hover:border-green-400 transition-all duration-300 p-3 sm:p-4 h-auto flex flex-col touch-action-manipulation">
+                                        <span class="font-bold text-base sm:text-lg">{{ donation.amount|floatformat:0 }}₸</span>
+                                        <span class="text-xs sm:text-sm opacity-90">{{ donation.trees }} {{ hero.treesText }}</span>
+                                    </button>
+                                {% endfor %}
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
+                                <input min=1 type="number" name="custom_amount" placeholder="{% if language == 'ru' %}Cумма (мин. 500₸){% elif language == 'kz' %}Бағасы(мин. 500₸){% else %}Price(min. 500₸){% endif %}" class="bg-white/90 text-gray-900 placeholder-gray-600 rounded p-2 border border-gray-300 w-full">
+                                <a href="{% url 'main_app:certificate' %}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center touch-action-manipulation">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                    {{ hero.ctaButton }}
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Right side - Statistics -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-white/20">
+                        <div class="text-center mb-6 sm:mb-8">
+                            <div class="relative inline-block">
+                                <div class="text-4xl sm:text-6xl lg:text-7xl font-bold text-white mb-2">{{ statistics.treesPlanted|floatformat:0 }}</div>
+                                <div class="text-base sm:text-xl text-green-200 mb-4">{{ hero.treesText }}</div>
+                                <!-- Progress circle -->
+                                <div class="mx-auto w-24 h-24 sm:w-32 sm:h-32 relative">
+                                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="50" stroke="rgba(255, 255, 255, 0.2)" stroke-width="8" fill="none"/>
+                                        <circle cx="60" cy="60" r="50" stroke="rgba(34, 197, 94, 0.8)" stroke-width="8" fill="none" stroke-dasharray="{{ progress_percentage }} 314" class="transition-all duration-1000"/>
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-center">
+                                            <div class="text-xs sm:text-sm text-green-200">{{ hero.targetText }}</div>
+                                            <div class="text-base sm:text-lg font-bold text-white">{{ statistics.targetTrees|floatformat:0 }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4 sm:space-y-6">
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-white/10 rounded-lg border border-white/20">
+                                <div class="flex items-center space-x-2 sm:space-x-3">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    <div>
+                                        <div class="text-sm sm:text-base text-white font-semibold">{{ hero.usersText }}</div>
+                                        <div class="text-lg sm:text-2xl font-bold text-white">{{ statistics.activeUsers|floatformat:0 }} {{ hero.usersCount }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-white/10 rounded-lg border border-white/20">
+                                <div class="flex items-center space-x-2 sm:space-x-3">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <div>
+                                        <div class="text-sm sm:text-base text-white font-semibold">{{ hero.daysText }}</div>
+                                        <div class="text-lg sm:text-2xl font-bold text-white">{{ statistics.daysUntilPlatformLaunch }} {{ hero.daysCount }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="py-12 sm:py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">{{ how_it_works.title }}</h2>
+                <div class="w-20 h-1 bg-green-600 mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                {% for step in how_it_works.steps %}
+                    <div class="relative group bg-white p-6 sm:p-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="absolute -top-3 sm:-top-4 -left-3 sm:-left-4 w-10 h-10 sm:w-12 sm:h-12 bg-green-600 rounded-full flex items-center justify-center shadow-md">
+                            <span class="text-xl sm:text-2xl font-bold text-white">{{ step.number }}</span>
+                        </div>
+                        <div class="mb-5 mt-3 sm:mt-4">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto group-hover:bg-green-100 transition-colors duration-300">
+                                {% if step.number == 1 %}
+                                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                {% elif step.number == 2 %}
+                                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                {% elif step.number == 3 %}
+                                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 005.33 0l4.515 4.514a3.5 3.5 0 000 4.972l-4.515 4.514a3.5 3.5 0 01-5.33 0l-4.515-4.514a3.5 3.5 0 010-4.972l4.515-4.514z"></path></svg>
+                                {% else %}
+                                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">{{ step.title }}</h3>
+                            {% if step.subtitle %}
+                                <p class="text-green-600 font-semibold text-sm sm:text-base mb-3 sm:mb-4">{{ step.subtitle }}</p>
+                            {% endif %}
+                            <p class="text-gray-600 text-sm sm:text-base leading-relaxed">{{ step.description }}</p>
+                        </div>
+                        {% if forloop.counter < how_it_works.steps|length %}
+                            <div class="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-green-200 transform -translate-y-1/2"></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Deforestation Section -->
+    <section class="py-12 sm:py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row gap-12 mb-16">
+                <div class="w-full md:w-1/2">
+                    <img src="{% static 'img/cutted-forest.png' %}" alt="Deforestation" class="w-full h-auto rounded-lg shadow-lg">
+                </div>
+                <div class="w-full md:w-1/2">
+                    <blockquote class="text-2xl italic text-gray-800 border-l-4 border-green-600 pl-6 mb-8">
+                        {% if language == 'ru' %}"Деревья живут как люди — взрослеют, болеют и умирают."
+                        {% elif language == 'kz' %}"Ағаштар адамдар сияқты өмір сүреді-жетіледі, ауырады және өледі."
+                        {% else %}"Trees live like humans—they grow up, get sick, and die."
+                        {% endif %}
+                    </blockquote>
+                    <ul class="space-y-6">
+                        <li class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-4">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-700">
+                                {% if language == 'ru' %}Деревья очищают воздух, которым мы дышим и воду, которую мы пьем. Они дают нам лекарства и защиту от палящего солнца.
+                                {% elif language == 'kz' %}Ағаштар біз дем алатын ауаны және ішетін суды тазартады. Олар бізге дәрі-дәрмектер мен күн сәулесінен қорғайды.
+                                {% else %}Trees purify the air we breathe and the water we drink. They give us medicines and protection from the scorching sun.
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-green-100 p-2 rounded-full mr-4">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v3a3 3 0 003 3z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-gray-700">
+                                {% if language == 'ru' %}Лес — источник существования для многих животных и людей.
+                                {% elif language == 'kz' %}Орман көптеген жануарлар мен адамдар үшін тіршілік көзі болып табылады.
+                                {% else %}The forest is a source of livelihood for many animals and people.
+                                {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mb-16">
+                <p class="text-3xl text-gray-800 text-center max-w-4xl mx-auto">
+                    {% if language == 'ru' %}
+                        Хищническое использование лесных ресурсов и пожары, допущенные человеком,
+                        <span class="text-green-600 font-semibold">привели к тому, что на месте лесов возникли пустыни, обмелели реки, исчезли животные, потеряв свой дом.</span>
+                    {% elif language == 'kz' %}
+                        Орман ресурстарын жыртқыш пайдалану және адам жасаған өрттер
+                        <span class="text-green-600 font-semibold">ормандардың орнында шөлдердің пайда болуына, өзендердің таяз болуына, жануарлардың үйінен айырылуына әкелді.</span>
+                    {% else %}
+                        The predatory use of forest resources and human-caused fires have
+                        <span class="text-green-600 font-semibold">led to deserts appearing in place of forests, rivers becoming shallow, and animals disappearing, losing their homes.</span>
+                    {% endif %}
+                </p>
+            </div>
+            <!-- Video Section -->
+            <div class="grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4">
+                <!-- Beetle Video -->
+                <div class="text-center">
+                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 overflow-hidden rounded-full border-3 border-green-100 shadow-md group cursor-pointer touch-action-manipulation">
+                        <img src="{% static 'img/beetle-icon.png' %}" alt="Beetle" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                        <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                            <source src="{% static 'videos/beetle.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800">
+                        {% if language == 'ru' %}Жук-короед
+                        {% elif language == 'kz' %}Қабық қоңызы
+                        {% else %}The bark beetle
+                        {% endif %}
+                    </h3>
+                </div>
+                <!-- Deforestation Video -->
+                <div class="text-center">
+                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 overflow-hidden rounded-full border-3 border-green-100 shadow-md group cursor-pointer touch-action-manipulation">
+                        <img src="{% static 'img/cutting-icon.png' %}" alt="Deforestation" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                        <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                            <source src="{% static 'videos/cutting.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800">
+                        {% if language == 'ru' %}Вырубки
+                        {% elif language == 'kz' %}Кесу
+                        {% else %}Cutting
+                        {% endif %}
+                    </h3>
+                </div>
+                <!-- Fire Video -->
+                <div class="text-center">
+                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 overflow-hidden rounded-full border-3 border-green-100 shadow-md group cursor-pointer touch-action-manipulation">
+                        <img src="{% static 'img/fire-icon.png' %}" alt="Fire" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                        <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                            <source src="{% static 'videos/fire.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800">
+                        {% if language == 'ru' %}Пожары
+                        {% elif language == 'kz' %}Өрт
+                        {% else %}Wildfires
+                        {% endif %}
+                    </h3>
+                </div>
+                <!-- Pollution Video -->
+                <div class="text-center">
+                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 overflow-hidden rounded-full border-3 border-green-100 shadow-md group cursor-pointer touch-action-manipulation">
+                        <img src="{% static 'img/pollution-icon.png' %}" alt="Pollution" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                        <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                            <source src="{% static 'videos/pollution.mp4' %}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800">
+                        {% if language == 'ru' %}Загрязнения
+                        {% elif language == 'kz' %}Ластану
+                        {% else %}Pollution
+                        {% endif %}
+                    </h3>
+                </div>
+            </div>
+            <script src="{% static 'js/video.js' %}"></script>
+        </div>
+    </section>
+
+    <!-- Why Planting Trees Matters Section -->
+    <section class="fixed-bg-section2" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url({% static 'img/hero-bg-2.png' %});">
+        <div class="scrolling-content">
+            <div class="container mx-auto px-4 py-12 sm:py-16">
+                <div class="text-center mb-8 sm:mb-12">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white mb-3 sm:mb-4">
+                        {% if language == 'ru' %}Почему важно сажать деревья?
+                        {% elif language == 'kz' %}Ағаш отырғызу неге маңызды?
+                        {% else %}Why Planting Trees Matters{% endif %}
+                    </h2>
+                    <div class="w-20 h-1 bg-green-600 mx-auto"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+
+                    {% for item in importance.values %}
+                        <div class="importance-card p-5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+                            <div class="icon-container {{ item.bg_color|default:'bg-green-100' }} mb-4">
+                                <svg class="w-8 h-8 {{ item.icon_color|default:'text-green-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ item.icon_path|default:'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z' }}"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg sm:text-xl font-bold text-green-500 mb-2">{{ item|get_item:language|get_item:'header'|default:'Header' }}</h3>
+                            <p class="text-gray-200 text-sm sm:text-base mb-3">{{ item|get_item:language|get_item:'subtext'|default:'Subtext' }}</p>
+                            <div class="story-highlight {{ item.text_color|default:'text-green-200' }} text-sm">
+                                "{{ item|get_item:language|get_item:'story'|default:'Story' }}"
+                            </div>
+                            <p class="text-gray-300 text-xs sm:text-sm">- {{ item|get_item:language|get_item:'author'|default:'Author' }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-8 sm:mt-12">
+                    <a href="{% url 'main_app:certificate' %}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 touch-action-manipulation">
+                        {% if language == 'ru' %}Посадить деревья
+                        {% elif language == 'kz' %}Ағаш отырғызу
+                        {% else %}Plant Trees{% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forest Areas Section -->
+    <section class="py-12 sm:py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+                    {% if language == 'ru' %}Лесные районы Казахстана
+                    {% elif language == 'kz' %}Қазақстанның орманды аймақтары
+                    {% else %}Forest Areas of Kazakhstan{% endif %}
+                </h2>
+                <p class="text-base sm:text-xl text-gray-600 max-w-2xl sm:max-w-3xl mx-auto">
+                    {% if language == 'ru' %}Исследуйте основные лесные районы и наши проекты по восстановлению по всему Казахстану
+                    {% elif language == 'kz' %}Қазақстан бойынша негізгі орманды аймақтар мен біздің қалпына келтіру жобаларымызды зерттеңіз
+                    {% else %}Explore the main forest areas and our restoration projects across Kazakhstan{% endif %}
+                </p>
+            </div>
+            <div class="map-section">
+                <div class="map-container relative bg-green-50 rounded-xl p-6 sm:p-8 shadow-md" data-language="{{ language }}">
+                    <div id="yandex-map" style="width: 100%; height: 300px; border-radius: 8px; overflow: hidden;"></div>
+                    <div class="mt-8 sm:mt-12 bg-white rounded-xl p-5 sm:p-6 shadow-md">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                            <div>
+                                <h3 class="text-xl sm:text-2xl font-bold text-green-800 mb-3 sm:mb-4" id="region-title">
+                                    {% if language == 'ru' %}Выберите регион
+                                    {% elif language == 'kz' %}Аймақты таңдаңыз
+                                    {% else %}Select a region{% endif %}
+                                </h3>
+                                <div class="space-y-2" id="region-stats">
+                                    <p class="text-gray-600 text-sm sm:text-base">
+                                        {% if language == 'ru' %}Нажмите на метку на карте, чтобы увидеть информацию о лесах и проектах
+                                        {% elif language == 'kz' %}Ормандар мен жобалар туралы ақпаратты көру үшін картадағы белгіні басыңыз
+                                        {% else %}Click on a marker on the map to see information about forests and projects{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-2 sm:mb-3">
+                                    {% if language == 'ru' %}Статистика посадок
+                                    {% elif language == 'kz' %}Отырғызу статистикасы
+                                    {% else %}Planting Statistics{% endif %}
+                                </h4>
+                                <div class="bg-green-50 rounded-lg p-3 sm:p-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-green-800 text-sm sm:text-base">{% if language == 'ru' %}Всего посажено{% elif language == 'kz' %}Барлығы отырғызылды{% else %}Total Planted{% endif %}</span>
+                                        <span class="font-bold text-green-900 text-sm sm:text-base">{{ statistics.treesPlanted|floatformat:0 }} {{ hero.treesText }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-green-800 text-sm sm:text-base">{% if language == 'ru' %}Цель{% elif language == 'kz' %}Мақсат{% else %}Target{% endif %}</span>
+                                        <span class="font-bold text-green-900 text-sm sm:text-base">{{ statistics.targetTrees|floatformat:0 }} {{ hero.treesText }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-1.5 sm:h-2 mt-2 sm:mt-3">
+                                        <div class="bg-green-600 h-1.5 sm:h-2 rounded-full" style="width: {{ progress_percentage|floatformat:0 }}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12 sm:mt-16">
+                <div class="bg-green-600 text-white p-6 sm:p-8 rounded-xl shadow-md">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">{% if language == 'ru' %}Готовы начать?{% elif language == 'kz' %}Бастауға дайынсыз ба?{% else %}Ready to start?{% endif %}</h3>
+                    <p class="text-green-100 text-sm sm:text-base mb-4 sm:mb-6 max-w-xl mx-auto">{% if language == 'ru' %}Присоединяйтесь к тысячам людей, которые уже помогают восстанавливать леса Казахстана. Каждое дерево имеет значение!{% elif language == 'kz' %}Қазақстанның орманын қалпына келтіруге көмектесіп жатқан мыңдаған адамдарға қосылыңыз. Әр ағаштың маңызы бар!{% else %}Join thousands of people who are already helping to restore Kazakhstan\'s forests. Every tree matters!{% endif %}</p>
+                    <a href="{% url 'main_app:certificate' %}" class="bg-white text-green-600 px-6 py-3 text-base sm:text-lg font-semibold rounded-full hover:bg-green-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 touch-action-manipulation">{% if language == 'ru' %}Посадить дерево сейчас{% elif language == 'kz' %}Қазір ағаш отырғызу{% else %}Plant a tree now{% endif %}</a>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'js/card.js' %}"></script>
+    </section>
+
+    <style>
+        .fixed-bg-section, .fixed-bg-section2 {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 80vh;
+            position: relative;
+            overflow: hidden;
+        }
+        .scrolling-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        .map-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        #yandex-map {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .importance-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .importance-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .icon-container {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button, a {
+            touch-action: manipulation;
+        }
+        @media (min-width: 640px) {
+            #yandex-map {
+                height: 400px;
+            }
+            .fixed-bg-section, .fixed-bg-section2 {
+                min-height: 80vh;
+            }
+        }
+    </style>
+{% endblock content %}
+
+
+
+
+
+{% comment %} 
+{% extends "basement/base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block header_section %}
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=de3329d4-ff91-43e7-a39c-42ee66b6557a&lang=ru_RU" type="text/javascript"></script>
+{% endblock header_section %}
+
+{% block content %}
+    <section class="fixed-bg-section" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');">
+        <div class="scrolling-content">
+            <div class="container mx-auto px-4 py-20">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <!-- Left side - Content -->
+                    <div class="bg-green-600 p-8 rounded-xl text-white">
+                        <h1 class="text-4xl lg:text-6xl font-bold mb-6 leading-tight">{{ hero.mainText }}</h1>
+                        <p class="text-xl mb-8 text-gray-200">{{ hero.subText }}</p>
+                        
+                        <!-- Quick donation buttons -->
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                                {% for donation in quick_donations %}
+                                    <button onclick="window.location.href='{% url 'main_app:certificate' %}'" type="button" class="bg-green-600 hover:bg-green-700 text-white border-2 border-green-500 hover:border-green-400 transition-all duration-300 p-4 h-auto flex flex-col">
+                                        <span class="font-bold text-lg">{{ donation.amount|floatformat:0 }}₸</span>
+                                        <span class="text-sm opacity-90">{{ donation.trees }} {{ hero.treesText }}</span>
+                                    </button>
+                                {% endfor %}
+                            </div>
+                            <div class="flex gap-3 mb-8">
+                                <input min=1 type="number" name="custom_amount" placeholder="{% if language == 'ru' %}Cумма (мин. 500₸){% elif language == 'kz' %}Бағасы(мин. 500₸){% else %}Price(min. 500₸){% endif %}" class="bg-white/90 text-gray-900 placeholder-gray-600 rounded p-2 border border-gray-300">
+                                <a href="{% url 'main_app:certificate' %}" class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center">
+                                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                    {{ hero.ctaButton }}
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Right side - Statistics -->
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+                        <div class="text-center mb-8">
+                            <div class="relative inline-block">
+                                <div class="text-6xl lg:text-7xl font-bold text-white mb-2">{{ statistics.treesPlanted|floatformat:0 }}</div>
+                                <div class="text-xl text-green-200 mb-4">{{ hero.treesText }}</div>
+                                <!-- Progress circle -->
+                                <div class="mx-auto w-32 h-32 relative">
+                                    <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="50" stroke="rgba(255, 255, 255, 0.2)" stroke-width="8" fill="none"/>
+                                        <circle cx="60" cy="60" r="50" stroke="rgba(34, 197, 94, 0.8)" stroke-width="8" fill="none" stroke-dasharray="78.5 314" class="transition-all duration-1000"/>
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-center">
+                                            <div class="text-sm text-green-200">{{ hero.targetText }}</div>
+                                            <div class="text-lg font-bold text-white">{{ statistics.targetTrees|floatformat:0 }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between p-4 bg-white/10 rounded-lg border border-white/20">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                    <div>
+                                        <div class="text-white font-semibold">{{ hero.usersText }}</div>
+                                        <div class="text-2xl font-bold text-white">{{ statistics.activeUsers|floatformat:0 }} {{ hero.usersCount }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-white/10 rounded-lg border border-white/20">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-6 h-6 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <div>
+                                        <div class="text-white font-semibold">{{ hero.daysText }}</div>
+                                        <div class="text-2xl font-bold text-white">{{ statistics.daysUntilPlatformLaunch }} {{ hero.daysCount }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">{{ how_it_works.title }}</h2>
+                <div class="w-24 h-1 bg-green-600 mx-auto"></div>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for step in how_it_works.steps %}
+                    <div class="relative group bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-green-600 rounded-full flex items-center justify-center shadow-lg">
+                            <span class="text-2xl font-bold text-white">{{ step.number }}</span>
+                        </div>
+                        <div class="mb-6 mt-4">
+                            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto group-hover:bg-green-100 transition-colors duration-300">
+                                {% if step.number == 1 %}
+                                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                {% elif step.number == 2 %}
+                                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                {% elif step.number == 3 %}
+                                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.5 3.5 0 005.33 0l4.515 4.514a3.5 3.5 0 000 4.972l-4.515 4.514a3.5 3.5 0 01-5.33 0l-4.515-4.514a3.5 3.5 0 010-4.972l4.515-4.514z"></path></svg>
+                                {% else %}
+                                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">{{ step.title }}</h3>
+                            {% if step.subtitle %}
+                                <p class="text-green-600 font-semibold mb-4">{{ step.subtitle }}</p>
+                            {% endif %}
+                            <p class="text-gray-600 leading-relaxed">{{ step.description }}</p>
+                        </div>
+                        {% if forloop.counter < how_it_works.steps|length %}
+                            <div class="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-green-200 transform -translate-y-1/2"></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <section class="py-20 bg-gray">
+                <div class="container mx-auto px-4">
+                    <div class="flex flex-col md:flex-row gap-12 mb-16">
+                        <div class="w-full md:w-1/2">
+                            <img src="{% static 'img/cutted-forest.png' %}" alt="Deforestation" class="w-full h-auto rounded-lg shadow-lg">
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <blockquote class="text-2xl italic text-gray-800 border-l-4 border-green-600 pl-6 mb-8">
+                                {% if language == 'ru' %}"Деревья живут как люди — взрослеют, болеют и умирают."
+                                {% elif language == 'kz' %}"Ағаштар адамдар сияқты өмір сүреді-жетіледі, ауырады және өледі."
+                                {% else %}"Trees live like humans—they grow up, get sick, and die."
+                                {% endif %}
+                            </blockquote>
+                            <ul class="space-y-6">
+                                <li class="flex items-start">
+                                    <div class="bg-green-100 p-2 rounded-full mr-4">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-gray-700">
+                                        {% if language == 'ru' %}Деревья очищают воздух, которым мы дышим и воду, которую мы пьем. Они дают нам лекарства и защиту от палящего солнца.
+                                        {% elif language == 'kz' %}Ағаштар біз дем алатын ауаны және ішетін суды тазартады. Олар бізге дәрі-дәрмектер мен күн сәулесінен қорғайды.
+                                        {% else %}Trees purify the air we breathe and the water we drink. They give us medicines and protection from the scorching sun.
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="bg-green-100 p-2 rounded-full mr-4">
+                                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v3a3 3 0 003 3z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-gray-700">
+                                        {% if language == 'ru' %}Лес — источник существования для многих животных и людей.
+                                        {% elif language == 'kz' %}Орман көптеген жануарлар мен адамдар үшін тіршілік көзі болып табылады.
+                                        {% else %}The forest is a source of livelihood for many animals and people.
+                                        {% endif %}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mb-16">
+                        <p class="text-3xl text-gray-800 text-center max-w-4xl mx-auto">
+                            {% if language == 'ru' %}
+                                Хищническое использование лесных ресурсов и пожары, допущенные человеком,
+                                <span class="text-green-600 font-semibold">привели к тому, что на месте лесов возникли пустыни, обмелели реки, исчезли животные, потеряв свой дом.</span>
+                            {% elif language == 'kz' %}
+                                Орман ресурстарын жыртқыш пайдалану және адам жасаған өрттер
+                                <span class="text-green-600 font-semibold">ормандардың орнында шөлдердің пайда болуына, өзендердің таяз болуына, жануарлардың үйінен айырылуына әкелді.</span>
+                            {% else %}
+                                The predatory use of forest resources and human-caused fires have
+                                <span class="text-green-600 font-semibold">led to deserts appearing in place of forests, rivers becoming shallow, and animals disappearing, losing their homes.</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        <!-- Beetle Video -->
+                        <div class="text-center">
+                            <div class="relative w-48 h-48 mx-auto mb-4 overflow-hidden rounded-full border-4 border-green-100 shadow-md group cursor-pointer">
+                                <img src="{% static 'img/beetle-icon.png' %}" alt="Beetle" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                                <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                                    <source src="{% static 'videos/beetle.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                                    <div class="w-16 h-16 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                {% if language == 'ru' %}Жук-короед
+                                {% elif language == 'kz' %}Қабық қоңызы
+                                {% else %}The bark beetle
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <!-- Deforestation Video -->
+                        <div class="text-center">
+                            <div class="relative w-48 h-48 mx-auto mb-4 overflow-hidden rounded-full border-4 border-green-100 shadow-md group cursor-pointer">
+                                <img src="{% static 'img/cutting-icon.png' %}" alt="Deforestation" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                                <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                                    <source src="{% static 'videos/cutting.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                                    <div class="w-16 h-16 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                {% if language == 'ru' %}Вырубки
+                                {% elif language == 'kz' %}Кесу
+                                {% else %}Cutting
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <!-- Fire Video -->
+                        <div class="text-center">
+                            <div class="relative w-48 h-48 mx-auto mb-4 overflow-hidden rounded-full border-4 border-green-100 shadow-md group cursor-pointer">
+                                <img src="{% static 'img/fire-icon.png' %}" alt="Fire" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                                <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                                    <source src="{% static 'videos/fire.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                                    <div class="w-16 h-16 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                {% if language == 'ru' %}Пожары
+                                {% elif language == 'kz' %}Өрт
+                                {% else %}Wildfires
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <!-- Pollution Video -->
+                        <div class="text-center">
+                            <div class="relative w-48 h-48 mx-auto mb-4 overflow-hidden rounded-full border-4 border-green-100 shadow-md group cursor-pointer">
+                                <img src="{% static 'img/pollution-icon.png' %}" alt="Pollution" class="w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300">
+                                <video class="absolute inset-0 w-full h-full object-cover rounded-full opacity-0 transition-opacity duration-300" preload="auto" muted playsinline loop>
+                                    <source src="{% static 'videos/pollution.mp4' %}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 play-button">
+                                    <div class="w-16 h-16 bg-green-600 bg-opacity-90 rounded-full flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform duration-300">
+                                        <svg class="w-8 h-8 text-white ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                {% if language == 'ru' %}Загрязнения
+                                {% elif language == 'kz' %}Ластану
+                                {% else %}Pollution
+                                {% endif %}
+                            </h3>
+                        </div>
+                    </div>
+                </section>
+                <script src="{% static 'js/video.js' %}"></script>
+                <div class="w-full text-center">
+                    <h2 class="text-4xl md:text-5xl font-bold text-green-600 mb-6">
+                        {% if language == 'ru' %}Почему важно сажать деревья?
+                        {% elif language == 'kz' %}Ағаш отырғызу неге маңызды?
+                        {% else %}Why Planting Trees Matters{% endif %}
+                    </h2>
+                </div>
+                <section class="fixed-bg-section2" style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url({% static 'img/hero-bg-2.png' %});">
+                    <div class="scrolling-content">
+                        <div class="container mx-auto px-4 py-16 h-full flex items-center">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <!-- Card 1: The Old Oak -->
+                                <div class="importance-card p-6">
+                                    <div class="icon-container bg-green-100 mb-5">
+                                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3">{{ importance.first|get_item:language|get_item:'header' }}</h3>
+                                    <p class="text-gray-600 mb-4">{{ importance.first|get_item:language|get_item:'subtext' }}</p>
+                                    <div class="story-highlight text-green-700">
+                                        "{{ importance.first|get_item:language|get_item:'story' }}"
+                                    </div>
+                                    <p class="text-gray-600 text-sm">- {{ importance.first|get_item:language|get_item:'author' }}</p>
+                                </div>
+                                <!-- Card 2: The Forest's Breath -->
+                                <div class="importance-card p-6">
+                                    <div class="icon-container bg-blue-100 mb-5">
+                                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3">{{ importance.second|get_item:language|get_item:'header' }}</h3>
+                                    <p class="text-gray-600 mb-4">{{ importance.second|get_item:language|get_item:'subtext' }}</p>
+                                    <div class="story-highlight text-blue-700">
+                                        "{{ importance.second|get_item:language|get_item:'story' }}"
+                                    </div>
+                                    <p class="text-gray-600 text-sm">- {{ importance.second|get_item:language|get_item:'author' }}</p>
+                                </div>
+                                <!-- Card 3: The Shade of Hope -->
+                                <div class="importance-card p-6">
+                                    <div class="icon-container bg-amber-100 mb-5">
+                                        <svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-3">{{ importance.third|get_item:language|get_item:'header' }}</h3>
+                                    <p class="text-gray-600 mb-4">{{ importance.third|get_item:language|get_item:'subtext' }}</p>
+                                    <div class="story-highlight text-amber-700">
+                                        "{{ importance.third|get_item:language|get_item:'story' }}"
+                                    </div>
+                                    <p class="text-gray-600 text-sm">- {{ importance.third|get_item:language|get_item:'author' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Big centered button container -->
+                        <div class="big-centered-button">
+                            <a href="{% url 'main_app:certificate' %}" class="big-button">
+                                {% if language == 'ru' %}Посадить деревья
+                                {% elif language == 'kz' %}Ағаш отырғызу
+                                {% else %}Plant Trees{% endif %}
+                            </a>
+                        </div>
+                    </div>
+                </section>
+                {% comment %} EXTRA INFO {% endcomment %}
+                <section class="py-20 bg-white">
+                    <div class="container mx-auto px-4">
+                        <div class="text-center mb-16">
+                            <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                                {% if language == 'ru' %}Лесные районы Казахстана
+                                {% elif language == 'kz' %}Қазақстанның орманды аймақтары
+                                {% else %}Forest Areas of Kazakhstan{% endif %}
+                            </h2>
+                            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                                {% if language == 'ru' %}Исследуйте основные лесные районы и наши проекты по восстановлению по всему Казахстану
+                                {% elif language == 'kz' %}Қазақстан бойынша негізгі орманды аймақтар мен біздің қалпына келтіру жобаларымызды зерттеңіз
+                                {% else %}Explore the main forest areas and our restoration projects across Kazakhstan{% endif %}
+                            </p>
+                        </div>
+                        <div class="map-section">
+                            <div class="map-container relative bg-green-50 rounded-2xl p-8 shadow-lg" data-language="{{ language }}">
+                                <!-- Yandex Map Container -->
+                                <div id="yandex-map" style="width: 100%; height: 500px; border-radius: 12px; overflow: hidden;"></div>
+                                <!-- Info Panel -->
+                                <div class="mt-12 bg-white rounded-xl p-6 shadow-md">
+                                    <div class="grid md:grid-cols-2 gap-8">
+                                        <div>
+                                            <h3 class="text-2xl font-bold text-green-800 mb-4" id="region-title">
+                                                {% if language == 'ru' %}Выберите регион
+                                                {% elif language == 'kz' %}Аймақты таңдаңыз
+                                                {% else %}Select a region{% endif %}
+                                            </h3>
+                                            <div class="space-y-2" id="region-stats">
+                                                <p class="text-gray-600">
+                                                    {% if language == 'ru' %}Нажмите на метку на карте, чтобы увидеть информацию о лесах и проектах
+                                                    {% elif language == 'kz' %}Ормандар мен жобалар туралы ақпаратты көру үшін картадағы белгіні басыңыз
+                                                    {% else %}Click on a marker on the map to see information about forests and projects{% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-semibold text-green-700 mb-3">
+                                                {% if language == 'ru' %}Статистика посадок
+                                                {% elif language == 'kz' %}Отырғызу статистикасы
+                                                {% else %}Planting Statistics{% endif %}
+                                            </h4>
+                                            <div class="bg-green-50 rounded-lg p-4">
+                                                <div class="flex justify-between items-center mb-2">
+                                                    <span class="text-green-800">
+                                                        {% if language == 'ru' %}Всего посажено
+                                                        {% elif language == 'kz' %}Барлығы отырғызылды
+                                                        {% else %}Total Planted{% endif %}
+                                                    </span>
+                                                    <span class="font-bold text-green-900">{{ statistics.treesPlanted|floatformat:0 }} {{ hero.treesText }}</span>
+                                                </div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-green-800">
+                                                        {% if language == 'ru' %}Цель
+                                                        {% elif language == 'kz' %}Мақсат
+                                                        {% else %}Target{% endif %}
+                                                    </span>
+                                                    <span class="font-bold text-green-900">{{ statistics.targetTrees|floatformat:0 }} {{ hero.treesText }}</span>
+                                                </div>
+                                                <div class="w-full bg-gray-200 rounded-full h-2 mt-3">
+                                                    <div class="bg-green-600 h-2 rounded-full" style="width: {{ progress_percentage|floatformat:0 }}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .map-container {
+                            position: relative;
+                            overflow: hidden;
+                            width: 100%;
+                            max-width: 800px;
+                            margin: 0 auto;
+                        }
+                        #yandex-map {
+                            width: 100%;
+                            height: 500px;
+                            border-radius: 12px;
+                            overflow: hidden;
+                        }
+                        @media (max-width: 640px) {
+                            #yandex-map {
+                                height: 350px;
+                            }
+                        }
+                    </style>
+                    <script src="{% static 'js/card.js' %}"></script>
+                </section>
+                <div class="text-center mt-16">
+                    <div class="bg-green-600 text-white p-8 rounded-xl shadow-lg">
+                        <h3 class="text-2xl font-bold mb-4">{% if language == 'ru' %}Готовы начать?{% elif language == 'kz' %}Бастауға дайынсыз ба?{% else %}Ready to start?{% endif %}</h3>
+                        <p class="text-green-100 mb-6 max-w-2xl mx-auto">{% if language == 'ru' %}Присоединяйтесь к тысячам людей, которые уже помогают восстанавливать леса Казахстана. Каждое дерево имеет значение!{% elif language == 'kz' %}Қазақстанның орманын қалпына келтіруге көмектесіп жатқан мыңдаған адамдарға қосылыңыз. Әр ағаштың маңызы бар!{% else %}Join thousands of people who are already helping to restore Kazakhstan\'s forests. Every tree matters!{% endif %}</p>
+                        <a href="{% url 'main_app:certificate' %}" class="bg-white text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-50 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">{% if language == 'ru' %}Посадить дерево сейчас{% elif language == 'kz' %}Қазір ағаш отырғызу{% else %}Plant a tree now{% endif %}</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+
+
+
+
+

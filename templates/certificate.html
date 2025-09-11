@@ -1,0 +1,1553 @@
+{% extends "basement/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block header_section %}
+<script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="certificate-page">
+    <div class="page-header">
+        <h1 class="page-title">
+            {% if language == 'ru' %}Green Mile Сертификат{% elif language == 'kz' %}Green Mile Сертификаты{% else %}Green Mile Certificate{% endif %}
+        </h1>
+        <p class="page-subtitle">
+            {% if language == 'ru' %}Профессиональные сертификаты посадки деревьев{% elif language == 'kz' %}Кәсіби ағаш отырғызу сертификаттары{% else %}Professional tree planting certificates{% endif %}
+        </p>
+    </div>
+
+    <!-- Step 1: Design Selection -->
+    <div class="step-container js-step-container" data-step="1" style="display: block;">
+        <div class="step-header">
+            <div class="step-number">1</div>
+            <h2 class="step-title">
+                {% if language == 'ru' %}Выберите дизайн сертификата{% elif language == 'kz' %}Сертификат дизайнын таңдаңыз{% else %}Choose certificate design{% endif %}
+            </h2>
+        </div>
+        
+        <div class="design-grid">
+            <div class="design-card active js-design-card" data-design="professional">
+                <div class="design-preview">   
+                    
+                    <div class="cert-preview cert-professional" 
+                        style="background-image: url('{% if certificate_templates.professional.background_image %}{{ certificate_templates.professional.background_image.url }}{% else %}{% static 'images/default-professional.jpg' %}{% endif %}'); 
+                        background-size: cover; background-position: center;"
+                    >                  
+                        <div class="cert-header" >
+                            <div class="cert-logo">🌱</div>
+                            <div class="cert-title">GREEN MILE</div>
+                        </div>
+                        <div class="cert-main-title">CERTIFICATE</div>
+                        <div class="cert-content">
+                            <div class="cert-text">Sample certificate text</div>
+                            <div class="cert-signature">Signature</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-info">
+                    <h3>{% if language == 'ru' %}Профессиональный{% elif language == 'kz' %}Кәсіби{% else %}Professional{% endif %}</h3>
+                    <p>{% if language == 'ru' %}Элегантный дизайн для официальных случаев{% elif language == 'kz' %}Ресми жағдайлар үшін әдемі дизайн{% else %}Elegant design for official occasions{% endif %}</p>
+                </div>
+            </div>
+
+            <div class="design-card js-design-card" data-design="modern">
+                <div class="design-preview">
+                    <div class="cert-preview cert-modern" 
+                        style="background-image: url('{% if certificate_templates.modern.background_image %}{{ certificate_templates.modern.background_image.url }}{% else %}{% static 'images/default-modern.jpg' %}{% endif %}'); 
+                        background-size: cover; background-position: center;"
+                    >
+                        <div class="cert-header-modern">
+                            <div class="cert-badge">🏆</div>
+                            <div class="cert-title-modern">ACHIEVEMENT</div>
+                        </div>
+                        <div class="cert-main-title-modern">GREEN CERTIFICATE</div>
+                        <div class="cert-content-modern">
+                            <div class="cert-text-modern">Sample text</div>
+                            <div class="cert-signature-modern">Signature</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-info">
+                    <h3>{% if language == 'ru' %}Современный{% elif language == 'kz' %}Заманауи{% else %}Modern{% endif %}</h3>
+                    <p>{% if language == 'ru' %}Современный минималистичный стиль{% elif language == 'kz' %}Қазіргі заманғы минималистік стиль{% else %}Contemporary minimalist style{% endif %}</p>
+                </div>
+            </div>
+
+            <div class="design-card js-design-card" data-design="elegant">
+                <div class="design-preview">
+                    <div class="cert-preview cert-elegant" 
+                        style="background-image: url('{% if certificate_templates.elegant.background_image %}{{ certificate_templates.elegant.background_image.url }}{% else %}{% static 'images/default-elegant.jpg' %}{% endif %}'); 
+                        background-size: cover; background-position: center;"
+                    >
+                        <div class="cert-border-elegant">
+                            <div class="cert-header-elegant">GREEN MILE</div>
+                            <div class="cert-main-title-elegant">Certificate of Achievement</div>
+                            <div class="cert-content-elegant">
+                                <div class="cert-text-elegant">Sample certificate</div>
+                                <div class="cert-signature-elegant">Signature</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="design-info">
+                    <h3>{% if language == 'ru' %}Элегантный{% elif language == 'kz' %}Сәнді{% else %}Elegant{% endif %}</h3>
+                    <p>{% if language == 'ru' %}Классический дизайн с орнаментами{% elif language == 'kz' %}Ою-өрнекті классикалық дизайн{% else %}Classic design with ornaments{% endif %}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-actions">
+            <button class="btn-primary js-step-next">
+                {% if language == 'ru' %}Далее{% elif language == 'kz' %}Әрі қарай{% else %}Next{% endif %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 2: Certificate Content -->
+    <div class="step-container js-step-container" data-step="2" style="display: none;">
+        <div class="step-header">
+            <div class="step-number">2</div>
+            <h2 class="step-title">
+                {% if language == 'ru' %}Заполните сертификат{% elif language == 'kz' %}Сертификатты толтырыңыз{% else %}Fill the certificate{% endif %}
+            </h2>
+        </div>
+
+       
+        <!-- Modified Certificate Editor with Customizable Template -->
+        <div class="certificate-editor">
+            <div class="editor-controls">
+                <!-- Existing form groups remain the same -->
+                <!-- Add this if needed for admin-uploaded templates, but since front-end, assume template is passed -->
+                  <div class="form-group">
+                    <label for="recipient-name">
+                        {% if language == 'ru' %}Имя получателя{% elif language == 'kz' %}Алушының аты{% else %}Recipient name{% endif %}
+                    </label>
+                    <input type="text" id="recipient-name" class="form-control" maxlength="50" 
+                           placeholder="{% if language == 'ru' %}Введите имя{% elif language == 'kz' %}Атын енгізіңіз{% else %}Enter name{% endif %}">
+                    <small class="char-counter">0/50</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="certificate-text">
+                        {% if language == 'ru' %}Текст сертификата{% elif language == 'kz' %}Сертификат мәтіні{% else %}Certificate text{% endif %}
+                    </label>
+                    <textarea id="certificate-text" class="form-control" rows="4" maxlength="300"
+                              placeholder="{% if language == 'ru' %}за вклад в восстановление лесов Казахстана...{% elif language == 'kz' %}Қазақстан ормандарын қалпына келтірудегі үлесі үшін...{% else %}for contributing to Kazakhstan's forest restoration...{% endif %}"></textarea>
+                    <small class="char-counter">0/300</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="signature-text">
+                        {% if language == 'ru' %}Подпись{% elif language == 'kz' %}Қолтаңба{% else %}Signature{% endif %}
+                    </label>
+                    <input type="text" id="signature-text" class="form-control" maxlength="50"
+                           value="{% if language == 'ru' %}С уважением, Green Mile{% elif language == 'kz' %}Құрметпен, Green Mile{% else %}With respect, Green Mile{% endif %}">
+                    <small class="char-counter">0/50</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="tree-count">
+                        {% if language == 'ru' %}Количество деревьев{% elif language == 'kz' %}Ағаш саны{% else %}Number of trees{% endif %}
+                    </label>
+                    <input type="number" id="tree-count" class="form-control" min="1" value="1">
+                </div>
+            </div>
+
+            <div class="certificate-preview">
+                <div id="live-certificate" class="certificate-live professional-cert" style="aspect-ratio: 210 / 297; width: 100%; max-width: 420px;">
+                    <div class="cert-background">
+                        <div class="cert-border">
+                            <div class="cert-header-section">
+                                <div class="cert-logo-section">
+                                    <div class="logo-icon">🌱</div>
+                                    <div class="org-name">GREEN MILE</div>
+                                </div>
+                                <div class="cert-number">№ <span id="cert-number">000001</span> / {% now "d.m.Y" %}</div>
+                            </div>
+                            
+                            <div class="cert-main-section">
+                                <h1 class="cert-main-title">
+                                    {% if language == 'ru' %}СЕРТИФИКАТ{% elif language == 'kz' %}СЕРТИФИКАТ{% else %}CERTIFICATE{% endif %}
+                                </h1>
+                                
+                                <div class="cert-subtitle">
+                                    {% if language == 'ru' %}о вкладе в восстановление лесов{% elif language == 'kz' %}орман қалпына келтірудегі үлесі туралы{% else %}of contribution to forest restoration{% endif %}
+                                </div>
+                                
+                                <div class="recipient-section">
+                                    <div class="recipient-label">
+                                        {% if language == 'ru' %}Настоящим подтверждается, что{% elif language == 'kz' %}Осымен расталады{% else %}This certifies that{% endif %}
+                                    </div>
+                                    <div class="recipient-name" id="live-recipient-name">
+                                        {% if language == 'ru' %}[Имя получателя]{% elif language == 'kz' %}[Алушы аты]{% else %}[Recipient Name]{% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="achievement-section">
+                                    <div class="tree-info">
+                                        <span class="tree-count-display" id="live-tree-count">1</span>
+                                        <span class="tree-label">
+                                            {% if language == 'ru' %}дерево{% elif language == 'kz' %}ағаш{% else %}tree{% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="cert-description" id="live-cert-text">
+                                        {% if language == 'ru' %}за вклад в восстановление лесов Казахстана и защиту окружающей среды{% elif language == 'kz' %}Қазақстан ормандарын қалпына келтіру және қоршаған ортаны қорғаудағы үлесі үшін{% else %}for contributing to Kazakhstan's forest restoration and environmental protection{% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="signature-section">
+                                    <div class="signature-line">
+                                        <div class="signature-text" id="live-signature">
+                                            {% if language == 'ru' %}С уважением, Green Mile{% elif language == 'kz' %}Құрметпен, Green Mile{% else %}With respect, Green Mile{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="cert-footer">
+                                    <div class="website">greenmile.kz</div>
+                                    <div class="impact-text">
+                                        {% if language == 'ru' %}Ваш вклад помогает восстанавливать леса Казахстана{% elif language == 'kz' %}Сіздің үлесіңіз Қазақстан ормандарын қалпына келтіруге көмектеседі{% else %}Your contribution helps restore Kazakhstan's forests{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-actions">
+            <button class="btn-secondary js-step-prev">
+                {% if language == 'ru' %}Назад{% elif language == 'kz' %}Артқа{% else %}Back{% endif %}
+            </button>
+            <button class="btn-primary js-step-next">
+                {% if language == 'ru' %}Далее{% elif language == 'kz' %}Әрі қарай{% else %}Next{% endif %}
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 3: Payment -->
+    <div class="step-container js-step-container" data-step="3" style="display: none;">
+        <div class="step-header">
+            <div class="step-number">3</div>
+            <h2 class="step-title">
+                {% if language == 'ru' %}Оплата и контактные данные{% elif language == 'kz' %}Төлем және байланыс деректері{% else %}Payment and contact details{% endif %}
+            </h2>
+        </div>
+
+        <form id="payment-form" class="payment-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customer-name">
+                        {% if language == 'ru' %}Ваше имя{% elif language == 'kz' %}Сіздің атыңыз{% else %}Your name{% endif %} *
+                    </label>
+                    <input type="text" id="customer-name" name="customerName" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="customer-email">
+                        {% if language == 'ru' %}Email для получения сертификата{% elif language == 'kz' %}Сертификат алу үшін email{% else %}Email for certificate delivery{% endif %} *
+                    </label>
+                    <input type="email" id="customer-email" name="customerEmail" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customer-phone">
+                        {% if language == 'ru' %}Телефон (необязательно){% elif language == 'kz' %}Телефон (міндетті емес){% else %}Phone (optional){% endif %}
+                    </label>
+                    <input type="tel" id="customer-phone" name="customerPhone" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="currency">
+                        {% if language == 'ru' %}Валюта{% elif language == 'kz' %}Валюта{% else %}Currency{% endif %}
+                    </label>
+                    <select id="currency" name="currency" class="form-control">
+                        <option value="KZT">KZT - Казахстанский тенге</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="RUB">RUB - Russian Ruble</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <h3>{% if language == 'ru' %}Итого к оплате{% elif language == 'kz' %}Төлемге жалпы{% else %}Total to pay{% endif %}</h3>
+                <div class="summary-item">
+                    <span>{% if language == 'ru' %}Количество деревьев:{% elif language == 'kz' %}Ағаш саны:{% else %}Number of trees:{% endif %}</span>
+                    <span id="summary-trees">1</span>
+                </div>
+                <div class="summary-item">
+                    <span>{% if language == 'ru' %}Цена за дерево:{% elif language == 'kz' %}Ағаш бағасы:{% else %}Price per tree:{% endif %}</span>
+                    <span>500 KZT</span>
+                </div>
+                <div class="summary-item total">
+                    <span>{% if language == 'ru' %}Итого:{% elif language == 'kz' %}Жалпы:{% else %}Total:{% endif %}</span>
+                    <span id="summary-total">500 KZT</span>
+                </div>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="privacy-consent" required>
+                    <span class="checkmark"></span>
+                    <span class="checkbox-text">
+                        {% if language == 'ru' %}Я согласен с обработкой персональных данных в соответствии с законодательством РК{% elif language == 'kz' %}Мен ҚР заңнамасына сәйкес жеке деректерді өңдеуге келісемін{% else %}I agree to personal data processing in accordance with RK legislation{% endif %}
+                    </span>
+                </label>
+            </div>
+
+            <div class="step-actions">
+                <button type="button" class="btn-secondary js-step-prev">
+                    {% if language == 'ru' %}Назад{% elif language == 'kz' %}Артқа{% else %}Back{% endif %}
+                </button>
+                <button type="submit" class="btn-primary btn-pay">
+                    <span class="btn-text">{% if language == 'ru' %}Оплатить{% elif language == 'kz' %}Төлеу{% else %}Pay Now{% endif %}</span>
+                    <span class="btn-loader" style="display: none;">⏳</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Step 4: Success -->
+    <div class="step-container js-step-container" data-step="4" style="display: none;">
+        <div class="success-screen">
+            <div class="success-icon">✅</div>
+            <h2>{% if language == 'ru' %}Спасибо за ваш вклад!{% elif language == 'kz' %}Үлесіңіз үшін рахмет!{% else %}Thank you for your contribution!{% endif %}</h2>
+            <p>{% if language == 'ru' %}Ваш платеж успешно обработан. Сертификат отправлен на указанный email.{% elif language == 'kz' %}Сіздің төлемін сәтті өңделді. Сертификат көрсетілген email-ге жіберілді.{% else %}Your payment has been processed successfully. Certificate has been sent to your email.{% endif %}</p>
+            
+            <div class="download-section">
+                <button class="btn-primary js-download-certificate">
+                    📥 {% if language == 'ru' %}Скачать сертификат{% elif language == 'kz' %}Сертификатты жүктеп алу{% else %}Download Certificate{% endif %}
+                </button>
+            </div>
+
+            <div class="share-section">
+                <h3>{% if language == 'ru' %}Поделитесь своим достижением!{% elif language == 'kz' %}Жетістігіңізбен бөлісіңіз!{% else %}Share your achievement!{% endif %}</h3>
+                <div class="share-buttons">
+                    <button class="share-btn" data-platform="telegram">📱 Telegram</button>
+                    <button class="share-btn" data-platform="whatsapp">💬 WhatsApp</button>
+                    <button class="share-btn" data-platform="facebook">👥 Facebook</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .certificate-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f9fc 0%, #e8f5e8 100%);
+        min-height: 100vh;
+    }
+
+    .cert-title{
+        color: black;
+        font-weight: bold;
+    }
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a5f3f;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: #6b7280;
+        font-weight: 400;
+    }
+
+    .step-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .step-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .step-number {
+        width: 3rem;
+        height: 3rem;
+        background: linear-gradient(135deg, #16a085, #27ae60);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .step-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        color: #1a5f3f;
+        margin: 0;
+    }
+
+    /* Design Selection */
+    .design-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .design-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fafafa;
+    }
+
+    .design-card:hover {
+        border-color: #16a085;
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.15);
+    }
+
+    .design-card.active {
+        border-color: #16a085;
+        background: #f0fdfa;
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.2);
+    }
+
+    .design-preview {
+        margin-bottom: 1rem;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cert-preview {
+        width: 250px;
+        height: 160px;
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        transform: scale(0.8);
+    }
+
+    /* Certificate Styles */
+    .cert-professional {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 2px solid #16a085;
+        padding: 1rem;
+    }
+
+    .cert-modern {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        color: white;
+        padding: 1rem;
+    }
+
+    .cert-elegant {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        color: white;
+        padding: 1rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        background: #fafafa;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #16a085;
+        box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+        background: white;
+    }
+
+    .char-counter {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* Certificate Editor */
+    .certificate-editor {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .certificate-preview {
+        position: sticky;
+        top: 2rem;
+    }
+
+    /* Enhanced Professional Styles for A4 Vertical Layout */
+    .certificate-live {
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+
+    .certificate-live:hover {
+        box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    .cert-background {
+        padding: 2.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-image: 
+            linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0.2)),
+            radial-gradient(circle at 50% 50%, rgba(22,160,133,0.05) 0%, transparent 100%);
+        position: relative;
+    }
+
+    .cert-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(22,160,133,0.02) 10px, rgba(22,160,133,0.02) 20px);
+    }
+
+    .cert-border {
+        padding: 2rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .cert-border::after {
+        content: '';
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        opacity: 0.1;
+    }
+
+    .cert-header-section {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(22,160,133,0.2);
+        padding-bottom: 1rem;
+    }
+
+    .cert-main-title {
+        font-size: 2.5rem;
+        letter-spacing: 3px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .recipient-name {
+        font-size: 1.8rem;
+        border-bottom: 3px solid #ffffff;
+        padding-bottom: 0.5rem;
+        text-shadow: 0 1px 2px rgba(22,160,133,0.1);
+    }
+
+    .tree-info {
+        background: rgba(22,160,133,0.05);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        display: inline-flex;
+        box-shadow: 0 2px 10px rgba(22,160,133,0.1);
+    }
+
+    .cert-description {
+        font-style: italic;
+        padding: 1rem;
+        border-left: 4px solid #16a085;
+
+        margin: 1.5rem 0;
+    }
+
+    .signature-text {
+        font-size: 1.3rem;
+        border-top: 2px dashed #16a085;
+        padding-top: 0.5rem;
+        text-align: right;
+    }
+
+    .cert-footer {
+        background: rgba(22,160,133,0.03);
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: auto;
+    }
+
+    .professional-cert {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    }
+
+    .cert-background {
+        padding: 2rem;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(22, 160, 133, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(22, 160, 133, 0.05) 0%, transparent 50%);
+    }
+
+    .cert-border {
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .cert-border::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        border-radius: 4px;
+        opacity: 0.3;
+    }
+
+    .cert-header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        background: rgba(255,255,255,0.2);
+        border-radius:25px;
+    }
+
+    .cert-logo-section {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .logo-icon {
+        font-size: 1.8rem;
+    }
+
+    .org-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #16a085;
+    }
+
+    .cert-number {
+        font-size: 0.875rem;
+        color: #6b7280;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
+
+    .cert-main-section {
+        text-align: center;
+    }
+
+    .cert-main-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: yellow;
+        margin-bottom: 0.5rem;
+        letter-spacing: 2px;
+    }
+
+    .cert-subtitle {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+
+    .recipient-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .recipient-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .recipient-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a5f3f;
+        border-bottom: 2px solid #16a085;
+        padding-bottom: 0.25rem;
+        display: inline-block;
+        min-width: 200px;
+    }
+
+    .achievement-section {
+        margin-bottom: 2rem;
+    }
+
+    .tree-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: #16a085;
+        font-weight: 600;
+    }
+
+    .tree-count-display {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .cert-description {
+        font-size: 1rem;
+        color: #ffffff;
+        line-height: 1.5;
+        max-width: 400px;
+        margin: 0 auto;
+        background: rgba(22,160,133,0.5)
+    }
+
+    .signature-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .signature-text {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        color: #16a085;
+        font-style: italic;
+    }
+
+    .cert-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
+
+    .website {
+        font-weight: 600;
+        color: #16a085;
+    }
+
+    .impact-text {
+        max-width: 200px;
+        text-align: right;
+        font-style: italic;
+    }
+
+    /* Form Rows */
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: #f8fffe;
+        border: 2px solid #16a085;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .order-summary h3 {
+        font-family: 'Playfair Display', serif;
+        color: #1a5f3f;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e0f2f1;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .summary-item.total {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #16a085;
+        border-top: 2px solid #16a085;
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+        margin: 2rem 0;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        cursor: pointer;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #16a085;
+        margin: 0;
+    }
+
+    /* Buttons */
+    .step-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #16a085, #27ae60);
+        color: white;
+        box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(22, 160, 133, 0.4);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        border-color: #d1d5db;
+    }
+
+    .btn-pay {
+        position: relative;
+    }
+
+    .btn-loader {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Success Screen */
+    .success-screen {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: bounce 1s ease-in-out;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+
+    .success-screen h2 {
+        font-family: 'Playfair Display', serif;
+        color: #16a085;
+        margin-bottom: 1rem;
+    }
+
+    .success-screen p {
+        color: #6b7280;
+        margin-bottom: 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .download-section {
+        margin-bottom: 2rem;
+    }
+
+    .share-section h3 {
+        color: #1a5f3f;
+        margin-bottom: 1rem;
+    }
+
+    .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .share-btn {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .share-btn:hover {
+        border-color: #16a085;
+        background: #f0fdfa;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .certificate-page {
+            padding: 1rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .design-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .certificate-editor {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .step-actions {
+            flex-direction: column;
+        }
+
+        .cert-main-title {
+            font-size: 1.5rem;
+        }
+
+        .recipient-name {
+            font-size: 1.2rem;
+        }
+
+        .share-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .step-container {
+            padding: 1.5rem;
+        }
+
+        .cert-background {
+            padding: 1rem;
+        }
+
+        .cert-border {
+            padding: 1rem;
+        }
+
+        .cert-main-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // State management
+    let currentStep = 1;
+    let selectedDesign = 'professional';
+    let certificateData = {
+        recipientName: '',
+        certificateText: '',
+        signatureText: 'С уважением, Green Mile',
+        treeCount: 1,
+        customerName: '',
+        customerEmail: '',
+        customerPhone: '',
+        currency: 'KZT'
+    };
+
+    // Exchange rates
+    const exchangeRates = {
+        KZT: 1,
+        USD: 0.0021,
+        EUR: 0.0019,
+        RUB: 0.19
+    };
+
+    // Elements
+    const steps = document.querySelectorAll('.js-step-container');
+    const nextButtons = document.querySelectorAll('.js-step-next');
+    const prevButtons = document.querySelectorAll('.js-step-prev');
+    const designCards = document.querySelectorAll('.js-design-card');
+    
+    // Form elements
+    const recipientNameInput = document.getElementById('recipient-name');
+    const certificateTextInput = document.getElementById('certificate-text');
+    const signatureTextInput = document.getElementById('signature-text');
+    const treeCountInput = document.getElementById('tree-count');
+    const currencySelect = document.getElementById('currency');
+    const paymentForm = document.getElementById('payment-form');
+    
+    // Live preview elements
+    const liveRecipientName = document.getElementById('live-recipient-name');
+    const liveCertText = document.getElementById('live-cert-text');
+    const liveSignature = document.getElementById('live-signature');
+    const liveTreeCount = document.getElementById('live-tree-count');
+    const certNumber = document.getElementById('cert-number');
+    
+    // Summary elements
+    const summaryTrees = document.getElementById('summary-trees');
+    const summaryTotal = document.getElementById('summary-total');
+        const templateUrls = {
+        {% for design, template in certificate_templates.items %}
+        '{{ design }}': '{{ template.background_image.url }}',
+        {% endfor %}
+    };
+    
+    const fallbackUrls = {
+        'professional': '{% static "images/default-professional.jpg" %}',
+        'modern': '{% static "images/default-modern.jpg" %}', 
+        'elegant': '{% static "images/default-elegant.jpg" %}'
+    };
+    
+    function getTemplateUrl(design) {
+        // Check if template exists and has a valid URL
+        if (templateUrls[design] && templateUrls[design] !== 'None') {
+            return templateUrls[design];
+        }
+        return fallbackUrls[design] || '';
+    }
+    // Initialize
+    init();
+
+    function init() {
+        updateCertificateNumber();
+        setupEventListeners();
+        updateLivePreview();
+        updateSummary();
+        updateCertificateStyle();
+    }
+
+    function setupEventListeners() {
+        // Step navigation
+        nextButtons.forEach(btn => {
+            btn.addEventListener('click', () => nextStep());
+        });
+
+        prevButtons.forEach(btn => {
+            btn.addEventListener('click', () => prevStep());
+        });
+
+        // Design selection
+        designCards.forEach(card => {
+            card.addEventListener('click', () => selectDesign(card.dataset.design));
+        });
+
+        // Form inputs with live preview
+        recipientNameInput.addEventListener('input', updateRecipientName);
+        certificateTextInput.addEventListener('input', updateCertificateText);
+        signatureTextInput.addEventListener('input', updateSignatureText);
+        treeCountInput.addEventListener('input', updateTreeCount);
+        currencySelect.addEventListener('change', updateCurrency);
+
+        // Character counters
+        setupCharacterCounters();
+
+        // Payment form
+        paymentForm.addEventListener('submit', handlePayment);
+
+        // Download certificate
+        document.querySelector('.js-download-certificate')?.addEventListener('click', downloadCertificate);
+
+        // Share buttons
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => shareAchievement(e.target.dataset.platform));
+        });
+    }
+
+    function setupCharacterCounters() {
+        const inputs = [recipientNameInput, certificateTextInput, signatureTextInput];
+        
+        inputs.forEach(input => {
+            if (input) {
+                input.addEventListener('input', function() {
+                    const counter = this.parentElement.querySelector('.char-counter');
+                    const maxLength = this.getAttribute('maxlength');
+                    if (counter && maxLength) {
+                        counter.textContent = `${this.value.length}/${maxLength}`;
+                        counter.style.color = this.value.length > maxLength * 0.9 ? '#ef4444' : '#6b7280';
+                    }
+                });
+            }
+        });
+    }
+
+    function showStep(step) {
+        currentStep = step;
+        steps.forEach(s => {
+            s.style.display = s.dataset.step == step ? 'block' : 'none';
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextStep() {
+        if (currentStep < 4) {
+            if (validateCurrentStep()) {
+                showStep(currentStep + 1);
+            }
+        }
+    }
+
+    function prevStep() {
+        if (currentStep > 1) {
+            showStep(currentStep - 1);
+        }
+    }
+
+    function validateCurrentStep() {
+        switch (currentStep) {
+            case 1:
+                return true; // Design selection is always valid
+            case 2:
+                return validateCertificateData();
+            case 3:
+                return validatePaymentData();
+            default:
+                return true;
+        }
+    }
+
+    function validateCertificateData() {
+        if (!certificateData.recipientName.trim()) {
+            alert('{% if language == "ru" %}Пожалуйста, введите имя получателя{% elif language == "kz" %}Алушының атын енгізіңіз{% else %}Please enter recipient name{% endif %}');
+            return false;
+        }
+        return true;
+    }
+
+    function validatePaymentData() {
+        const customerName = document.getElementById('customer-name').value.trim();
+        const customerEmail = document.getElementById('customer-email').value.trim();
+        const privacyConsent = document.getElementById('privacy-consent').checked;
+
+        if (!customerName) {
+            alert('{% if language == "ru" %}Пожалуйста, введите ваше имя{% elif language == "kz" %}Атыңызды енгізіңіз{% else %}Please enter your name{% endif %}');
+            return false;
+        }
+
+        if (!customerEmail || !isValidEmail(customerEmail)) {
+            alert('{% if language == "ru" %}Пожалуйста, введите корректный email{% elif language == "kz" %}Дұрыс email енгізіңіз{% else %}Please enter a valid email{% endif %}');
+            return false;
+        }
+
+        if (!privacyConsent) {
+            alert('{% if language == "ru" %}Необходимо согласие на обработку данных{% elif language == "kz" %}Деректерді өңдеуге келісім қажет{% else %}Privacy consent is required{% endif %}');
+            return false;
+        }
+
+        return true;
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function selectDesign(design) {
+        selectedDesign = design;
+        designCards.forEach(card => {
+            card.classList.toggle('active', card.dataset.design === design);
+        });
+        updateCertificateStyle();
+    }
+
+    function updateCertificateStyle() {
+        const certificate = document.getElementById('live-certificate');
+        if (certificate) {
+            certificate.className = `certificate-live ${selectedDesign}-cert`;
+            const templateUrl = getTemplateUrl(selectedDesign);
+            if (templateUrl) {
+                certificate.style.backgroundImage = `url('${templateUrl}')`;
+                certificate.style.backgroundSize = 'cover';
+                certificate.style.backgroundPosition = 'center';
+            }
+        }
+    }
+
+    function updateRecipientName() {
+        certificateData.recipientName = recipientNameInput.value;
+        updateLivePreview();
+    }
+
+    function updateCertificateText() {
+        certificateData.certificateText = certificateTextInput.value;
+        updateLivePreview();
+    }
+
+    function updateSignatureText() {
+        certificateData.signatureText = signatureTextInput.value;
+        updateLivePreview();
+    }
+
+    function updateTreeCount() {
+        certificateData.treeCount = parseInt(treeCountInput.value) || 1;
+        updateLivePreview();
+        updateSummary();
+    }
+
+    function updateCurrency() {
+        certificateData.currency = currencySelect.value;
+        updateSummary();
+    }
+
+    function updateLivePreview() {
+        if (liveRecipientName) {
+            liveRecipientName.textContent = certificateData.recipientName || 
+                '{% if language == "ru" %}[Имя получателя]{% elif language == "kz" %}[Алушы аты]{% else %}[Recipient Name]{% endif %}';
+        }
+
+        if (liveCertText) {
+            liveCertText.textContent = certificateData.certificateText || 
+                '{% if language == "ru" %}за вклад в восстановление лесов Казахстана и защиту окружающей среды{% elif language == "kz" %}Қазақстан ормандарын қалпына келтіру және қоршаған ортаны қорғаудағы үлесі үшін{% else %}for contributing to Kazakhstan\'s forest restoration and environmental protection{% endif %}';
+        }
+
+        if (liveSignature) {
+            liveSignature.textContent = certificateData.signatureText;
+        }
+
+        if (liveTreeCount) {
+            liveTreeCount.textContent = certificateData.treeCount;
+        }
+    }
+
+    function updateSummary() {
+        const trees = certificateData.treeCount;
+        const totalKZT = trees * 500;
+        const rate = exchangeRates[certificateData.currency] || 1;
+        const total = (totalKZT * rate).toFixed(2);
+
+        if (summaryTrees) summaryTrees.textContent = trees;
+        if (summaryTotal) summaryTotal.textContent = `${total} ${certificateData.currency}`;
+    }
+
+    function updateCertificateNumber() {
+        if (certNumber) {
+            const number = String(Date.now()).slice(-6);
+            certNumber.textContent = number.padStart(6, '0');
+        }
+    }
+
+    async function handlePayment(e) {
+        e.preventDefault();
+        
+        if (!validatePaymentData()) return;
+
+        const submitBtn = e.target.querySelector('.btn-pay');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoader = submitBtn.querySelector('.btn-loader');
+
+        // Show loading state
+        submitBtn.disabled = true;
+        btnText.style.display = 'none';
+        btnLoader.style.display = 'inline-block';
+
+        try {
+            // Collect all form data
+            const formData = {
+                customerName: document.getElementById('customer-name').value,
+                customerEmail: document.getElementById('customer-email').value,
+                customerPhone: document.getElementById('customer-phone').value || '',
+                recipientName: certificateData.recipientName,
+                certificateText: certificateData.certificateText,
+                signatureText: certificateData.signatureText,
+                treeCount: certificateData.treeCount,
+                currency: certificateData.currency,
+                selectedDesign: selectedDesign,
+                totalAmount: (certificateData.treeCount * 500 * (exchangeRates[certificateData.currency] || 1)).toFixed(2)
+            };
+
+            // Send to backend
+            const response = await fetch('/api/create-certificate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Proceed to payment
+                await processPayment(formData);
+            } else {
+                throw new Error(result.error || 'Server error');
+            }
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            alert('{% if language == "ru" %}Ошибка при обработке платежа: {% elif language == "kz" %}Төлемді өңдеу қатесі: {% else %}Payment processing error: {% endif %}' + error.message);
+            
+            // Reset button state
+            submitBtn.disabled = false;
+            btnText.style.display = 'inline-block';
+            btnLoader.style.display = 'none';
+        }
+    }
+
+    async function processPayment(formData) {
+        // Initialize CloudPayments
+        if (typeof cp === 'undefined' || !cp.CloudPayments) {
+            throw new Error('Payment system not loaded');
+        }
+
+        const widget = new cp.CloudPayments();
+        const amount = parseFloat(formData.totalAmount);
+
+        widget.pay('charge', {
+            publicId: 'test_api_00000000000000000000001', // Replace with your actual public key
+            description: `{% if language == "ru" %}Посадка ${formData.treeCount} деревьев - Green Mile{% elif language == "kz" %}${formData.treeCount} ағаш отырғызу - Green Mile{% else %}Planting ${formData.treeCount} trees - Green Mile{% endif %}`,
+            amount: amount,
+            currency: formData.currency,
+            accountId: formData.customerEmail,
+            invoiceId: `GM${Date.now()}`,
+            skin: 'modern',
+            data: formData
+        }, {
+            onSuccess: async function(options) {
+                try {
+                    // Send successful payment data to backend
+                    await fetch('/api/payment-success/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCsrfToken()
+                        },
+                        body: JSON.stringify({
+                            ...formData,
+                            paymentId: options.transactionId,
+                            status: 'completed'
+                        })
+                    });
+
+                    showStep(4); // Show success step
+                } catch (error) {
+                    console.error('Post-payment processing error:', error);
+                    // Still show success as payment went through
+                    showStep(4);
+                }
+            },
+            onFail: function(reason, options) {
+                console.error('Payment failed:', reason);
+                alert('{% if language == "ru" %}Оплата не прошла: {% elif language == "kz" %}Төлем өтпеді: {% else %}Payment failed: {% endif %}' + reason);
+                
+                // Reset button state
+                const submitBtn = document.querySelector('.btn-pay');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const btnLoader = submitBtn.querySelector('.btn-loader');
+                
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline-block';
+                btnLoader.style.display = 'none';
+            }
+        });
+    }
+
+    function downloadCertificate() {
+        const step2Container = document.querySelector('.js-step-container[data-step="2"]');
+        const certificate = document.getElementById('live-certificate');
+
+        if (!step2Container || !certificate) {
+            console.error('Certificate elements not found');
+            alert('Error generating certificate. Please try again or contact support.');
+            return;
+        }
+
+        // Store original styles
+        const originalStepDisplay = step2Container.style.display;
+        const originalCertPosition = certificate.style.position;
+        const originalCertLeft = certificate.style.left;
+        const originalCertTop = certificate.style.top;
+
+        try {
+            // Temporarily show off-screen
+            step2Container.style.display = 'block';
+            certificate.style.position = 'absolute';
+            certificate.style.left = '-9999px';
+            certificate.style.top = '0px';
+
+            html2canvas(certificate, {
+                scale: 2, // High quality
+                backgroundColor: '#ffffff',
+                width: certificate.offsetWidth,
+                height: certificate.offsetHeight,
+                logging: false
+            }).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', [210, 297]); // A4 portrait
+
+                // Full A4 size
+                const pageWidth = 210;
+                const pageHeight = 297;
+
+                pdf.addImage(
+                    canvas.toDataURL('image/png'),
+                    'PNG',
+                    0, // X (no margin)
+                    0, // Y (no margin)
+                    pageWidth, // Full width
+                    pageHeight // Full height
+                );
+
+                const certNumber = document.querySelector('#certNumber') || { textContent: 'Unknown' };
+                pdf.save(`GreenMile_Certificate_${certNumber.textContent}.pdf`);
+            }).catch(error => {
+                console.error('html2canvas error:', error);
+                alert('Error generating PDF. Please try again.');
+            });
+        } finally {
+            // Always reset styles, even on error
+            step2Container.style.display = originalStepDisplay;
+            certificate.style.position = originalCertPosition;
+            certificate.style.left = originalCertLeft;
+            certificate.style.top = originalCertTop;
+        }
+    }
+
+
+
+    function shareAchievement(platform) {
+        const text = `{% if language == "ru" %}Я посадил(а) ${certificateData.treeCount} деревьев с Green Mile! Присоединяйтесь к восстановлению лесов Казахстана.{% elif language == "kz" %}Мен Green Mile арқылы ${certificateData.treeCount} ағаш отырғыздым! Қазақстан ормандарын қалпына келтіруге қосылыңыз.{% else %}I planted ${certificateData.treeCount} trees with Green Mile! Join Kazakhstan's forest restoration.{% endif %}`;
+        const url = window.location.origin;
+        
+        const shareUrls = {
+            telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+            whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`
+        };
+        
+        if (shareUrls[platform]) {
+            window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+        }
+    }
+
+    function getCsrfToken() {
+        // Try multiple methods to get the CSRF token
+        let token = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (!token) {
+            token = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
+        }
+        if (!token) {
+            // Try to get from meta tag if you add one
+            const metaTag = document.querySelector('meta[name="csrf-token"]');
+            if (metaTag) {
+                token = metaTag.getAttribute('content');
+            }
+        }
+        if (!token) {
+            console.warn('CSRF token not found');
+            return '';
+        }
+        return token;
+    }
+    VanillaTilt.init(document.getElementById('live-certificate'), {
+        max: 15,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.3,
+        perspective: 1000,
+        scale: 1.02,
+        gyroscope: false
+    });
+});
+</script>
+{% endblock %}

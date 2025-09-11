@@ -1,0 +1,304 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зеленая миля</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in-down': 'fadeInDown 0.5s ease-out',
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 0;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #16a34a;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .language-options {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .language-selector:hover .language-options {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        .mobile-menu {
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .menu-btn {
+            transition: transform 0.3s ease;
+        }
+        
+        .menu-btn.open {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white/95 backdrop-blur-md border-b border-green-100/50 sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'main_app:home' %}" class="flex items-center space-x-3 group">
+                        <div class="bg-green-600 p-2 rounded-lg group-hover:bg-green-700 transition-colors duration-300 shadow-md">
+                            <img src="{% static 'img/logo.png' %}" alt="Tree" class="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-green-900 logo-text group-hover:text-green-700 transition-colors duration-300">Зеленая миля</h1>
+                            <p class="text-xs text-green-600/80 group-hover:text-green-700 transition-colors duration-300">
+                                Восстановление лесов Казахстана
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <a href="{% url 'main_app:about/history' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">История</a>
+                    <a href="{% url 'main_app:about/team' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Команда</a>
+                    <a href="{% url 'main_app:about/faq' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">FAQ</a>
+                    <a href="{% url 'main_app:reports' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Отчеты</a>
+                    <a href="{% url 'main_app:contacts' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Контакты</a>
+                </nav>
+
+                <!-- Right side -->
+                <!-- Right side -->
+                <!-- Right side -->
+                <div class="flex items-center space-x-4">
+                    <!-- Language selector -->
+                    <div class="relative language-selector" id="language-selector">
+                        <button class="border-green-200/70 text-green-700 hover:bg-green-50 border rounded-lg px-3 py-1.5 flex items-center transition-all duration-300 shadow-sm hover:shadow-md">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.5 0a9 9 0 019 9 9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9zm0 2c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path>
+                            </svg>
+                            Рус
+                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 language-selector-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="absolute bg-white border border-gray-200/80 rounded-lg shadow-lg mt-2 py-1.5 language-options w-full min-w-max backdrop-blur-sm bg-white/95" id="language-options">
+                            <a href="{% url 'main_app:set_language' 'ru' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Русский</a>
+                            <a href="{% url 'main_app:set_language' 'kz' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Қазақша</a>
+                            <a href="{% url 'main_app:set_language' 'en' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">English</a>
+                        </div>
+                    </div>
+
+                    <!-- Login button -->
+                    <a href="#" class="hidden md:block bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg transition-colors duration-300 shadow-sm hover:shadow-md font-medium">
+                        Войти
+                    </a>
+
+                    <!-- Mobile menu button -->
+                    <button class="lg:hidden menu-btn p-1.5 rounded-lg hover:bg-green-50 transition-colors duration-300" id="mobile-menu-button">
+                        <svg class="h-6 w-6 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+
+                    <!-- Mobile menu button -->
+                    <button class="lg:hidden menu-btn p-1.5 rounded-lg hover:bg-green-50 transition-colors duration-300" id="mobile-menu-button">
+                        <svg class="h-6 w-6 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="lg:hidden border-t border-green-100/50 py-4 mobile-menu" id="mobile-menu">
+                <nav class="space-y-3">
+                    <a href="{% url 'main_app:about' %}" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-green-50/50 font-medium">О нас</a>
+                    <a href="{% url 'main_app:reports' %}" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-green-50/50 font-medium">Отчеты</a>
+                    <a href="#help" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-green-50/50 font-medium">Частным лицам</a>
+                    <a href="#volunteers" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-green-50/50 font-medium">Волонтерам</a>
+                    <a href="#organizations" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-green-50/50 font-medium">Организациям</a>
+                    <a href="#" class="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-300 text-center font-medium mt-2">
+                        Войти
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+  
+   <script>
+        // Language selector functionality
+        const languageSelector = document.getElementById('language-selector');
+        const languageOptions = document.getElementById('language-options');
+        const languageArrow = document.querySelector('.language-selector-arrow');
+        let languageMenuOpen = false;
+        let hoverTimeout;
+        
+        // Open language menu on hover
+        languageSelector.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(() => {
+                openLanguageMenu();
+            }, 150); 
+        });
+        
+
+        languageSelector.addEventListener('mouseleave', function() {
+            clearTimeout(hoverTimeout);
+
+            if (!languageMenuOpen) {
+                hoverTimeout = setTimeout(() => {
+                    closeLanguageMenu();
+                }, 300); 
+            }
+        });
+        
+        // Keep menu open when hovering over options
+        languageOptions.addEventListener('mouseenter', function() {
+            clearTimeout(hoverTimeout);
+        });
+        
+        // Close menu when leaving options area
+        languageOptions.addEventListener('mouseleave', function() {
+            if (!languageMenuOpen) {
+                hoverTimeout = setTimeout(() => {
+                    closeLanguageMenu();
+                }, 150);
+            }
+        });
+        
+        // Toggle language menu on button click
+        languageSelector.querySelector('button').addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (languageMenuOpen) {
+                closeLanguageMenu();
+            } else {
+                openLanguageMenu();
+            }
+        });
+        
+        // Close language menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (languageMenuOpen && !languageSelector.contains(event.target)) {
+                closeLanguageMenu();
+            }
+        });
+        
+        // Prevent language menu from closing when clicking inside it
+        languageOptions.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Keep menu open after selection for better UX
+        });
+        
+        // Function to open language menu
+        function openLanguageMenu() {
+            languageMenuOpen = true;
+            languageOptions.style.opacity = '1';
+            languageOptions.style.transform = 'translateY(0)';
+            languageOptions.style.pointerEvents = 'auto';
+            languageArrow.style.transform = 'rotate(180deg)';
+        }
+        
+        // Function to close language menu
+        function closeLanguageMenu() {
+            languageMenuOpen = false;
+            languageOptions.style.opacity = '0';
+            languageOptions.style.transform = 'translateY(-10px)';
+            languageOptions.style.pointerEvents = 'none';
+            languageArrow.style.transform = 'rotate(0deg)';
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('open');
+            mobileMenuButton.classList.toggle('open');
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideMenu = mobileMenu.contains(event.target);
+            const isClickOnMenuButton = mobileMenuButton.contains(event.target);
+            
+            if (!isClickInsideMenu && !isClickOnMenuButton && mobileMenu.classList.contains('open')) {
+                mobileMenu.classList.remove('open');
+                mobileMenuButton.classList.remove('open');
+            }
+        });
+        
+        // Add active class to current page link
+        const currentLocation = window.location.href;
+        const navLinks = document.querySelectorAll('nav a');
+        
+        navLinks.forEach(link => {
+            if (link.href === currentLocation) {
+                link.classList.add('active');
+            }
+        });
+  </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!-- templates/emails/certificate_confirmation.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Mile Certificate</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #16a085, #27ae60);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .certificate-info {
+            background: #f8fffe;
+            border: 2px solid #16a085;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0f2f1;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #1a5f3f;
+        }
+        .info-value {
+            color: #4b5563;
+        }
+        .impact-section {
+            background: linear-gradient(135deg, #e8f5e8, #f0fdfa);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .impact-title {
+            color: #16a085;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+        .impact-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .impact-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #16a085;
+            display: block;
+        }
+        .impact-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #16a085, #27ae60);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            margin: 20px auto;
+            display: block;
+            width: fit-content;
+        }
+        .footer {
+            background: #f3f4f6;
+            padding: 25px 30px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .social-links {
+            margin-top: 15px;
+        }
+        .social-links a {
+            color: #16a085;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            .header {
+                padding: 25px 20px;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .impact-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .info-row {
+                flex-direction: column;
+                text-align: center;
+            }
+            .info-label {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Thank You for Your Contribution!</h1>
+            <p>Your Green Mile Certificate has been created</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear {{ certificate_data.customerName }},</p>
+            
+            <p>Thank you for supporting forest restoration in Kazakhstan! Your certificate has been successfully generated and is ready for download.</p>
+            
+            <div class="certificate-info">
+                <h3 style="margin-top: 0; color: #16a085;">Certificate Details</h3>
+                <div class="info-row">
+                    <span class="info-label">Certificate ID:</span>
+                    <span class="info-value">{{ certificate_data.orderId }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Recipient:</span>
+                    <span class="info-value">{{ certificate_data.recipientName }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Trees Planted:</span>
+                    <span class="info-value">{{ certificate_data.treeCount }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Design:</span>
+                    <span class="info-value">{{ certificate_data.selectedDesign|title }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Amount Paid:</span>
+                    <span class="info-value">{{ certificate_data.totalAmount }} {{ certificate_data.currency }}</span>
+                </div>
+            </div>
+            
+            <div class="impact-section">
+                <h3 class="impact-title">Your Environmental Impact</h3>
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <span class="impact-number">{{ environmental_impact.co2_absorption_per_year }}</span>
+                        <div class="impact-label">kg CO2 absorbed per year</div>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-number">{{ environmental_impact.oxygen_production_per_year }}</span>
+                        <div class="impact-label">kg oxygen produced per year</div>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-number">{{ environmental_impact.air_for_people }}</span>
+                        <div class="impact-label">people supplied with clean air</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p>Your trees will be planted by Green Mile activists in various regions of Kazakhstan to restore damaged forests. We will send you photos and GPS coordinates once the planting is complete.</p>
+            
+            <a href="{{ request.scheme }}://{{ request.get_host }}/certificate/" class="cta-button">
+                Download Your Certificate
+            </a>
+            
+            <p style="margin-top: 30px;">Thank you for being part of the solution to restore Kazakhstan's forests and fight climate change!</p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Green Mile Foundation</strong><br>
+            Restoring Kazakhstan's forests, one tree at a time</p>
+            
+            <div class="social-links">
+                <a href="mailto:info@greenmile.kz">info@greenmile.kz</a> |
+                <a href="tel:+77771234567">+7 (777) 123-45-67</a> |
+                <a href="https://greenmile.kz">greenmile.kz</a>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 12px; color: #9ca3af;">
+                This email was sent because you created a certificate with Green Mile.<br>
+                If you have any questions, please contact us at info@greenmile.kz
+            </p>
+        </div>
+    </div>
+</body>
+</html>

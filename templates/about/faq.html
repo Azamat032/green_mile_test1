@@ -1,0 +1,108 @@
+{% extends "../basement/base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="py-16 sm:py-20 md:py-24 min-h-screen top-0 bg-gradient-to-b from-green-50 via-green-25 to-white">
+    <div class="container mx-auto px-6">
+        <!-- Hero Section -->
+        <div class="text-center mb-20 animate-fade-in-down">
+            <h1 class="text-5xl md:text-6xl font-extrabold text-green-900 mb-6 logo-text tracking-tight">
+                {% if language == 'ru' %}Часто Задаваемые Вопросы{% elif language == 'kz' %}Жиі Қойылатын Сұрақтар{% else %}Frequently Asked Questions{% endif %}
+            </h1>
+            <div class="w-24 h-1 bg-green-600 mx-auto mb-8 rounded-full"></div>
+            <p class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
+                {% if language == 'ru' %}
+                Узнайте больше о миссии "Зеленой мили", наших программах по посадке деревьев и способах участия.
+                {% elif language == 'kz' %}
+                "Жасыл миля" миссиясы, ағаш отырғызу бағдарламалары және қатысу жолдары туралы көбірек біліңіз.
+                {% else %}
+                Discover more about the "Green Mile" mission, our tree-planting programs, and how you can get involved.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="mb-24">
+            <h2 class="text-4xl font-semibold text-gray-900 text-center mb-12 tracking-wide">
+                {% if language == 'ru' %}Ответы на Ваши Вопросы{% elif language == 'kz' %}Сіздің Сұрақтарыңызға Жауаптар{% else %}Answers to Your Questions{% endif %}
+            </h2>
+            <div class="max-w-3xl mx-auto space-y-4">
+                {% for faq in faqs %}
+                    <div class="border border-green-100 rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg">
+                        <button class="faq-button w-full text-left p-6 bg-green-50 hover:bg-green-100 rounded-xl transition-colors duration-300 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-green-200" aria-expanded="false">
+                            <span class="text-lg font-medium text-gray-900 pr-4">
+                                {% if language == 'ru' %}{{ faq.question_ru }}{% elif language == 'kz' %}{{ faq.question_kz }}{% else %}{{ faq.question_en }}{% endif %}
+                            </span>
+                            <svg class="w-5 h-5 text-green-600 transform transition-transform duration-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer hidden p-6 bg-white text-gray-600 leading-relaxed border-t border-green-100 transition-all duration-300">
+                            {% if language == 'ru' %}{{ faq.answer_ru }}{% elif language == 'kz' %}{{ faq.answer_kz }}{% else %}{{ faq.answer_en }}{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Quote Section -->
+        <div class="bg-gradient-to-r from-green-600 to-green-500 text-white p-12 rounded-2xl mb-24 text-center shadow-xl">
+            <blockquote class="text-2xl md:text-3xl italic font-light max-w-3xl mx-auto">
+                {% if language == 'ru' %}
+                "Каждый вопрос открывает путь к пониманию и поддержке нашего зеленого будущего."
+                {% elif language == 'kz' %}
+                "Әр сұрақ біздің жасыл болашағымызды түсінуге және қолдауға жол ашады."
+                {% else %}
+                "Every question paves the way to understanding and supporting our green future."
+                {% endif %}
+            </blockquote>
+            <cite class="block mt-4 text-green-100 text-lg font-medium">
+                — {% if language == 'ru' %}Команда Зеленой мили{% elif language == 'kz' %}Жасыл миля командасы{% else %}Green Mile Team{% endif %}
+            </cite>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="text-center bg-gradient-to-r from-green-700 to-green-600 text-white p-12 rounded-2xl shadow-xl">
+            <h3 class="text-3xl md:text-4xl font-semibold mb-4 tracking-tight">
+                {% if language == 'ru' %}Остались Вопросы?{% elif language == 'kz' %}Басқа Сұрақтарыңыз Бар Ма?{% else %}Still Have Questions?{% endif %}
+            </h3>
+            <p class="text-green-100 mb-8 text-lg max-w-2xl mx-auto leading-relaxed font-light">
+                {% if language == 'ru' %}
+                Свяжитесь с нами, чтобы узнать, как вы можете внести свой вклад в миссию "Зеленой мили".
+                {% elif language == 'kz' %}
+                "Жасыл миля" миссиясына қалай үлес қоса алатыныңызды білу үшін бізбен байланысыңыз.
+                {% else %}
+                Reach out to learn how you can contribute to the "Green Mile" mission.
+                {% endif %}
+            </p>
+            <a href="{% url 'main_app:contact' %}" class="inline-block bg-white text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-green-50 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+                {% if language == 'ru' %}Связаться с нами{% elif language == 'kz' %}Бізбен байланысыңыз{% else %}Contact Us{% endif %}
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.faq-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const answer = button.nextElementSibling;
+            const icon = button.querySelector('svg');
+            const isOpen = !answer.classList.contains('hidden');
+
+            // Close all other FAQs
+            document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
+                if (otherAnswer !== answer) {
+                    otherAnswer.classList.add('hidden');
+                    otherAnswer.previousElementSibling.querySelector('svg').classList.remove('rotate-180');
+                    otherAnswer.previousElementSibling.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            // Toggle current FAQ
+            answer.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+            button.setAttribute('aria-expanded', !isOpen);
+        });
+    });
+</script>
+{% endblock content %}

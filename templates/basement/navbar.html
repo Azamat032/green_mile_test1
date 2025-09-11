@@ -1,0 +1,437 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зеленая миля</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in-down': 'fadeInDown 0.5s ease-out',
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .nav-link {
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #16a34a;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .dropdown-options {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .dropdown-selector:hover .dropdown-options {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .mobile-menu {
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            pointer-events: none;
+            display: none;
+        }
+
+        .mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            display: block;
+            background-color: white;
+            padding-bottom: 1rem;
+        }
+
+        .mobile-menu.open .dropdown-options:not(.hidden) {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            z-index: 60;
+            animation: slideDown 0.3s ease;
+        }
+
+        .menu-btn {
+            transition: transform 0.3s ease;
+        }
+
+        .menu-btn.open {
+            transform: rotate(90deg);
+        }
+
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white/95 backdrop-blur-md border-b border-green-100/50 sticky top-0 z-50 shadow-sm min-h-[64px]">
+        <div class="container mx-auto">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <a href="{% url 'main_app:home' %}" class="flex items-center space-x-3 group">
+                        <div class="bg-green-600 p-2 rounded-lg group-hover:bg-green-700 transition-colors duration-300 shadow-md">
+                            <img src="{% static 'img/logo.png' %}" alt="Tree" class="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-green-900 logo-text group-hover:text-green-700 transition-colors duration-300">Зеленая миля</h1>
+                            <p class="text-xs text-green-600/80 group-hover:text-green-700 transition-colors duration-300">
+                                Восстановление лесов Казахстана
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <div class="relative dropdown-selector" id="about-selector">
+                        <a href="{% url 'main_app:about' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium flex items-center">
+                            О нас
+                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 about-selector-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </a>
+                        <div class="dropdown-options bg-white border border-gray-200/80 rounded-lg shadow-lg mt-2 py-1.5 w-48 backdrop-blur-sm bg-white/95" id="about-options">
+                            <a href="{% url 'main_app:history' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">История</a>
+                            <a href="{% url 'main_app:team' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Команда</a>
+                            <a href="{% url 'main_app:faq' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200 active">FAQ</a>
+                            <a href="{% url 'main_app:reports' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Отчеты</a>
+                            <a href="{% url 'main_app:contact' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Контакты</a>
+                        </div>
+                    </div>
+                    <a href="{% url 'main_app:reports' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Отчеты</a>
+                    <a href="#help" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Частным лицам</a>
+                    <a href="#volunteers" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Волонтерам</a>
+                    <a href="#organizations" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Организациям</a>
+                </nav>
+
+                <!-- Right side -->
+                <div class="flex items-center space-x-4">
+                    <!-- Language selector -->
+                    <div class="relative language-selector" id="language-selector">
+                        <button class="border-green-200/70 text-green-700 hover:bg-green-50 border rounded-lg px-3 py-1.5 flex items-center transition-all duration-300 shadow-sm hover:shadow-md">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.5 0a9 9 0 019 9 9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9zm0 2c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path>
+                            </svg>
+                            Рус
+                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 language-selector-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-options bg-white border border-gray-200/80 rounded-lg shadow-lg mt-2 py-1.5 w-full min-w-max backdrop-blur-sm bg-white/95" id="language-options">
+                            <a href="{% url 'main_app:set_language' 'ru' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Русский</a>
+                            <a href="{% url 'main_app:set_language' 'kz' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Қазақша</a>
+                            <a href="{% url 'main_app:set_language' 'en' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">English</a>
+                        </div>
+                    </div>
+
+                    <!-- Login button -->
+                    <a href="#" class="hidden md:block bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg transition-colors duration-300 shadow-sm hover:shadow-md font-medium">
+                        Войти
+                    </a>
+
+                    <!-- Mobile menu button -->
+                    <button class="lg:hidden menu-btn p-1.5 rounded-lg hover:bg-green-50 transition-colors duration-300" id="mobile-menu-button">
+                        <svg class="h-6 w-6 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="lg:hidden border-t border-green-100/50 mobile-menu" id="mobile-menu">
+                <nav class="bg-white">
+                    <div class="relative">
+                        <a href="{% url 'main_app:about' %}" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold flex items-center text-base" id="mobile-about-toggle" aria-expanded="false">
+                            О нас
+                            <svg class="w-5 h-5 ml-2 transition-transform duration-300 mobile-about-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </a>
+                        <div class="dropdown-options bg-white border-2 border-green-200 rounded-xl shadow-md mt-1 py-2 w-full backdrop-blur-sm bg-white/95 hidden" id="mobile-about-options">
+                            <a href="{% url 'main_app:history' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">История</a>
+                            <a href="{% url 'main_app:team' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">Команда</a>
+                            <a href="{% url 'main_app:faq' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm active">FAQ</a>
+                            <a href="{% url 'main_app:reports' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">Отчеты</a>
+                            <a href="{% url 'main_app:contact' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">Контакты</a>
+                        </div>
+                    </div>
+                    <a href="{% url 'main_app:reports' %}" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Отчеты</a>
+                    <a href="#help" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Частным лицам</a>
+                    <a href="#volunteers" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Волонтерам</a>
+                    <a href="#organizations" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Организациям</a>
+                    <a href="#" class="block bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">Войти</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Language selector functionality
+            const languageSelector = document.getElementById('language-selector');
+            const languageOptions = document.getElementById('language-options');
+            const languageArrow = document.querySelector('.language-selector-arrow');
+            let languageMenuOpen = false;
+            let languageHoverTimeout;
+
+            languageSelector.addEventListener('mouseenter', function() {
+                clearTimeout(languageHoverTimeout);
+                languageHoverTimeout = setTimeout(() => {
+                    openMenu(languageOptions, languageArrow);
+                    languageMenuOpen = true;
+                }, 150);
+            });
+
+            languageSelector.addEventListener('mouseleave', function() {
+                clearTimeout(languageHoverTimeout);
+                if (!languageMenuOpen) {
+                    languageHoverTimeout = setTimeout(() => {
+                        closeMenu(languageOptions, languageArrow);
+                    }, 300);
+                }
+            });
+
+            languageOptions.addEventListener('mouseenter', function() {
+                clearTimeout(languageHoverTimeout);
+            });
+
+            languageOptions.addEventListener('mouseleave', function() {
+                if (!languageMenuOpen) {
+                    languageHoverTimeout = setTimeout(() => {
+                        closeMenu(languageOptions, languageArrow);
+                    }, 150);
+                }
+            });
+
+            languageSelector.querySelector('button').addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (languageMenuOpen) {
+                    closeMenu(languageOptions, languageArrow);
+                    languageMenuOpen = false;
+                } else {
+                    openMenu(languageOptions, languageArrow);
+                    languageMenuOpen = true;
+                }
+            });
+
+            document.addEventListener('click', function(event) {
+                if (languageMenuOpen && !languageSelector.contains(event.target)) {
+                    closeMenu(languageOptions, languageArrow);
+                    languageMenuOpen = false;
+                }
+            });
+
+            languageOptions.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // About dropdown functionality
+            const aboutSelector = document.getElementById('about-selector');
+            const aboutOptions = document.getElementById('about-options');
+            const aboutArrow = document.querySelector('.about-selector-arrow');
+            let aboutMenuOpen = false;
+            let aboutHoverTimeout;
+
+            aboutSelector.addEventListener('mouseenter', function() {
+                clearTimeout(aboutHoverTimeout);
+                aboutHoverTimeout = setTimeout(() => {
+                    openMenu(aboutOptions, aboutArrow);
+                    aboutMenuOpen = true;
+                }, 150);
+            });
+
+            aboutSelector.addEventListener('mouseleave', function() {
+                clearTimeout(aboutHoverTimeout);
+                if (!aboutMenuOpen) {
+                    aboutHoverTimeout = setTimeout(() => {
+                        closeMenu(aboutOptions, aboutArrow);
+                    }, 300);
+                }
+            });
+
+            aboutOptions.addEventListener('mouseenter', function() {
+                clearTimeout(aboutHoverTimeout);
+            });
+
+            aboutOptions.addEventListener('mouseleave', function() {
+                if (!aboutMenuOpen) {
+                    aboutHoverTimeout = setTimeout(() => {
+                        closeMenu(aboutOptions, aboutArrow);
+                    }, 150);
+                }
+            });
+
+            aboutSelector.querySelector('a').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (aboutMenuOpen) {
+                    closeMenu(aboutOptions, aboutArrow);
+                    aboutMenuOpen = false;
+                } else {
+                    openMenu(aboutOptions, aboutArrow);
+                    aboutMenuOpen = true;
+                }
+            });
+
+            document.addEventListener('click', function(event) {
+                if (aboutMenuOpen && !aboutSelector.contains(event.target)) {
+                    closeMenu(aboutOptions, aboutArrow);
+                    aboutMenuOpen = false;
+                }
+            });
+
+            aboutOptions.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Mobile about dropdown functionality
+            const mobileAboutToggle = document.getElementById('mobile-about-toggle');
+            const mobileAboutOptions = document.getElementById('mobile-about-options');
+            const mobileAboutArrow = document.querySelector('.mobile-about-arrow');
+            let mobileAboutOpen = false;
+
+            if (mobileAboutToggle && mobileAboutOptions) {
+                mobileAboutToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Mobile About Toggle Clicked');
+                    mobileAboutOptions.classList.toggle('hidden');
+                    mobileAboutArrow.style.transform = mobileAboutOptions.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+                    mobileAboutToggle.setAttribute('aria-expanded', !mobileAboutOptions.classList.contains('hidden'));
+                    mobileAboutOpen = !mobileAboutOptions.classList.contains('hidden');
+                });
+            }
+
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    mobileMenu.classList.toggle('open');
+                    mobileMenuButton.classList.toggle('open');
+                });
+            }
+
+            document.addEventListener('click', function(event) {
+                const isClickInsideMenu = mobileMenu && mobileMenu.contains(event.target);
+                const isClickOnMenuButton = mobileMenuButton && mobileMenuButton.contains(event.target);
+
+                if (!isClickInsideMenu && !isClickOnMenuButton && mobileMenu && mobileMenu.classList.contains('open')) {
+                    mobileMenu.classList.remove('open');
+                    mobileMenuButton.classList.remove('open');
+                    if (mobileAboutOpen && mobileAboutOptions) {
+                        mobileAboutOptions.classList.add('hidden');
+                        mobileAboutArrow.style.transform = 'rotate(0deg)';
+                        mobileAboutToggle.setAttribute('aria-expanded', 'false');
+                        mobileAboutOpen = false;
+                    }
+                }
+            });
+
+            // Helper functions
+            function openMenu(options, arrow) {
+                options.style.opacity = '1';
+                options.style.transform = 'translateY(0)';
+                options.style.pointerEvents = 'auto';
+                options.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            }
+
+            function closeMenu(options, arrow) {
+                options.style.opacity = '0';
+                options.style.transform = 'translateY(-10px)';
+                options.style.pointerEvents = 'none';
+                options.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+
+            // Add active class to current page link
+            const currentLocation = window.location.href;
+            const navLinks = document.querySelectorAll('nav a');
+
+            navLinks.forEach(link => {
+                if (link.href === currentLocation) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
