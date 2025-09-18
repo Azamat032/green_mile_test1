@@ -314,19 +314,19 @@ site_data = {
         ],
         'gallery_images': [
             {
-                'src': 'img/history/planting_event.jpg',
+                'src': 'img/history/planting_event.png',
                 'alt_ru': 'Мероприятие по посадке',
                 'alt_kz': 'Отырғызу іс-шарасы',
                 'alt_en': 'Planting event'
             },
             {
-                'src': 'img/history/team_action.jpg',
+                'src': 'img/history/team_action.png',
                 'alt_ru': 'Команда в действии',
                 'alt_kz': 'Команда әрекетте',
                 'alt_en': 'Team in action'
             },
             {
-                'src': 'img/history/forest_restoration.jpg',
+                'src': 'img/history/forest_restoration.png',
                 'alt_ru': 'Восстановление леса',
                 'alt_kz': 'Орманды қалпына келтіру',
                 'alt_en': 'Forest restoration'
@@ -368,7 +368,7 @@ site_data = {
                 'bio_ru': 'Айша основала "Зеленую милю" в 2010 году с мечтой о зеленом Казахстане. Ее страсть к экологии вдохновляет тысячи волонтеров.',
                 'bio_kz': 'Айша 2010 жылы "Жасыл миляны" Қазақстанды жасыл ету арманымен құрды. Оның экологияға деген құштарлығы мыңдаған еріктілерді шабыттандырады.',
                 'bio_en': 'Aisha founded "Green Mile" in 2010 with a dream of a greener Kazakhstan. Her passion for ecology inspires thousands of volunteers.',
-                'photo': 'img/team/aisha.jpg'
+                'photo': 'img/team/man.png'
             },
             {
                 'name_ru': 'Ерлан Абдрахманов',
@@ -380,7 +380,7 @@ site_data = {
                 'bio_ru': 'Ерлан управляет волонтерскими программами и организует посадочные мероприятия по всему Казахстану.',
                 'bio_kz': 'Ерлан еріктілер бағдарламаларын басқарады және бүкіл Қазақстан бойынша отырғызу шараларын ұйымдастырады.',
                 'bio_en': 'Yerlan manages volunteer programs and organizes planting events across Kazakhstan.',
-                'photo': 'img/team/yerlan.jpg'
+                'photo': 'img/team/man.png'
             },
             {
                 'name_ru': 'Светлана Ким',
@@ -392,7 +392,7 @@ site_data = {
                 'bio_ru': 'Светлана руководит программой селекции павлонии, ускоряя восстановление лесов благодаря быстрорастущим деревьям.',
                 'bio_kz': 'Светлана павлония селекциясы бағдарламасын басқарады, жылдам өсетін ағаштар арқылы ормандарды қалпына келтіруді жеделдетеді.',
                 'bio_en': 'Svetlana leads the paulownia breeding program, accelerating forest restoration with fast-growing trees.',
-                'photo': 'img/team/svetlana.jpg'
+                'photo': 'img/team/man.png'
             }
         ]
     },
@@ -590,6 +590,7 @@ def home(request):
     language = get_language(request)
     context = {
         'language': language,
+        'how_it_works': site_data['howItWorks'][language],
         'navigation': site_data['navigation'][language],
         'hero': site_data['hero'][language],
         'importance': site_data["importance"],
@@ -703,45 +704,6 @@ def contact(request):
     return render(request, 'contact.html', context)
 
 
-DESIGN_CHOICES = [
-    ('professional', 'Professional'),
-    ('modern', 'Modern'),
-    ('elegant', 'Elegant'),
-]
-
-
-def certificate(request):
-    language = get_language(request)
-
-    templates = CertificateTemplate.objects.all()
-
-    certificate_templates = {}
-    for design_code, design_name in DESIGN_CHOICES:
-        try:
-            template = CertificateTemplate.objects.get(design=design_code)
-            certificate_templates[design_code] = template
-        except CertificateTemplate.DoesNotExist:
-
-            certificate_templates[design_code] = type('FallbackTemplate', (), {
-                'background_image': None,
-                'design': design_code
-            })()
-
-    print("Available templates:", list(certificate_templates.keys()))
-    for design, template in certificate_templates.items():
-        print(
-            f"Template {design}: {template.background_image.url if template.background_image else 'No image'}")
-
-    context = {
-        'language': language,
-        'navigation': site_data['navigation'][language],
-        'navigation_links': site_data.get('navigation_links', {}),
-        'contact': site_data.get('contact', {}),
-        'certificate_templates': certificate_templates,
-    }
-    return render(request, 'certificate.html', context)
-
-
 def history(request):
     language = get_language(request)
     context = {
@@ -780,7 +742,68 @@ def team(request):
     return render(request, 'about/team.html', context)
 
 
+DESIGN_CHOICES = [
+    ('professional', 'Professional'),
+    ('modern', 'Modern'),
+    ('elegant', 'Elegant'),
+]
+
+
+# views.py
+def certificate(request):
+    language = get_language(request)
+
+    # Get all active templates grouped by design
+    templates_by_design = {}
+    for design_code, design_name in DESIGN_CHOICES:
+        templates = CertificateTemplate.objects.filter(
+            design=design_code,
+            is_active=True
+        ).order_by('variation')
+        templates_by_design[design_code] = templates
+
+    # Get default templates for fallback
+    certificate_templates = {}
+    for design_code, design_name in DESIGN_CHOICES:
+        try:
+            default_template = CertificateTemplate.objects.filter(
+                design=design_code,
+                is_active=True
+            ).first()
+            if not default_template:
+                raise CertificateTemplate.DoesNotExist()
+            certificate_templates[design_code] = default_template
+        except CertificateTemplate.DoesNotExist:
+            certificate_templates[design_code] = type('FallbackTemplate', (), {
+                'background_image': None,
+                'design': design_code
+            })()
+
+    # Serialize templates for JavaScript
+    serialized_templates = {}
+    for design, templates in templates_by_design.items():
+        serialized_templates[design] = [
+            {
+                'id': t.id,
+                'variation': t.variation,
+                'name': t.name,
+                'background_image': t.background_image.url if t.background_image else '',
+                'description': t.description
+            }
+            for t in templates
+        ]
+
+    context = {
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'navigation_links': site_data.get('navigation_links', {}),
+        'contact': site_data.get('contact', {}),
+        'certificate_templates': certificate_templates,
+        'templates_by_design_json': json.dumps(serialized_templates),
+    }
+    return render(request, 'certificate.html', context)
 # API Views for Certificate System
+
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -846,10 +869,23 @@ def create_certificate(request):
 def payment_success(request):
     """Handle successful payment"""
     try:
-        data = json.loads(request.body)
+        # Try to get data from both JSON and form data
+        if request.content_type == 'application/json':
+            data = json.loads(request.body)
+        else:
+            # Handle form data or URL parameters
+            data = request.POST.dict()
+            if not data:
+                # Try GET parameters as fallback
+                data = request.GET.dict()
 
-        order_id = data.get('orderId')
+        order_id = data.get('orderId') or data.get('order_id')
+        payment_id = data.get('paymentId') or data.get(
+            'payment_id') or data.get('payment_reference')
+
         if not order_id:
+            logger.error(
+                f"Missing order ID in payment success. Data received: {data}")
             return JsonResponse({
                 'success': False,
                 'error': 'Missing order ID'
@@ -858,6 +894,7 @@ def payment_success(request):
         # Retrieve order data from session
         order_data = request.session.get(f'order_{order_id}')
         if not order_data:
+            logger.error(f"Order not found in session: {order_id}")
             return JsonResponse({
                 'success': False,
                 'error': 'Order not found'
@@ -865,10 +902,14 @@ def payment_success(request):
 
         # Update order with payment information
         order_data.update({
-            'paymentId': data.get('paymentId'),
+            'paymentId': payment_id,
             'status': 'completed',
             'completedAt': datetime.now().isoformat()
         })
+
+        # Save updated order data back to session
+        request.session[f'order_{order_id}'] = order_data
+        request.session.modified = True
 
         # Send Telegram notification
         telegram_notifier = TelegramNotifier()
@@ -889,22 +930,23 @@ def payment_success(request):
             logger.warning(
                 f"Failed to send certificate email for order {order_id}")
 
-        # Update statistics (in a real app, you'd update the database)
+        # Update statistics
         site_data['statistics']['treesPlanted'] += order_data['treeCount']
         site_data['statistics']['totalDonations'] += int(
-            float(order_data.get('totalAmount', 0)) * 500)  # Convert to KZT
+            float(order_data.get('totalAmount', 0)))
 
-        # Clean up session
-        del request.session[f'order_{order_id}']
-
+        # Return success response with redirect URL
         return JsonResponse({
             'success': True,
             'message': 'Payment processed successfully',
             'certificateId': order_id,
+            # Add this redirect URL
+            'redirectUrl': f'/certificate/success/{order_id}/',
             'environmentalImpact': CertificateService.calculate_environmental_impact(order_data['treeCount'])
         })
 
     except json.JSONDecodeError:
+        logger.error("JSON decode error in payment success")
         return JsonResponse({
             'success': False,
             'error': 'Invalid JSON data'
@@ -915,6 +957,25 @@ def payment_success(request):
             'success': False,
             'error': 'Internal server error'
         }, status=500)
+
+
+def certificate_success(request, certificate_id):
+    """Display success page after payment"""
+    language = get_language(request)
+
+    # Retrieve order data from session
+    order_data = request.session.get(f'order_{certificate_id}', {})
+
+    context = {
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'certificate_id': certificate_id,
+        'order_data': order_data,
+        'environmental_impact': CertificateService.calculate_environmental_impact(
+            order_data.get('treeCount', 0)
+        ) if order_data else {}
+    }
+    return render(request, 'certificate_success.html', context)
 
 
 @require_http_methods(["GET"])

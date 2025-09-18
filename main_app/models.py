@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-
 DESIGN_CHOICES = [
     ('professional', 'Professional'),
     ('modern', 'Modern'),
@@ -11,7 +10,6 @@ DESIGN_CHOICES = [
 
 
 class Certificate(models.Model):
-
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('completed', 'Completed'),
@@ -34,6 +32,12 @@ class Certificate(models.Model):
     certificate_text = models.TextField(max_length=300, blank=True)
     signature_text = models.CharField(max_length=100, blank=True)
     tree_count = models.PositiveIntegerField(default=1)
+    template = models.ForeignKey(
+        'CertificateTemplate',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     design = models.CharField(
         max_length=20, choices=DESIGN_CHOICES, default='professional')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -61,14 +65,26 @@ class Certificate(models.Model):
 
 
 class CertificateTemplate(models.Model):
-    design = models.CharField(
-        max_length=20,
-        choices=DESIGN_CHOICES,
-        unique=True
+    design = models.CharField(max_length=20, choices=DESIGN_CHOICES)
+    variation = models.CharField(
+        max_length=50,
+        help_text="Введите имя сертификата, например: 'v1'",
+        default="default"
     )
-    background_image = models.ImageField(
-        upload_to='certificate_templates/'
-    )
+    name = models.CharField(max_length=100, blank=True,
+                            help_text="Template display mame")
+    description = models.TextField(
+        blank=True, help_text="Template description")
+    background_image = models.ImageField(upload_to="certificate_templates/")
+    is_active = models.BooleanField(default=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        unique_together = ('design', 'variation')
+        ordering = ['design', 'variation']
 
     def __str__(self):
-        return self.get_design_display()
+        if self.name:
+            return f"{self.get_design_display()} - {self.name}"
+        return f"{self.get_design_display()} - {self.variation}"

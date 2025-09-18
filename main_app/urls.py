@@ -24,4 +24,6 @@ urlpatterns = [
          views.certificate_status, name='certificate_status'),
     path('api/certificate/<str:certificate_id>/download/',
          views.download_certificate, name='download_certificate'),
+
+
 ]
