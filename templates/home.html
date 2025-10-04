@@ -27,7 +27,7 @@
                                 {% endfor %}
                             </div>
                             <div class="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-8">
-                                <input min=1 type="number" name="custom_amount" placeholder="{% if language == 'ru' %}Cумма (мин. 500₸){% elif language == 'kz' %}Бағасы(мин. 500₸){% else %}Price(min. 500₸){% endif %}" class="bg-white/90 text-gray-900 placeholder-gray-600 rounded p-2 border border-gray-300 w-full">
+                                <input min=1 type="number" name="custom_amount" placeholder="{% if language == 'ru' %}Cумма (мин. 5000₸){% elif language == 'kz' %}Бағасы(мин. 500₸){% else %}Price(min. 500₸){% endif %}" class="bg-white/90 text-gray-900 placeholder-gray-600 rounded p-2 border border-gray-300 w-full">
                                 <a href="{% url 'main_app:certificate' %}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 inline-flex items-center touch-action-manipulation">
                                     <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
                                     {{ hero.ctaButton }}

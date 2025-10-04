@@ -460,11 +460,11 @@ site_data = {
 
 
 class TelegramNotifier:
-    """Telegram notification service for Green Mile orders"""
+    """Telegram notification service for Green Mile orders and contact form submissions"""
 
     def __init__(self, bot_token=None, chat_id=None):
-        self.bot_token = bot_token or TELEGRAM_BOT_TOKEN
-        self.chat_id = chat_id or TELEGRAM_CHAT_ID
+        self.bot_token = "8254680657:AAG4JY-2nUxvnSO1HKLleoJW8673hWHpdfI"
+        self.chat_id = "128610465"
         self.api_url = f"https://api.telegram.org/bot{self.bot_token}"
 
     def send_order_notification(self, order_data):
@@ -476,37 +476,63 @@ class TelegramNotifier:
             logger.error(f"Failed to send Telegram notification: {e}")
             return False
 
+    def send_contact_notification(self, contact_data):
+        """Send contact form submission notification to Telegram"""
+        try:
+            message = self._format_contact_message(contact_data)
+            return self._send_message(message)
+        except Exception as e:
+            logger.error(
+                f"Failed to send contact form Telegram notification: {e}")
+            return False
+
     def _format_order_message(self, data):
         """Format order data into a Telegram message"""
         status_emoji = "✅" if data.get('status') == 'completed' else "🔄"
 
         message = f"""
-{status_emoji} <b>New Green Mile Order</b>
+            {status_emoji} <b>New Green Mile Order</b>
 
-📋 <b>Order Details:</b>
-• Order ID: <code>{data.get('orderId', 'N/A')}</code>
-• Date: <code>{datetime.now().strftime('%Y-%m-%d %H:%M')}</code>
+            📋 <b>Order Details:</b>
+            • Order ID: <code>{data.get('orderId', 'N/A')}</code>
+            • Date: <code>{datetime.now().strftime('%Y-%m-%d %H:%M')}</code>
 
-👤 <b>Customer Information:</b>
-• Name: <code>{data.get('customerName', 'N/A')}</code>
-• Email: <code>{data.get('customerEmail', 'N/A')}</code>
-• Phone: <code>{data.get('customerPhone', 'N/A') or 'Not provided'}</code>
+            👤 <b>Customer Information:</b>
+            • Name: <code>{data.get('customerName', 'N/A')}</code>
+            • Email: <code>{data.get('customerEmail', 'N/A')}</code>
+            • Phone: <code>{data.get('customerPhone', 'N/A') or 'Not provided'}</code>
 
-🎯 <b>Certificate Details:</b>
-• Recipient: <code>{data.get('recipientName', 'N/A')}</code>
-• Trees: <code>{data.get('treeCount', 'N/A')}</code>
-• Design: <code>{data.get('selectedDesign', 'N/A')}</code>
-• Certificate Text: <code>{data.get('certificateText', 'N/A')[:100]}...</code>
+            🎯 <b>Certificate Details:</b>
+            • Recipient: <code>{data.get('recipientName', 'N/A')}</code>
+            • Trees: <code>{data.get('treeCount', 'N/A')}</code>
+            • Design: <code>{data.get('selectedDesign', 'N/A')}</code>
+            • Certificate Text: <code>{data.get('certificateText', 'N/A')[:100]}...</code>
 
-💰 <b>Payment Information:</b>
-• Amount: <code>{data.get('totalAmount', 'N/A')} {data.get('currency', 'KZT')}</code>
-• Payment ID: <code>{data.get('paymentId', 'N/A')}</code>
-• Status: <code>{data.get('status', 'pending').upper()}</code>
+            💰 <b>Payment Information:</b>
+            • Amount: <code>{data.get('totalAmount', 'N/A')} {data.get('currency', 'KZT')}</code>
+            • Payment ID: <code>{data.get('paymentId', 'N/A')}</code>
+            • Status: <code>{data.get('status', 'pending').upper()}</code>
 
-🌱 <b>Environmental Impact:</b>
-• CO2 Absorption: ~<code>{int(data.get('treeCount', 0)) * 22} kg/year</code>
-• Oxygen Production: ~<code>{int(data.get('treeCount', 0)) * 16} kg/year</code>
-"""
+            🌱 <b>Environmental Impact:</b>
+            • CO2 Absorption: ~<code>{int(data.get('treeCount', 0)) * 22} kg/year</code>
+            • Oxygen Production: ~<code>{int(data.get('treeCount', 0)) * 16} kg/year</code>
+            """
+        return message.strip()
+
+    def _format_contact_message(self, data):
+        """Format contact form data into a Telegram message"""
+        message = f"""
+            📬 <b>New Contact Form Submission</b>
+
+            📋 <b>Details:</b>
+            • Name: <code>{data.get('name', 'N/A')}</code>
+            • Email: <code>{data.get('email', 'N/A')}</code>
+            • Subject: <code>{data.get('subject', 'No subject provided')}</code>
+            • Submitted: <code>{data.get('submitted_at', 'N/A')}</code>
+
+            💬 <b>Message:</b>
+            <code>{data.get('message', 'N/A')[:200]}{'...' if len(data.get('message', '')) > 200 else ''}</code>
+        """
         return message.strip()
 
     def _send_message(self, message):
@@ -520,6 +546,8 @@ class TelegramNotifier:
         }
 
         response = requests.post(url, data=payload, timeout=10)
+        if response.status_code != 200:
+            logger.error(f"Telegram API error: {response.text}")
         return response.status_code == 200
 
 
@@ -570,6 +598,12 @@ class CertificateService:
         except Exception as e:
             logger.error(f"Failed to send certificate email: {e}")
             return False
+
+
+def list_media_files(request):
+    media_files = os.listdir(os.path.join(
+        settings.MEDIA_ROOT, 'certificate_templates'))
+    return JsonResponse({'files': media_files})
 
 
 def get_language(request):
@@ -690,17 +724,53 @@ def contact(request):
         'contact': site_data.get('contact', {}),
         'navigation_links': site_data.get('navigation_links', {}),
     }
+
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
-        subject = request.POST.get('subject')
+        subject = request.POST.get('subject', 'No subject provided')
         message = request.POST.get('message')
+
+        # Validate required fields
         if not name or not email or not message:
-            messages.error(request, site_data['hero'][language].get(
-                'error_required_fields', 'Please fill in all required fields'))
+            messages.error(
+                request,
+                site_data['hero'][language].get(
+                    'error_required_fields', 'Пожалуйста, заполните все поля'
+                )
+            )
         else:
-            messages.success(request, site_data['hero'][language].get(
-                'message_sent', 'Thank you for your message. We will contact you soon.'))
+            contact_data = {
+                'name': name,
+                'email': email,
+                'subject': subject,
+                'message': message,
+                'submitted_at': datetime.now().strftime('%Y-%m-%d %H:%M'),
+            }
+
+            # Send Telegram notification
+            telegram_notifier = TelegramNotifier()
+            notification_sent = telegram_notifier.send_contact_notification(
+                contact_data)
+
+            if notification_sent:
+                messages.success(
+                    request,
+                    site_data['hero'][language].get(
+                        'message_sent', 'Спасибо за Ваше сообщение. В скором времени мы выйдем с Вами на связь'
+                    )
+                )
+            else:
+                messages.error(
+                    request,
+                    site_data['hero'][language].get(
+                        'error_sending_message', 'Возникла ошибка. Пожалуйста, повторите еще раз.'
+                    )
+                )
+
+        # Redirect to avoid form resubmission
+        return redirect('main_app:contact')
+
     return render(request, 'contact.html', context)
 
 
@@ -750,48 +820,53 @@ DESIGN_CHOICES = [
 
 
 # views.py
+# views.py - Update the certificate function
 def certificate(request):
     language = get_language(request)
 
-    # Get all active templates grouped by design
+    # Get all active templates
+    templates = CertificateTemplate.objects.filter(is_active=True)
+
+    # Group templates by design
     templates_by_design = {}
     for design_code, design_name in DESIGN_CHOICES:
-        templates = CertificateTemplate.objects.filter(
-            design=design_code,
-            is_active=True
-        ).order_by('variation')
-        templates_by_design[design_code] = templates
+        design_templates = templates.filter(
+            design=design_code).order_by('variation')
+        templates_by_design[design_code] = design_templates
 
-    # Get default templates for fallback
-    certificate_templates = {}
-    for design_code, design_name in DESIGN_CHOICES:
-        try:
-            default_template = CertificateTemplate.objects.filter(
-                design=design_code,
-                is_active=True
-            ).first()
-            if not default_template:
-                raise CertificateTemplate.DoesNotExist()
-            certificate_templates[design_code] = default_template
-        except CertificateTemplate.DoesNotExist:
-            certificate_templates[design_code] = type('FallbackTemplate', (), {
-                'background_image': None,
-                'design': design_code
-            })()
-
-    # Serialize templates for JavaScript
+    # Serialize templates for JavaScript - FIX THIS PART
     serialized_templates = {}
-    for design, templates in templates_by_design.items():
+    for design, template_list in templates_by_design.items():
         serialized_templates[design] = [
             {
                 'id': t.id,
                 'variation': t.variation,
                 'name': t.name,
-                'background_image': t.background_image.url if t.background_image else '',
+                'background_image': t.background_image.url if t.background_image and hasattr(t.background_image, 'url') else '',
                 'description': t.description
             }
-            for t in templates
+            for t in template_list
         ]
+
+    # Get default templates for each design
+    certificate_templates = {}
+    for design_code, design_name in DESIGN_CHOICES:
+        try:
+            default_template = templates.filter(design=design_code).first()
+            if default_template:
+                certificate_templates[design_code] = default_template
+            else:
+                # Create a fallback template object
+                certificate_templates[design_code] = type('FallbackTemplate', (), {
+                    'background_image': None,
+                    'design': design_code
+                })()
+        except Exception as e:
+            logger.error(f"Error getting template for {design_code}: {e}")
+            certificate_templates[design_code] = type('FallbackTemplate', (), {
+                'background_image': None,
+                'design': design_code
+            })()
 
     context = {
         'language': language,
@@ -802,7 +877,6 @@ def certificate(request):
         'templates_by_design_json': json.dumps(serialized_templates),
     }
     return render(request, 'certificate.html', context)
-# API Views for Certificate System
 
 
 @csrf_exempt

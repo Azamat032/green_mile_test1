@@ -33,12 +33,11 @@
         <div class="design-grid">
             <div class="design-card active js-design-card" data-design="professional">
                 <div class="design-preview">   
-                    
                     <div class="cert-preview cert-professional" 
-                        style="background-image: url('{% if certificate_templates.professional.background_image %}{{ certificate_templates.professional.background_image.url }}{% else %}{% static 'images/default-professional.jpg' %}{% endif %}'); 
+                        style="background-image: url('{% if certificate_templates.professional.background_image %}{{ certificate_templates.professional.background_image.url }}{% else %}{% static 'img/default-professional.png' %}{% endif %}'); 
                         background-size: cover; background-position: center;"
                     >                  
-                        <div class="cert-header" >
+                        <div class="cert-header">
                             <div class="cert-logo">🌱</div>
                             <div class="cert-title">GREEN MILE</div>
                         </div>
@@ -58,7 +57,7 @@
             <div class="design-card js-design-card" data-design="modern">
                 <div class="design-preview">
                     <div class="cert-preview cert-modern" 
-                        style="background-image: url('{% if certificate_templates.modern.background_image %}{{ certificate_templates.modern.background_image.url }}{% else %}{% static 'images/default-modern.jpg' %}{% endif %}'); 
+                        style="background-image: url('{% if certificate_templates.modern.background_image %}{{ certificate_templates.modern.background_image.url }}{% else %}{% static 'img/default-modern.png' %}{% endif %}'); 
                         background-size: cover; background-position: center;"
                     >
                         <div class="cert-header-modern">
@@ -81,7 +80,7 @@
             <div class="design-card js-design-card" data-design="elegant">
                 <div class="design-preview">
                     <div class="cert-preview cert-elegant" 
-                        style="background-image: url('{% if certificate_templates.elegant.background_image %}{{ certificate_templates.elegant.background_image.url }}{% else %}{% static 'images/default-elegant.jpg' %}{% endif %}'); 
+                        style="background-image: url('{% if certificate_templates.elegant.background_image %}{{ certificate_templates.elegant.background_image.url }}{% else %}{% static 'img/default-elegant.png' %}{% endif %}'); 
                         background-size: cover; background-position: center;"
                     >
                         <div class="cert-border-elegant">
@@ -107,6 +106,7 @@
             </button>
         </div>
     </div>
+
     <!-- Step 2: Template Selection -->
     <div class="step-container js-step-container" data-step="2" style="display: none;">
         <div class="step-header">
@@ -123,6 +123,93 @@
 
         <div class="template-grid js-template-grid">
             <!-- Templates will be loaded dynamically -->
+            {% with design=selected_design|default:"professional" %}
+                {% if design == "professional" %}
+                    <div class="template-item" data-template-id="p1">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/p1.png' %}" alt="Professional Template 1">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Профессиональный 1{% elif language == 'kz' %}Кәсіби 1{% else %}Professional 1{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 1 профессионального дизайна{% elif language == 'kz' %}Кәсіби дизайнның 1-нұсқасы{% else %}Variant 1 of professional design{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="template-item" data-template-id="p2">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/p2.png' %}" alt="Professional Template 2">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Профессиональный 2{% elif language == 'kz' %}Кәсіби 2{% else %}Professional 2{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 2 профессионального дизайна{% elif language == 'kz' %}Кәсіби дизайнның 2-нұсқасы{% else %}Variant 2 of professional design{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="template-item" data-template-id="p3">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/p3.png' %}" alt="Professional Template 3">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Профессиональный 3{% elif language == 'kz' %}Кәсіби 3{% else %}Professional 3{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 3 профессионального дизайна{% elif language == 'kz' %}Кәсіби дизайнның 3-нұсқасы{% else %}Variant 3 of professional design{% endif %}</p>
+                        </div>
+                    </div>
+                {% elif design == "modern" %}
+                    <div class="template-item" data-template-id="m1">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/m1.png' %}" alt="Modern Template 1">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Современный 1{% elif language == 'kz' %}Заманауи 1{% else %}Modern 1{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 1 современного дизайна{% elif language == 'kz' %}Заманауи дизайнның 1-нұсқасы{% else %}Variant 1 of modern design{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="template-item" data-template-id="m2">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/m2.png' %}" alt="Modern Template 2">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Современный 2{% elif language == 'kz' %}Заманауи 2{% else %}Modern 2{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 2 современного дизайна{% elif language == 'kz' %}Заманауи дизайнның 2-нұсқасы{% else %}Variant 2 of modern design{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="template-item" data-template-id="m3">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/m3.png' %}" alt="Modern Template 3">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Современный 3{% elif language == 'kz' %}Заманауи 3{% else %}Modern 3{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 3 современного дизайна{% elif language == 'kz' %}Заманауи дизайнның 3-нұсқасы{% else %}Variant 3 of modern design{% endif %}</p>
+                        </div>
+                    </div>
+                {% elif design == "elegant" %}
+                    <div class="template-item" data-template-id="e1">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/e1.png' %}" alt="Elegant Template 1">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Элегантный 1{% elif language == 'kz' %}Сәнді 1{% else %}Elegant 1{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 1 элегантного дизайна{% elif language == 'kz' %}Сәнді дизайнның 1-нұсқасы{% else %}Variant 1 of elegant design{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="template-item" data-template-id="e2">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/e2.png' %}" alt="Elegant Template 2">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Элегантный 2{% elif language == 'kz' %}Сәнді 2{% else %}Elegant 2{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 2 элегантного дизайна{% elif language == 'kz' %}Сәнді дизайнның 2-нұсқасы{% else %}Variant 2 of elegant design{% endif %}</p>
+                        </div>
+                    </div>
+                    <div class="template-item" data-template-id="e3">
+                        <div class="template-image-container">
+                            <img class="template-preview" src="{% static 'img/e3.png' %}" alt="Elegant Template 3">
+                        </div>
+                        <div class="template-info">
+                            <h4>{% if language == 'ru' %}Элегантный 3{% elif language == 'kz' %}Сәнді 3{% else %}Elegant 3{% endif %}</h4>
+                            <p>{% if language == 'ru' %}Вариант 3 элегантного дизайна{% elif language == 'kz' %}Сәнді дизайнның 3-нұсқасы{% else %}Variant 3 of elegant design{% endif %}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endwith %}
         </div>
 
         <div class="step-actions">
@@ -144,13 +231,9 @@
             </h2>
         </div>
 
-       
-        <!-- Modified Certificate Editor with Customizable Template -->
         <div class="certificate-editor">
             <div class="editor-controls">
-                <!-- Existing form groups remain the same -->
-                <!-- Add this if needed for admin-uploaded templates, but since front-end, assume template is passed -->
-                  <div class="form-group">
+                <div class="form-group">
                     <label for="recipient-name">
                         {% if language == 'ru' %}Имя получателя{% elif language == 'kz' %}Алушының аты{% else %}Recipient name{% endif %}
                     </label>
@@ -181,13 +264,12 @@
                     <label for="tree-count">
                         {% if language == 'ru' %}Количество деревьев{% elif language == 'kz' %}Ағаш саны{% else %}Number of trees{% endif %}
                     </label>
-                    <input type="number" id="tree-count" class="form-control" min="1" value="1">
+                    <input type="number" id="tree-count" class="form-control" min="10" value="10">
                 </div>
             </div>
 
-            
             <div class="certificate-preview">
-                <div id="live-certificate" class="certificate-live professional-cert" style="aspect-ratio: 210 / 297; width: 100%; max-width: 420px;">
+                <div id="live-certificate" class="certificate-live professional-cert" style="aspect-ratio: 210 / 297; width: 100%; max-width: 420px; background-image: url('{% static 'img/default-professional.png' %}'); background-size: cover; background-position: center;">
                     <div class="cert-background">
                         <div class="cert-border">
                             <div class="cert-header-section">
@@ -199,35 +281,31 @@
                             </div>
                             
                             <div class="cert-main-section">
-                                <!-- Improved Main Title -->
                                 <h1 class="cert-main-title">
                                     {% if language == 'ru' %}БЛАГОДАРНОСТЬ{% elif language == 'kz' %}АЛҒЫС ХАТ{% else %}CERTIFICATE OF APPRECIATION{% endif %}
                                 </h1>
                                 
-                                <!-- Improved Subtitle -->
                                 <div class="cert-subtitle">
                                     {% if language == 'ru' %}За вклад в экологическое будущее{% elif language == 'kz' %}Жасыл болашаққа үлес қосқаны үшін{% else %}For a Contribution to a Greener Future{% endif %}
                                 </div>
                                 
                                 <div class="recipient-section">
-                                    <!-- Improved Label -->
                                     <div class="recipient-label">
                                         {% if language == 'ru' %}Награждается{% elif language == 'kz' %}Марапатталады{% else %}This certificate is proudly presented to{% endif %}
                                     </div>
                                     <div class="recipient-name" id="live-recipient-name">
-                                        {% if language == 'ru' %}[Имя получателя]{% elif language == 'kz' %}[Алушы аты]{% else %}[Recipient Name]{% endif %}
+                                        {% if language == 'ru' %}Имя получателя{% elif language == 'kz' %}Алушы аты{% else %}Recipient Name{% endif %}
                                     </div>
                                 </div>
                                 
                                 <div class="achievement-section">
                                     <div class="tree-info">
-                                        <span class="tree-count-display" id="live-tree-count">1</span>
+                                        <span class="tree-count-display" id="live-tree-count">10</span>
                                         <span class="tree-label" id="tree-label">
                                             {% if language == 'ru' %}дерево{% elif language == 'kz' %}Ағаштар саны{% else %}Number of trees{% endif %}
                                         </span>
                                     </div>
                                     
-                                    <!-- Improved Description -->
                                     <div class="cert-description" id="live-cert-text">
                                         {% if language == 'ru' %}было посажено в Ваше имя, внося вклад в восстановление лесов Казахстана.{% elif language == 'kz' %}Сіздің атыңыздан Қазақстан ормандарын қалпына келтіруге қосқан үлесіңіз үшін.{% else %}has been planted in your name, supporting forest restoration in Kazakhstan.{% endif %}
                                     </div>
@@ -235,7 +313,6 @@
                                 
                                 <div class="signature-section">
                                     <div class="signature-line">
-                                        <!-- Improved Signature -->
                                         <div class="signature-text" id="live-signature">
                                             {% if language == 'ru' %}С благодарностью, Команда Green Mile{% elif language == 'kz' %}Алғыс білдіре отырып, Green Mile ұжымы{% else %}With Gratitude, The Green Mile Team{% endif %}
                                         </div>
@@ -244,7 +321,6 @@
                                 
                                 <div class="cert-footer">
                                     <div class="website">greenmile.kz</div>
-                                    <!-- Improved Impact Text -->
                                     <div class="impact-text">
                                         {% if language == 'ru' %}Вместе мы создаём зелёное будущее.{% elif language == 'kz' %}Бірге біз жасыл болашақты құрамыз.{% else %}Together, we are growing a greener tomorrow.{% endif %}
                                     </div>
@@ -321,11 +397,11 @@
                 </div>
                 <div class="summary-item">
                     <span>{% if language == 'ru' %}Цена за дерево:{% elif language == 'kz' %}Ағаш бағасы:{% else %}Price per tree:{% endif %}</span>
-                    <span>500 KZT</span>
+                    <span>5000 KZT</span>
                 </div>
                 <div class="summary-item total">
                     <span>{% if language == 'ru' %}Итого:{% elif language == 'kz' %}Жалпы:{% else %}Total:{% endif %}</span>
-                    <span id="summary-total">500 KZT</span>
+                    <span id="summary-total">5000 KZT</span>
                 </div>
             </div>
 
@@ -378,842 +454,842 @@
 
 <style>
     * {
-    box-sizing: border-box;
-}
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f9fc 0%, #e8f5e8 100%);
+    }
 
-body {
-    margin: 0;
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #f5f9fc 0%, #e8f5e8 100%);
-}
-
-.certificate-page {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    min-height: 100vh;
-}
-
-.page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.page-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1a5f3f;
-    margin-bottom: 0.5rem;
-}
-
-.page-subtitle {
-    font-size: 1.1rem;
-    color: #6b7280;
-    font-weight: 400;
-}
-
-.step-container {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
-    margin-bottom: 2rem;
-    position: relative;
-    z-index: 1;
-}
-
-/* Step 2: Template Selection */
-.step-container[data-step="2"] {
-    background: white;
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 1;
-    overflow: visible;
-}
-
-.step-container[data-step="2"]::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    right: -20px;
-    bottom: -20px;
-    background: linear-gradient(135deg, rgba(22, 160, 133, 0.05) 0%, transparent 50%);
-    z-index: -1;
-    border-radius: 20px;
-}
-
-.step-header {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.step-number {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #16a085, #2ecc71);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
-}
-
-.step-header-content {
-    flex: 1;
-}
-
-.step-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    color: #1a3c34;
-    margin: 0;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-}
-
-.step-description {
-    font-size: 1rem;
-    color: #4b5e5a;
-    margin: 0.5rem 0 0;
-    line-height: 1.5;
-    max-width: 600px;
-}
-
-.template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem 0;
-}
-
-.template-item {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 2px solid #e5e7eb;
-    aspect-ratio: 210 / 297;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.template-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(22, 160, 133, 0.15);
-    border-color: #16a085;
-}
-
-.template-item.selected {
-    border-color: #16a085;
-    box-shadow: 0 8px 20px rgba(22, 160, 133, 0.2);
-    transform: scale(1.02);
-}
-
-.template-item.selected::after {
-    content: "✓";
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
-    background: #16a085;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.template-preview {
-    width: 100%;
-    height: 65%;
-    object-fit: cover;
-    display: block;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.template-info {
-    padding: 0.75rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-}
-
-.template-info h4 {
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1a3c34;
-    margin: 0 0 0.25rem 0;
-}
-
-.template-info p {
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.no-templates {
-    text-align: center;
-    font-size: 1rem;
-    color: #6b7280;
-    padding: 2rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.step-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    position: relative;
-    z-index: 1;
-}
-
-.btn-primary, .btn-secondary {
-    padding: 0.875rem 2rem;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 160px;
-    text-align: center;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #16a085, #2ecc71);
-    color: white;
-    box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(22, 160, 133, 0.4);
-}
-
-.btn-secondary {
-    background: #f3f4f6;
-    color: #1a3c34;
-    border: 2px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-    background: #e5e7eb;
-    border-color: #16a085;
-    color: #16a085;
-}
-
-/* Design Selection */
-.design-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.design-card {
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #fafafa;
-}
-
-.design-card:hover {
-    border-color: #16a085;
-    box-shadow: 0 8px 20px rgba(22, 160, 133, 0.15);
-}
-
-.design-card.active {
-    border-color: #16a085;
-    background: #f0fdfa;
-    box-shadow: 0 8px 20px rgba(22, 160, 133, 0.2);
-}
-
-.design-preview {
-    margin-bottom: 1rem;
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.cert-preview {
-    width: 250px;
-    height: 160px;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-    transform: scale(0.8);
-}
-
-/* Certificate Styles */
-.cert-professional {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border: 2px solid #16a085;
-    padding: 1rem;
-}
-
-.cert-modern {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
-    color: white;
-    padding: 1rem;
-}
-
-.cert-elegant {
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-    color: white;
-    padding: 1rem;
-}
-
-.cert-header, .cert-header-modern, .cert-header-elegant {
-    text-align: center;
-    margin-bottom: 0.5rem;
-}
-
-.cert-logo, .cert-badge {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
-}
-
-.cert-title, .cert-title-modern, .cert-header-elegant {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-}
-
-.cert-main-title, .cert-main-title-modern, .cert-main-title-elegant {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0.5rem 0;
-}
-
-.cert-content, .cert-content-modern, .cert-content-elegant {
-    text-align: center;
-    font-size: 0.8rem;
-}
-
-.cert-text, .cert-text-modern, .cert-text-elegant {
-    margin-bottom: 0.5rem;
-}
-
-.cert-signature, .cert-signature-modern, .cert-signature-elegant {
-    font-style: italic;
-    font-size: 0.8rem;
-}
-
-/* Certificate Live Preview */
-.certificate-live {
-    margin: 0 auto;
-    overflow: hidden;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    transform-style: preserve-3d;
-    will-change: transform;
-}
-
-.certificate-live:hover {
-    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
-}
-
-.cert-background {
-    padding: 2rem;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-image: 
-        radial-gradient(circle at 20% 50%, rgba(22, 160, 133, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(22, 160, 133, 0.05) 0%, transparent 50%);
-    position: relative;
-}
-
-.cert-background::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(22,160,133,0.02) 10px, rgba(22,160,133,0.02) 20px);
-}
-
-.cert-border {
-    padding: 1.5rem;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.cert-border::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    border-radius: 4px;
-    opacity: 0.9;
-}
-
-.cert-header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    background: rgba(255,255,255,0.01);
-    border-radius: 25px;
-    padding: 0.5rem 1rem;
-}
-
-.cert-logo-section {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.logo-icon {
-    font-size: 1.8rem;
-}
-
-.org-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #16a085;
-}
-
-.cert-number {
-    font-size: 0.875rem;
-    color: #6b7280;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-}
-
-.cert-main-section {
-    text-align: center;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.cert-main-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1a5f3f;
-    margin-bottom: 0.5rem;
-    letter-spacing: 2px;
-}
-
-.cert-subtitle {
-    font-size: 1rem;
-    color: #6b7280;
-    margin-bottom: 1.5rem;
-    font-style: italic;
-}
-
-.recipient-section {
-    margin-bottom: 1.5rem;
-}
-
-.recipient-label {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-bottom: 0.5rem;
-}
-
-.recipient-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #1a5f3f;
-    border-bottom: 2px solid #16a085;
-    padding-bottom: 0.25rem;
-    display: inline-block;
-    min-width: 200px;
-}
-
-.achievement-section {
-    margin-bottom: 2rem;
-}
-
-.tree-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-    color: #16a085;
-    font-weight: 600;
-    background: rgba(22,160,133,0.05);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
-    box-shadow: 0 2px 10px rgba(22,160,133,0.1);
-}
-
-.tree-count-display {
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.cert-description {
-    font-size: 1rem;
-    color: #4b5e5a;
-    line-height: 1.5;
-    max-width: 400px;
-    margin: 0 auto;
-    font-style: italic;
-    padding: 1rem;
-    border-left: 4px solid #16a085;
-}
-
-.signature-section {
-    margin-bottom: 1.5rem;
-}
-
-.signature-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    color: #16a085;
-    font-style: italic;
-    border-top: 2px dashed #16a085;
-    padding-top: 0.5rem;
-    text-align: right;
-}
-
-.cert-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.875rem;
-    color: #6b7280;
-    border-top: 1px solid #e5e7eb;
-    padding-top: 1rem;
-    margin-top: 1rem;
-    background: rgba(22,160,133,0.03);
-}
-
-.website {
-    font-weight: 600;
-    color: #16a085;
-}
-
-.impact-text {
-    max-width: 200px;
-    text-align: right;
-    font-style: italic;
-}
-
-/* Form Styles */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 0.5rem;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-    background: #fafafa;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #16a085;
-    box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
-    background: white;
-}
-
-.char-counter {
-    color: #6b7280;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-    display: block;
-    text-align: right;
-}
-
-/* Certificate Editor */
-.certificate-editor {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-}
-
-.certificate-preview {
-    position: sticky;
-    top: 2rem;
-}
-
-/* Form Rows */
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-}
-
-/* Order Summary */
-.order-summary {
-    background: #f8fffe;
-    border: 2px solid #16a085;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 2rem 0;
-}
-
-.order-summary h3 {
-    font-family: 'Playfair Display', serif;
-    color: #1a5f3f;
-    margin-bottom: 1rem;
-}
-
-.summary-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e0f2f1;
-}
-
-.summary-item:last-child {
-    border-bottom: none;
-}
-
-.summary-item.total {
-    font-weight: 600;
-    font-size: 1.2rem;
-    color: #16a085;
-    border-top: 2px solid #16a085;
-    margin-top: 1rem;
-    padding-top: 1rem;
-}
-
-/* Checkbox */
-.checkbox-group {
-    margin: 2rem 0;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    cursor: pointer;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.checkbox-label input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    accent-color: #16a085;
-    margin: 0;
-}
-
-/* Success Screen */
-.success-screen {
-    text-align: center;
-    padding: 2rem;
-}
-
-.success-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    animation: bounce 1s ease-in-out;
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-}
-
-.success-screen h2 {
-    font-family: 'Playfair Display', serif;
-    color: #16a085;
-    margin-bottom: 1rem;
-}
-
-.success-screen p {
-    color: #6b7280;
-    margin-bottom: 2rem;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.download-section {
-    margin-bottom: 2rem;
-}
-
-.share-section h3 {
-    color: #1a5f3f;
-    margin-bottom: 1rem;
-}
-
-.share-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.share-btn {
-    padding: 0.75rem 1.5rem;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-}
-
-.share-btn:hover {
-    border-color: #16a085;
-    background: #f0fdfa;
-}
-
-@keyframes checkmarkAppear {
-    0% { transform: scale(0); opacity: 0; }
-    70% { transform: scale(1.2); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Responsive Design */
-@media (max-width: 900px) {
     .certificate-page {
-        padding: 1.5rem;
-    }
-
-    .step-container {
-        padding: 2rem;
-    }
-
-    .step-container[data-step="2"] {
-        padding: 2rem;
-    }
-
-    .template-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-    }
-
-    .template-item {
-        border-radius: 10px;
-    }
-
-    .step-title {
-        font-size: 1.75rem;
-    }
-
-    .step-description {
-        font-size: 0.95rem;
-    }
-
-    .certificate-editor {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 600px) {
-    .certificate-page {
-        padding: 1rem;
-    }
-
-    .step-container {
-        padding: 1.5rem;
-    }
-
-    .step-container[data-step="2"] {
-        padding: 1.5rem;
-    }
-
-    .template-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .template-item {
-        max-width: 280px;
+        max-width: 1280px;
         margin: 0 auto;
+        padding: 2rem;
+        min-height: 100vh;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a5f3f;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: #6b7280;
+        font-weight: 400;
+    }
+
+    .step-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Step 2: Template Selection */
+    .step-container[data-step="2"] {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+    }
+
+    .step-container[data-step="2"]::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        right: -20px;
+        bottom: -20px;
+        background: linear-gradient(135deg, rgba(22, 160, 133, 0.05) 0%, transparent 50%);
+        z-index: -1;
+        border-radius: 20px;
     }
 
     .step-header {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .step-number {
-        align-self: center;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #16a085, #2ecc71);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
+    }
+
+    .step-header-content {
+        flex: 1;
+    }
+
+    .step-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        color: #1a3c34;
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+    }
+
+    .step-description {
+        font-size: 1rem;
+        color: #4b5e5a;
+        margin: 0.5rem 0 0;
+        line-height: 1.5;
+        max-width: 600px;
+    }
+
+    .template-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+
+    .template-item {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 2px solid #e5e7eb;
+        aspect-ratio: 210 / 297;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .template-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.15);
+        border-color: #16a085;
+    }
+
+    .template-item.selected {
+        border-color: #16a085;
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.2);
+        transform: scale(1.02);
+    }
+
+    .template-item.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 24px;
+        height: 24px;
+        background: #16a085;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .template-preview {
+        width: 100%;
+        height: 65%;
+        object-fit: cover;
+        display: block;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .template-info {
+        padding: 0.75rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .template-info h4 {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1a3c34;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .template-info p {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .no-templates {
+        text-align: center;
+        font-size: 1rem;
+        color: #6b7280;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 8px;
     }
 
     .step-actions {
-        flex-direction: column;
-        align-items: center;
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 1;
     }
 
     .btn-primary, .btn-secondary {
-        width: 100%;
-        max-width: 280px;
+        padding: 0.875rem 2rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 160px;
+        text-align: center;
     }
 
-    .cert-main-title {
+    .btn-primary {
+        background: linear-gradient(135deg, #16a085, #2ecc71);
+        color: white;
+        box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(22, 160, 133, 0.4);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #1a3c34;
+        border: 2px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        border-color: #16a085;
+        color: #16a085;
+    }
+
+    /* Design Selection */
+    .design-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .design-card {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fafafa;
+    }
+
+    .design-card:hover {
+        border-color: #16a085;
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.15);
+    }
+
+    .design-card.active {
+        border-color: #16a085;
+        background: #f0fdfa;
+        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.2);
+    }
+
+    .design-preview {
+        margin-bottom: 1rem;
+        height: 180px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cert-preview {
+        width: 250px;
+        height: 160px;
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+        transform: scale(0.8);
+    }
+
+    /* Certificate Styles */
+    .cert-professional {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border: 2px solid #16a085;
+        padding: 1rem;
+    }
+
+    .cert-modern {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        color: white;
+        padding: 1rem;
+    }
+
+    .cert-elegant {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        color: white;
+        padding: 1rem;
+    }
+
+    .cert-header, .cert-header-modern, .cert-header-elegant {
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .cert-logo, .cert-badge {
         font-size: 1.5rem;
+        margin-bottom: 0.25rem;
     }
 
-    .recipient-name {
+    .cert-title, .cert-title-modern, .cert-header-elegant {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .cert-main-title, .cert-main-title-modern, .cert-main-title-elegant {
+        font-family: 'Playfair Display', serif;
         font-size: 1.2rem;
+        font-weight: 700;
+        margin: 0.5rem 0;
+    }
+
+    .cert-content, .cert-content-modern, .cert-content-elegant {
+        text-align: center;
+        font-size: 0.8rem;
+    }
+
+    .cert-text, .cert-text-modern, .cert-text-elegant {
+        margin-bottom: 0.5rem;
+    }
+
+    .cert-signature, .cert-signature-modern, .cert-signature-elegant {
+        font-style: italic;
+        font-size: 0.8rem;
+    }
+
+    /* Certificate Live Preview */
+    .certificate-live {
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        transform-style: preserve-3d;
+        will-change: transform;
+    }
+
+    .certificate-live:hover {
+        box-shadow: 0 30px 50px rgba(0, 0, 0, 0.2);
     }
 
     .cert-background {
-        padding: 1rem;
+        padding: 2rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(22, 160, 133, 0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(22, 160, 133, 0.05) 0%, transparent 50%);
+        position: relative;
+    }
+
+    .cert-background::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(22,160,133,0.02) 10px, rgba(22,160,133,0.02) 20px);
     }
 
     .cert-border {
-        padding: 1rem;
+        padding: 1.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
     }
-}
+
+    .cert-border::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        border-radius: 4px;
+        opacity: 0.9;
+    }
+
+    .cert-header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        background: rgba(255,255,255,0.01);
+        border-radius: 25px;
+        padding: 0.5rem 1rem;
+    }
+
+    .cert-logo-section {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .logo-icon {
+        font-size: 1.8rem;
+    }
+
+    .org-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #16a085;
+    }
+
+    .cert-number {
+        font-size: 0.875rem;
+        color: #6b7280;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+    }
+
+    .cert-main-section {
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .cert-main-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a5f3f;
+        margin-bottom: 0.5rem;
+        letter-spacing: 2px;
+    }
+
+    .cert-subtitle {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+
+    .recipient-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .recipient-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+
+    .recipient-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a5f3f;
+        border-bottom: 2px solid #16a085;
+        padding-bottom: 0.25rem;
+        display: inline-block;
+        min-width: 200px;
+    }
+
+    .achievement-section {
+        margin-bottom: 2rem;
+    }
+
+    .tree-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+        color: #16a085;
+        font-weight: 600;
+        background: rgba(22,160,133,0.05);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        box-shadow: 0 2px 10px rgba(22,160,133,0.1);
+    }
+
+    .tree-count-display {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .cert-description {
+        font-size: 1rem;
+        color: #4b5e5a;
+        line-height: 1.5;
+        max-width: 400px;
+        margin: 0 auto;
+        font-style: italic;
+        padding: 1rem;
+        border-left: 4px solid #16a085;
+    }
+
+    .signature-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .signature-text {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        color: #16a085;
+        font-style: italic;
+        border-top: 2px dashed #16a085;
+        padding-top: 0.5rem;
+        text-align: right;
+    }
+
+    .cert-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 1rem;
+        margin-top: 1rem;
+        background: rgba(22,160,133,0.03);
+    }
+
+    .website {
+        font-weight: 600;
+        color: #16a085;
+    }
+
+    .impact-text {
+        max-width: 200px;
+        text-align: right;
+        font-style: italic;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+        background: #fafafa;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #16a085;
+        box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+        background: white;
+    }
+
+    .char-counter {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+        text-align: right;
+    }
+
+    /* Certificate Editor */
+    .certificate-editor {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .certificate-preview {
+        position: sticky;
+        top: 2rem;
+    }
+
+    /* Form Rows */
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Order Summary */
+    .order-summary {
+        background: #f8fffe;
+        border: 2px solid #16a085;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .order-summary h3 {
+        font-family: 'Playfair Display', serif;
+        color: #1a5f3f;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e0f2f1;
+    }
+
+    .summary-item:last-child {
+        border-bottom: none;
+    }
+
+    .summary-item.total {
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #16a085;
+        border-top: 2px solid #16a085;
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+        margin: 2rem 0;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        cursor: pointer;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #16a085;
+        margin: 0;
+    }
+
+    /* Success Screen */
+    .success-screen {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: bounce 1s ease-in-out;
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+
+    .success-screen h2 {
+        font-family: 'Playfair Display', serif;
+        color: #16a085;
+        margin-bottom: 1rem;
+    }
+
+    .success-screen p {
+        color: #6b7280;
+        margin-bottom: 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .download-section {
+        margin-bottom: 2rem;
+    }
+
+    .share-section h3 {
+        color: #1a5f3f;
+        margin-bottom: 1rem;
+    }
+
+    .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .share-btn {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .share-btn:hover {
+        border-color: #16a085;
+        background: #f0fdfa;
+    }
+
+    @keyframes checkmarkAppear {
+        0% { transform: scale(0); opacity: 0; }
+        70% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+        .certificate-page {
+            padding: 1.5rem;
+        }
+
+        .step-container {
+            padding: 2rem;
+        }
+
+        .step-container[data-step="2"] {
+            padding: 2rem;
+        }
+
+        .template-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .template-item {
+            border-radius: 10px;
+        }
+
+        .step-title {
+            font-size: 1.75rem;
+        }
+
+        .step-description {
+            font-size: 0.95rem;
+        }
+
+        .certificate-editor {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .certificate-page {
+            padding: 1rem;
+        }
+
+        .step-container {
+            padding: 1.5rem;
+        }
+
+        .step-container[data-step="2"] {
+            padding: 1.5rem;
+        }
+
+        .template-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .template-item {
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .step-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 1rem;
+        }
+
+        .step-number {
+            align-self: center;
+        }
+
+        .step-actions {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .cert-main-title {
+            font-size: 1.5rem;
+        }
+
+        .recipient-name {
+            font-size: 1.2rem;
+        }
+
+        .cert-background {
+            padding: 1rem;
+        }
+
+        .cert-border {
+            padding: 1rem;
+        }
+    }
 </style>
 
 <script>
@@ -1226,7 +1302,7 @@ body {
         recipientName: '',
         certificateText: '',
         signatureText: '{% if language == "ru" %}С уважением, Green Mile{% elif language == "kz" %}Құрметпен, Green Mile{% else %}With respect, Green Mile{% endif %}',
-        treeCount: 1,
+        treeCount: 10,
         customerName: '',
         customerEmail: '',
         customerPhone: '',
@@ -1277,9 +1353,9 @@ body {
     };
     
     const fallbackUrls = {
-        'professional': '{% static "images/default-professional.jpg" %}',
-        'modern': '{% static "images/default-modern.jpg" %}', 
-        'elegant': '{% static "images/default-elegant.jpg" %}'
+        'professional': '{% static "img/default-professional.jpg" %}',
+        'modern': '{% static "img/default-modern.jpg" %}', 
+        'elegant': '{% static "img/default-elegant.jpg" %}'
     };
     
     function getTemplateUrl(design) {
@@ -1481,36 +1557,50 @@ body {
         }
     }
 
+    
     function loadTemplatesForDesign(design) {
         const templates = templatesByDesign[design] || [];
-        console.log(`Loading templates for ${design}:`, templates); // Debug
+        console.log(`Loading templates for ${design}:`, templates);
+        
         if (!templateGrid) {
             console.error('Template grid element not found');
             return;
         }
+        
         templateGrid.innerHTML = '';
         
         if (templates.length === 0) {
-            console.warn(`No templates available for ${design}`); // Debug
-            templateGrid.innerHTML = `<div class="no-templates">{% if language == "ru" %}Нет доступных шаблонов{% elif language == "kz" %}Қолжетімді үлгілер жоқ{% else %}No templates available{% endif %}</div>`;
-            const nextButton = document.querySelector('.js-step-container[data-step="2"] .js-step-next');
-            if (nextButton) {
-                nextButton.disabled = true;
-            }
+            console.warn(`No templates available for ${design}`);
+            templateGrid.innerHTML = `
+                <div class="no-templates">
+                    <div class="no-templates-icon">📄</div>
+                    <p>{% if language == "ru" %}Нет доступных шаблонов{% elif language == "kz" %}Қолжетімді үлгілер жоқ{% else %}No templates available{% endif %}</p>
+                    <p class="no-templates-help">{% if language == "ru" %}Пожалуйста, попробуйте позже или выберите другой дизайн{% elif language == "kz" %}Кейінірек көріңіз немесе басқа дизайнды таңдаңыз{% else %}Please try again later or choose another design{% endif %}</p>
+                </div>
+            `;
             return;
         }
 
         templates.forEach((template, index) => {
             const templateItem = document.createElement('div');
-            const isSelected = index === 0 && !selectedTemplate; // Auto-select first template
+            const isSelected = index === 0;
+            
+            // Handle missing background images
+            let imageUrl = template.background_image;
+            if (!imageUrl || imageUrl === 'None') {
+                imageUrl = fallbackUrls[design] || '';
+            }
+            
             templateItem.className = 'template-item' + (isSelected ? ' selected' : '');
-            templateItem.dataset.templateId = String(template.id); // Ensure string type
-            templateItem.setAttribute('role', 'button'); // Accessibility
-            templateItem.setAttribute('aria-label', `Select template ${template.name || template.variation || 'Template ' + (index + 1)}`);
-            templateItem.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+            templateItem.dataset.templateId = String(template.id);
             
             templateItem.innerHTML = `
-                <img class="template-preview" src="${template.background_image || getTemplateUrl(design)}" alt="Template ${template.name || template.variation || 'Template ' + (index + 1)}">
+                <div class="template-image-container">
+                    <img class="template-preview" src="${imageUrl}" 
+                        alt="${template.name || template.variation || 'Template ' + (index + 1)}"
+                        onerror="this.src='${fallbackUrls[design] || ''}'">
+                    ${!imageUrl ? '<div class="template-placeholder">🌱</div>' : ''}
+                </div>
                 <div class="template-info">
                     <h4>${template.name || template.variation || `Template ${index + 1}`}</h4>
                     ${template.description ? `<p>${template.description}</p>` : ''}
@@ -1518,23 +1608,11 @@ body {
             `;
             
             templateItem.addEventListener('click', () => {
-                console.log('Template clicked:', template.id, template); // Debug
                 selectTemplate(template, index);
             });
+            
             templateGrid.appendChild(templateItem);
         });
-
-        // Auto-select first template if none is selected
-        if (templates.length > 0 && !selectedTemplate) {
-            selectedTemplate = templates[0];
-            console.log('Auto-selected first template:', selectedTemplate); // Debug
-            const nextButton = document.querySelector('.js-step-container[data-step="2"] .js-step-next');
-            if (nextButton) {
-                nextButton.disabled = false;
-                console.log('Next button enabled after auto-selecting template'); // Debug
-            }
-            updateCertificateStyle();
-        }
     }
 
     function selectTemplate(template, index) {
@@ -1586,7 +1664,7 @@ body {
     }
 
     function updateTreeCount() {
-        certificateData.treeCount = parseInt(treeCountInput.value) || 1;
+        certificateData.treeCount = parseInt(treeCountInput.value) || 10;
         updateLivePreview();
         updateSummary();
     }

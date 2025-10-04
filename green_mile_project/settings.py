@@ -164,6 +164,7 @@ LOGGING = {
     },
 }
 
+
 # Session Configuration
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 3600 * 24  # 24 hours
@@ -186,6 +187,14 @@ CLOUDPAYMENTS_API_SECRET = os.getenv(
 # File Upload Settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+try:
+    import whitenoise
+    if not DEBUG:
+        MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+        STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+except ImportError:
+    pass
 
 # Static Files
 STATIC_URL = '/static/'
