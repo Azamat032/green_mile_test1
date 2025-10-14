@@ -231,19 +231,19 @@ site_data = {
     ],
     'about': {
         'ru': {
-            'title': 'О фонде "Зеленая миля"',
+            'title': 'О фонде "Наш лес"',
             'mission': 'Наша миссия - восстановление лесных экосистем Казахстана через программы посадки деревьев и экологическое просвещение.',
             'pawloniaTitle': 'Селекция павлонии в Костанайской области',
             'pawloniaDescription': 'Мы разрабатываем программу селекции павлонии - быстрорастущего дерева, которое может значительно ускорить процесс восстановления лесов в нашем регионе.'
         },
         'kz': {
-            'title': '"Жасыл миля" қоры туралы',
+            'title': '"Наш лес" қоры туралы',
             'mission': 'Біздің миссиямыз - ағаш отырғызу бағдарламалары мен экологиялық ағарту арқылы Қазақстанның орман экожүйелерін қалпына келтіру.',
             'pawloniaTitle': 'Қостанай облысындағы павлония селекциясы',
             'pawloniaDescription': 'Біз павлония селекция бағдарламасын дамытып жатырмыз - бұл біздің аймақтағы ормандарды қалпына келтіру процесін айтарлықтай жеделдете алатын жылдам өсетін ағаш.'
         },
         'en': {
-            'title': 'About Green Mile Foundation',
+            'title': 'About Наш лесFoundation',
             'mission': 'Our mission is to restore Kazakhstan\'s forest ecosystems through tree planting programs and environmental education.',
             'pawloniaTitle': 'Pawlonia selection in Kostanay region',
             'pawloniaDescription': 'We are developing a pawlonia breeding program - a fast-growing tree that can significantly accelerate the forest restoration process in our region.'
@@ -266,8 +266,8 @@ site_data = {
                 'title_ru': 'Основание',
                 'title_kz': 'Құрылуы',
                 'title_en': 'Foundation',
-                'desc_ru': 'Группа энтузиастов-экологов в Алматы основала "Зеленую милю" для борьбы с обезлесением.',
-                'desc_kz': 'Алматыдағы эколог-энтузиастар тобы ормансызданумен күресу үшін "Жасыл милю" құрды.',
+                'desc_ru': 'Группа энтузиастов-экологов в Алматы основала "Наш лес" для борьбы с обезлесением.',
+                'desc_kz': 'Алматыдағы эколог-энтузиастар тобы ормансызданумен күресу үшін "Наш лес" құрды.',
                 'desc_en': 'A group of ecology enthusiasts in Almaty founded "Green Mile" to combat deforestation.',
                 'image': 'img/history/foundation.png'
             },
@@ -365,9 +365,9 @@ site_data = {
                 'role_ru': 'Основатель и директор',
                 'role_kz': 'Құрылтайшы және директор',
                 'role_en': 'Founder and Director',
-                'bio_ru': 'Айша основала "Зеленую милю" в 2010 году с мечтой о зеленом Казахстане. Ее страсть к экологии вдохновляет тысячи волонтеров.',
-                'bio_kz': 'Айша 2010 жылы "Жасыл миляны" Қазақстанды жасыл ету арманымен құрды. Оның экологияға деген құштарлығы мыңдаған еріктілерді шабыттандырады.',
-                'bio_en': 'Aisha founded "Green Mile" in 2010 with a dream of a greener Kazakhstan. Her passion for ecology inspires thousands of volunteers.',
+                'bio_ru': 'Айша основала "Наш лес" в 2010 году с мечтой о зеленом Казахстане. Ее страсть к экологии вдохновляет тысячи волонтеров.',
+                'bio_kz': 'Айша 2010 жылы "Наш лесны" Қазақстанды жасыл ету арманымен құрды. Оның экологияға деген құштарлығы мыңдаған еріктілерді шабыттандырады.',
+                'bio_en': 'Aisha founded "Наш лес" in 2010 with a dream of a greener Kazakhstan. Her passion for ecology inspires thousands of volunteers.',
                 'photo': 'img/team/man.png'
             },
             {
@@ -399,12 +399,12 @@ site_data = {
     'faq': {
         'faqs': [
             {
-                'question_ru': 'Что такое "Зеленая миля"?',
-                'question_kz': '"Жасыл миля" дегеніміз не?',
-                'question_en': 'What is "Green Mile"?',
-                'answer_ru': '"Зеленая миля" — это экологическое движение, основанное в 2010 году в Алматы, направленное на восстановление лесов Казахстана и борьбу с изменением климата.',
-                'answer_kz': '"Жасыл миля" — 2010 жылы Алматыда құрылған, Қазақстан ормандарын қалпына келтіруге және климаттың өзгеруімен күресуге бағытталған экологиялық қозғалыс.',
-                'answer_en': '"Green Mile" is an environmental movement founded in 2010 in Almaty, aimed at restoring Kazakhstan’s forests and combating climate change.'
+                'question_ru': 'Что такое "Наш лес"?',
+                'question_kz': '"Наш лес" дегеніміз не?',
+                'question_en': 'What is "Наш лес"?',
+                'answer_ru': '"Наш лес" — это экологическое движение, основанное в 2010 году в Алматы, направленное на восстановление лесов Казахстана и борьбу с изменением климата.',
+                'answer_kz': '"Наш лес" — 2010 жылы Алматыда құрылған, Қазақстан ормандарын қалпына келтіруге және климаттың өзгеруімен күресуге бағытталған экологиялық қозғалыс.',
+                'answer_en': '"Наш лес" is an environmental movement founded in 2010 in Almaty, aimed at restoring Kazakhstan’s forests and combating climate change.'
             },
             {
                 'question_ru': 'Как я могу посадить дерево?',
@@ -460,7 +460,7 @@ site_data = {
 
 
 class TelegramNotifier:
-    """Telegram notification service for Green Mile orders and contact form submissions"""
+    """Telegram notification service for Наш лесorders and contact form submissions"""
 
     def __init__(self, bot_token=None, chat_id=None):
         self.bot_token = "8254680657:AAG4JY-2nUxvnSO1HKLleoJW8673hWHpdfI"
@@ -491,7 +491,7 @@ class TelegramNotifier:
         status_emoji = "✅" if data.get('status') == 'completed' else "🔄"
 
         message = f"""
-            {status_emoji} <b>New Green Mile Order</b>
+            {status_emoji} <b>New Наш лесOrder</b>
 
             📋 <b>Order Details:</b>
             • Order ID: <code>{data.get('orderId', 'N/A')}</code>
@@ -573,7 +573,7 @@ class CertificateService:
     def send_certificate_email(email, certificate_data):
         """Send certificate via email"""
         try:
-            subject = f"Green Mile Certificate - {certificate_data['recipientName']}"
+            subject = f"Наш лесCertificate - {certificate_data['recipientName']}"
 
             # You would generate the actual PDF certificate here
             # For now, we'll send a confirmation email
@@ -601,8 +601,7 @@ class CertificateService:
 
 
 def list_media_files(request):
-    media_files = os.listdir(os.path.join(
-        settings.MEDIA_ROOT, 'certificate_templates'))
+    media_files = settings.MEDIA_ROOT
     return JsonResponse({'files': media_files})
 
 
@@ -819,54 +818,85 @@ DESIGN_CHOICES = [
 ]
 
 
-# views.py
-# views.py - Update the certificate function
 def certificate(request):
     language = get_language(request)
-
-    # Get all active templates
     templates = CertificateTemplate.objects.filter(is_active=True)
 
-    # Group templates by design
+    import os
+    print("=== FILE EXISTENCE CHECK ===")
+    for template in templates:
+        if template.background_image:
+            full_path = os.path.join(
+                settings.MEDIA_ROOT, template.background_image.name)
+            exists = os.path.exists(full_path)
+            print(f"Template: {template.name}")
+            print(f"  DB Path: {template.background_image.name}")
+            print(f"  Full Path: {full_path}")
+            print(f"  Exists: {exists}")
+            if not exists:
+                # Check if file is in root
+                filename = os.path.basename(template.background_image.name)
+                root_path = os.path.join(settings.MEDIA_ROOT, filename)
+                root_exists = os.path.exists(root_path)
+                print(f"  Root Path: {root_path}")
+                print(f"  Root Exists: {root_exists}")
+
+    # Group templates by design and ensure we have templates
     templates_by_design = {}
     for design_code, design_name in DESIGN_CHOICES:
         design_templates = templates.filter(
             design=design_code).order_by('variation')
-        templates_by_design[design_code] = design_templates
+        templates_by_design[design_code] = list(design_templates)
 
-    # Serialize templates for JavaScript - FIX THIS PART
+    # Debug: Print template info
+    print("=== TEMPLATE DEBUG INFO ===")
+    for design, template_list in templates_by_design.items():
+        print(f"Design: {design}, Templates: {len(template_list)}")
+        for t in template_list:
+            print(
+                f"  - {t.name}: {t.background_image.url if t.background_image else 'No image'}")
+
+    # Serialize templates for JavaScript
     serialized_templates = {}
     for design, template_list in templates_by_design.items():
-        serialized_templates[design] = [
-            {
+        serialized_templates[design] = []
+        for t in template_list:
+            # Fix the image URL path
+            if t.background_image:
+                # Check if file exists in the expected path
+                import os
+                expected_path = os.path.join(
+                    settings.MEDIA_ROOT, t.background_image.name)
+                actual_filename = os.path.basename(t.background_image.name)
+
+                # If file doesn't exist in certificate_templates but exists in root
+                root_path = os.path.join(settings.MEDIA_ROOT, actual_filename)
+                if not os.path.exists(expected_path) and os.path.exists(root_path):
+                    # Use the root path
+                    background_url = f"/media/{actual_filename}"
+                else:
+                    background_url = t.background_image.url
+            else:
+                background_url = ''
+
+            template_data = {
                 'id': t.id,
                 'variation': t.variation,
-                'name': t.name,
-                'background_image': t.background_image.url if t.background_image and hasattr(t.background_image, 'url') else '',
-                'description': t.description
+                'name': t.name or f"{t.get_design_display()} {t.variation}",
+                'description': t.description or f"{t.get_design_display()} template",
+                'background_image': background_url
             }
-            for t in template_list
-        ]
+            serialized_templates[design].append(template_data)
 
     # Get default templates for each design
     certificate_templates = {}
     for design_code, design_name in DESIGN_CHOICES:
         try:
             default_template = templates.filter(design=design_code).first()
-            if default_template:
-                certificate_templates[design_code] = default_template
-            else:
-                # Create a fallback template object
-                certificate_templates[design_code] = type('FallbackTemplate', (), {
-                    'background_image': None,
-                    'design': design_code
-                })()
+            certificate_templates[design_code] = default_template
         except Exception as e:
             logger.error(f"Error getting template for {design_code}: {e}")
-            certificate_templates[design_code] = type('FallbackTemplate', (), {
-                'background_image': None,
-                'design': design_code
-            })()
+            certificate_templates[design_code] = None
 
     context = {
         'language': language,
@@ -875,6 +905,7 @@ def certificate(request):
         'contact': site_data.get('contact', {}),
         'certificate_templates': certificate_templates,
         'templates_by_design_json': json.dumps(serialized_templates),
+        'templates_by_design': templates_by_design,  # Add this for template debugging
     }
     return render(request, 'certificate.html', context)
 

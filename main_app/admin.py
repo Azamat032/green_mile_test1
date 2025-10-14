@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Certificate, CertificateTemplate
-# Register your models here.
+from django import forms
 
 
 @admin.register(Certificate)
@@ -67,15 +67,31 @@ class CertificateAdmin(admin.ModelAdmin):
     environmental_impact_display.short_description = 'Environmental Impact'
 
 
+class CertificateTemplateAdminForm(forms.ModelForm):
+    class Meta:
+        model = CertificateTemplate
+        fields = '__all__'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        design = cleaned_data.get('design')
+        variation = cleaned_data.get('variation')
+        if design and variation:
+            existing = CertificateTemplate.objects.filter(
+                design=design, variation=variation
+            ).exclude(id=self.instance.id)
+            if existing.exists():
+                raise forms.ValidationError(
+                    f"A template with design '{design}' and variation '{variation}' already exists. Please choose a different variation."
+                )
+        return cleaned_data
+
+
 @admin.register(CertificateTemplate)
 class CertificateTemplateAdmin(admin.ModelAdmin):
-    list_display = ['design', 'background_image_preview']
-    readonly_fields = ['background_image_preview']
-
-    def background_image_preview(self, obj):
-        if obj.background_image:
-            return f"<img src='{obj.background_image.url}' style='max-height: 200px;' />"
-        return "No image"
-
-    background_image_preview.allow_tags = True
-    background_image_preview.short_description = "Preview"
+    form = CertificateTemplateAdminForm
+    list_display = ('name', 'design', 'variation', 'is_active', 'created_at')
+    list_filter = ('design', 'is_active')
+    search_fields = ('name', 'variation')
+    fields = ('design', 'variation', 'name', 'description',
+              'background_image', 'is_active')

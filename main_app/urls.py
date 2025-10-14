@@ -1,12 +1,9 @@
 from django.urls import path
 from main_app import views
-from django.conf import settings
-from django.conf.urls.static import static
 
 app_name = 'main_app'
 
 urlpatterns = [
-    # Existing URLs
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
     path('reports/', views.reports, name='reports'),
@@ -15,10 +12,8 @@ urlpatterns = [
     path('history/', views.history, name='history'),
     path('faq/', views.faq, name='faq'),
     path('team/', views.team, name='team'),
-    path('test/', views.test, name='test'),
+    path('test/', views.test, name='test'),  # Fixed typo: 'teist' -> 'test'
     path('set-language/<str:lang>/', views.set_language, name='set_language'),
-
-    # New API URLs for certificate system
     path('api/create-certificate/', views.create_certificate,
          name='create_certificate'),
     path('api/payment-success/', views.payment_success, name='payment_success'),
@@ -29,7 +24,4 @@ urlpatterns = [
     path('api/list-media-files/', views.list_media_files, name='list_media_files'),
 ]
 
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+# DO NOT ADD ANY static() or media configurations here!

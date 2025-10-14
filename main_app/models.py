@@ -1,3 +1,6 @@
+# models.py - REMOVE THIS LINE:
+# from main_app.models import CertificateTemplate  # ← DELETE THIS LINE
+
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
@@ -33,7 +36,7 @@ class Certificate(models.Model):
     signature_text = models.CharField(max_length=100, blank=True)
     tree_count = models.PositiveIntegerField(default=1)
     template = models.ForeignKey(
-        'CertificateTemplate',
+        'CertificateTemplate',  # Using string reference to avoid circular import
         on_delete=models.SET_NULL,
         null=True,
         blank=True
@@ -72,10 +75,15 @@ class CertificateTemplate(models.Model):
         default="default"
     )
     name = models.CharField(max_length=100, blank=True,
-                            help_text="Template display mame")
+                            help_text="Template display name")
     description = models.TextField(
         blank=True, help_text="Template description")
-    background_image = models.ImageField(upload_to="certificate_templates/")
+    background_image = models.ImageField(
+        upload_to="certificate_templates/",
+        blank=True,
+        null=True,
+        help_text="Upload certificate template background image"
+    )
     is_active = models.BooleanField(default=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

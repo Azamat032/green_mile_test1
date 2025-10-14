@@ -14,7 +14,7 @@
 <div class="certificate-page">
     <div class="page-header">
         <h1 class="page-title">
-            {% if language == 'ru' %}Green Mile Сертификат{% elif language == 'kz' %}Green Mile Сертификаты{% else %}Green Mile Certificate{% endif %}
+            {% if language == 'ru' %}Наш лес Сертификат{% elif language == 'kz' %}Наш лес Сертификаты{% else %}Наш лес Certificate{% endif %}
         </h1>
         <p class="page-subtitle">
             {% if language == 'ru' %}Профессиональные сертификаты посадки деревьев{% elif language == 'kz' %}Кәсіби ағаш отырғызу сертификаттары{% else %}Professional tree planting certificates{% endif %}
@@ -34,12 +34,12 @@
             <div class="design-card active js-design-card" data-design="professional">
                 <div class="design-preview">   
                     <div class="cert-preview cert-professional" 
-                        style="background-image: url('{% if certificate_templates.professional.background_image %}{{ certificate_templates.professional.background_image.url }}{% else %}{% static 'img/default-professional.png' %}{% endif %}'); 
+                        style="background-image: url('{% if certificate_templates.professional.background_image %}{{ certificate_templates.professional.background_image.url }}{% else %}{% static 'img/default-professional.jpg' %}{% endif %}'); 
                         background-size: cover; background-position: center;"
                     >                  
                         <div class="cert-header">
                             <div class="cert-logo">🌱</div>
-                            <div class="cert-title">GREEN MILE</div>
+                            <div class="cert-title">Наш лес </div>
                         </div>
                         <div class="cert-main-title">CERTIFICATE</div>
                         <div class="cert-content">
@@ -57,7 +57,7 @@
             <div class="design-card js-design-card" data-design="modern">
                 <div class="design-preview">
                     <div class="cert-preview cert-modern" 
-                        style="background-image: url('{% if certificate_templates.modern.background_image %}{{ certificate_templates.modern.background_image.url }}{% else %}{% static 'img/default-modern.png' %}{% endif %}'); 
+                        style="background-image: url('{% if certificate_templates.modern.background_image %}{{ certificate_templates.modern.background_image.url }}{% else %}{% static 'img/default-modern.jpg' %}{% endif %}'); 
                         background-size: cover; background-position: center;"
                     >
                         <div class="cert-header-modern">
@@ -80,12 +80,12 @@
             <div class="design-card js-design-card" data-design="elegant">
                 <div class="design-preview">
                     <div class="cert-preview cert-elegant" 
-                        style="background-image: url('{% if certificate_templates.elegant.background_image %}{{ certificate_templates.elegant.background_image.url }}{% else %}{% static 'img/default-elegant.png' %}{% endif %}'); 
+                        style="background-image: url('{% if certificate_templates.elegant.background_image %}{{ certificate_templates.elegant.background_image.url }}{% else %}{% static 'img/default-elegant.jpg' %}{% endif %}'); 
                         background-size: cover; background-position: center;"
                     >
                         <div class="cert-border-elegant">
-                            <div class="cert-header-elegant">GREEN MILE</div>
-                            <div class="cert-main-title-elegant">Certificate of Achievement</div>
+                            <div class="cert-header-elegant">Наш лес </div>
+                            <div class="cert-main-title-elegant">Certificate of Appreciation</div>
                             <div class="cert-content-elegant">
                                 <div class="cert-text-elegant">Sample certificate</div>
                                 <div class="cert-signature-elegant">Signature</div>
@@ -122,101 +122,14 @@
         </div>
 
         <div class="template-grid js-template-grid">
-            <!-- Templates will be loaded dynamically -->
-            {% with design=selected_design|default:"professional" %}
-                {% if design == "professional" %}
-                    <div class="template-item" data-template-id="p1">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/p1.png' %}" alt="Professional Template 1">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Профессиональный 1{% elif language == 'kz' %}Кәсіби 1{% else %}Professional 1{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 1 профессионального дизайна{% elif language == 'kz' %}Кәсіби дизайнның 1-нұсқасы{% else %}Variant 1 of professional design{% endif %}</p>
-                        </div>
-                    </div>
-                    <div class="template-item" data-template-id="p2">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/p2.png' %}" alt="Professional Template 2">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Профессиональный 2{% elif language == 'kz' %}Кәсіби 2{% else %}Professional 2{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 2 профессионального дизайна{% elif language == 'kz' %}Кәсіби дизайнның 2-нұсқасы{% else %}Variant 2 of professional design{% endif %}</p>
-                        </div>
-                    </div>
-                    <div class="template-item" data-template-id="p3">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/p3.png' %}" alt="Professional Template 3">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Профессиональный 3{% elif language == 'kz' %}Кәсіби 3{% else %}Professional 3{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 3 профессионального дизайна{% elif language == 'kz' %}Кәсіби дизайнның 3-нұсқасы{% else %}Variant 3 of professional design{% endif %}</p>
-                        </div>
-                    </div>
-                {% elif design == "modern" %}
-                    <div class="template-item" data-template-id="m1">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/m1.png' %}" alt="Modern Template 1">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Современный 1{% elif language == 'kz' %}Заманауи 1{% else %}Modern 1{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 1 современного дизайна{% elif language == 'kz' %}Заманауи дизайнның 1-нұсқасы{% else %}Variant 1 of modern design{% endif %}</p>
-                        </div>
-                    </div>
-                    <div class="template-item" data-template-id="m2">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/m2.png' %}" alt="Modern Template 2">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Современный 2{% elif language == 'kz' %}Заманауи 2{% else %}Modern 2{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 2 современного дизайна{% elif language == 'kz' %}Заманауи дизайнның 2-нұсқасы{% else %}Variant 2 of modern design{% endif %}</p>
-                        </div>
-                    </div>
-                    <div class="template-item" data-template-id="m3">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/m3.png' %}" alt="Modern Template 3">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Современный 3{% elif language == 'kz' %}Заманауи 3{% else %}Modern 3{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 3 современного дизайна{% elif language == 'kz' %}Заманауи дизайнның 3-нұсқасы{% else %}Variant 3 of modern design{% endif %}</p>
-                        </div>
-                    </div>
-                {% elif design == "elegant" %}
-                    <div class="template-item" data-template-id="e1">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/e1.png' %}" alt="Elegant Template 1">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Элегантный 1{% elif language == 'kz' %}Сәнді 1{% else %}Elegant 1{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 1 элегантного дизайна{% elif language == 'kz' %}Сәнді дизайнның 1-нұсқасы{% else %}Variant 1 of elegant design{% endif %}</p>
-                        </div>
-                    </div>
-                    <div class="template-item" data-template-id="e2">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/e2.png' %}" alt="Elegant Template 2">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Элегантный 2{% elif language == 'kz' %}Сәнді 2{% else %}Elegant 2{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 2 элегантного дизайна{% elif language == 'kz' %}Сәнді дизайнның 2-нұсқасы{% else %}Variant 2 of elegant design{% endif %}</p>
-                        </div>
-                    </div>
-                    <div class="template-item" data-template-id="e3">
-                        <div class="template-image-container">
-                            <img class="template-preview" src="{% static 'img/e3.png' %}" alt="Elegant Template 3">
-                        </div>
-                        <div class="template-info">
-                            <h4>{% if language == 'ru' %}Элегантный 3{% elif language == 'kz' %}Сәнді 3{% else %}Elegant 3{% endif %}</h4>
-                            <p>{% if language == 'ru' %}Вариант 3 элегантного дизайна{% elif language == 'kz' %}Сәнді дизайнның 3-нұсқасы{% else %}Variant 3 of elegant design{% endif %}</p>
-                        </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
+            <!-- Templates will be loaded dynamically via JavaScript -->
         </div>
 
         <div class="step-actions">
             <button class="btn-secondary js-step-prev">
                 {% if language == 'ru' %}Назад{% elif language == 'kz' %}Артқа{% else %}Back{% endif %}
             </button>
-            <button class="btn-primary js-step-next">
+            <button class="btn-primary js-step-next" disabled>
                 {% if language == 'ru' %}Далее{% elif language == 'kz' %}Әрі қарай{% else %}Next{% endif %}
             </button>
         </div>
@@ -225,7 +138,7 @@
     <!-- Step 3: Certificate Content -->
     <div class="step-container js-step-container" data-step="3" style="display: none;">
         <div class="step-header">
-            <div class="step-number">2</div>
+            <div class="step-number">3</div>
             <h2 class="step-title">
                 {% if language == 'ru' %}Заполните сертификат{% elif language == 'kz' %}Сертификатты толтырыңыз{% else %}Fill the certificate{% endif %}
             </h2>
@@ -256,7 +169,7 @@
                         {% if language == 'ru' %}Подпись{% elif language == 'kz' %}Қолтаңба{% else %}Signature{% endif %}
                     </label>
                     <input type="text" id="signature-text" class="form-control" maxlength="50"
-                           value="{% if language == 'ru' %}С уважением, Green Mile{% elif language == 'kz' %}Құрметпен, Green Mile{% else %}With respect, Green Mile{% endif %}">
+                           value="{% if language == 'ru' %}С уважением, Наш лес {% elif language == 'kz' %}Құрметпен, Наш лес {% else %}With respect, Наш лес {% endif %}">
                     <small class="char-counter">0/50</small>
                 </div>
 
@@ -269,13 +182,13 @@
             </div>
 
             <div class="certificate-preview">
-                <div id="live-certificate" class="certificate-live professional-cert" style="aspect-ratio: 210 / 297; width: 100%; max-width: 420px; background-image: url('{% static 'img/default-professional.png' %}'); background-size: cover; background-position: center;">
+                <div id="live-certificate" class="certificate-live professional-cert" style="aspect-ratio: 210 / 297; width: 100%; max-width: 420px; background-image: url('{% static 'img/default-professional.jpg' %}'); background-size: cover; background-position: center;">
                     <div class="cert-background">
                         <div class="cert-border">
                             <div class="cert-header-section">
                                 <div class="cert-logo-section">
                                     <div class="logo-icon">🌱</div>
-                                    <div class="org-name">GREEN MILE</div>
+                                    <div class="org-name">Наш лес </div>
                                 </div>
                                 <div class="cert-number">№ <span id="cert-number">000001</span> / {% now "d.m.Y" %}</div>
                             </div>
@@ -314,7 +227,7 @@
                                 <div class="signature-section">
                                     <div class="signature-line">
                                         <div class="signature-text" id="live-signature">
-                                            {% if language == 'ru' %}С благодарностью, Команда Green Mile{% elif language == 'kz' %}Алғыс білдіре отырып, Green Mile ұжымы{% else %}With Gratitude, The Green Mile Team{% endif %}
+                                            {% if language == 'ru' %}С благодарностью, Команда Наш лес {% elif language == 'kz' %}Алғыс білдіре отырып, Наш лесұжымы{% else %}With Gratitude, The Наш лесTeam{% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -345,13 +258,14 @@
     <!-- Step 4: Payment -->
     <div class="step-container js-step-container" data-step="4" style="display: none;">
         <div class="step-header">
-            <div class="step-number">3</div>
+            <div class="step-number">4</div>
             <h2 class="step-title">
                 {% if language == 'ru' %}Оплата и контактные данные{% elif language == 'kz' %}Төлем және байланыс деректері{% else %}Payment and contact details{% endif %}
             </h2>
         </div>
 
         <form id="payment-form" class="payment-form">
+            <input type="hidden" id="template-id" name="template_id" value="">
             <div class="form-row">
                 <div class="form-group">
                     <label for="customer-name">
@@ -393,7 +307,7 @@
                 <h3>{% if language == 'ru' %}Итого к оплате{% elif language == 'kz' %}Төлемге жалпы{% else %}Total to pay{% endif %}</h3>
                 <div class="summary-item">
                     <span>{% if language == 'ru' %}Количество деревьев:{% elif language == 'kz' %}Ағаш саны:{% else %}Number of trees:{% endif %}</span>
-                    <span id="summary-trees">1</span>
+                    <span id="summary-trees">10</span>
                 </div>
                 <div class="summary-item">
                     <span>{% if language == 'ru' %}Цена за дерево:{% elif language == 'kz' %}Ағаш бағасы:{% else %}Price per tree:{% endif %}</span>
@@ -401,7 +315,7 @@
                 </div>
                 <div class="summary-item total">
                     <span>{% if language == 'ru' %}Итого:{% elif language == 'kz' %}Жалпы:{% else %}Total:{% endif %}</span>
-                    <span id="summary-total">5000 KZT</span>
+                    <span id="summary-total">50000 KZT</span>
                 </div>
             </div>
 
@@ -501,10 +415,10 @@
 
     /* Step 2: Template Selection */
     .step-container[data-step="2"] {
-        background: white;
-        border-radius: 16px;
-        padding: 2.5rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #fffaf0 0%, #ffffff 100%);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         position: relative;
         z-index: 1;
         overflow: visible;
@@ -517,9 +431,10 @@
         left: -20px;
         right: -20px;
         bottom: -20px;
-        background: linear-gradient(135deg, rgba(22, 160, 133, 0.05) 0%, transparent 50%);
+        background: linear-gradient(135deg, rgba(218, 165, 32, 0.1) 0%, transparent 50%);
         z-index: -1;
-        border-radius: 20px;
+        border-radius: 24px;
+        border: 2px double #daa520;
     }
 
     .step-header {
@@ -566,85 +481,129 @@
 
     .template-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem 0;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+        padding: 1.5rem 0;
     }
 
     .template-item {
-        background: white;
+        background: #fffaf0;
         border-radius: 12px;
         overflow: hidden;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 2px solid #e5e7eb;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border: 2px double #daa520;
         aspect-ratio: 210 / 297;
         position: relative;
         display: flex;
         flex-direction: column;
+        padding: 0.5rem;
     }
 
     .template-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.15);
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(22, 160, 133, 0.2);
         border-color: #16a085;
     }
 
     .template-item.selected {
         border-color: #16a085;
-        box-shadow: 0 8px 20px rgba(22, 160, 133, 0.2);
-        transform: scale(1.02);
+        box-shadow: 0 12px 25px rgba(22, 160, 133, 0.25), 0 0 0 4px rgba(22, 160, 133, 0.1);
+        transform: scale(1.03);
     }
 
     .template-item.selected::after {
         content: "✓";
         position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 24px;
-        height: 24px;
+        top: 16px;
+        right: 16px;
+        width: 28px;
+        height: 28px;
         background: #16a085;
         color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 700;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        animation: checkmarkAppear 0.3s ease;
+    }
+
+    .template-image-container {
+        position: relative;
+        width: 100%;
+        height: 70%;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: #ffffff;
     }
 
     .template-preview {
         width: 100%;
-        height: 65%;
+        height: 100%;
         object-fit: cover;
+        object-position: center;
+        aspect-ratio: 210 / 297;
         display: block;
-        border-bottom: 1px solid #e5e7eb;
+        transition: transform 0.3s ease;
+    }
+
+    .template-item:hover .template-preview {
+        transform: scale(1.05);
+    }
+
+    .template-placeholder {
+        display: none;
+        height: 100%;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        color: #6b7280;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .placeholder-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .placeholder-text {
+        font-size: 0.9rem;
+        font-weight: 500;
     }
 
     .template-info {
-        padding: 0.75rem;
+        padding: 1rem;
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
         text-align: center;
+        background: linear-gradient(180deg, rgba(255, 250, 240, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
+        border-top: 1px solid #e5e7eb;
     }
 
     .template-info h4 {
-        font-family: 'Inter', sans-serif;
-        font-size: 1rem;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
         font-weight: 600;
         color: #1a3c34;
-        margin: 0 0 0.25rem 0;
+        margin: 0 0 0.5rem 0;
+        letter-spacing: 0.02em;
     }
 
     .template-info p {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: #6b7280;
         margin: 0;
         line-height: 1.4;
+        font-style: italic;
     }
 
     .no-templates {
@@ -654,6 +613,17 @@
         padding: 2rem;
         background: #f8f9fa;
         border-radius: 8px;
+        border: 2px dashed #d1d5db;
+    }
+
+    .no-templates-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .no-templates-help {
+        font-size: 0.9rem;
+        color: #9ca3af;
     }
 
     .step-actions {
@@ -686,6 +656,12 @@
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(22, 160, 133, 0.4);
+    }
+
+    .btn-primary:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+        box-shadow: none;
     }
 
     .btn-secondary {
@@ -801,7 +777,7 @@
         font-size: 0.8rem;
     }
 
-    /* Certificate Live Preview */
+        /* Certificate Live Preview */
     .certificate-live {
         margin: 0 auto;
         overflow: hidden;
@@ -1205,8 +1181,8 @@
         }
 
         .template-grid {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
         }
 
         .template-item {
@@ -1229,6 +1205,22 @@
         .form-row {
             grid-template-columns: 1fr;
         }
+
+        .cert-main-title {
+            font-size: 1.8rem;
+        }
+
+        .recipient-name {
+            font-size: 1.4rem;
+        }
+
+        .tree-count-display {
+            font-size: 1.8rem;
+        }
+
+        .cert-description {
+            font-size: 1rem;
+        }
     }
 
     @media (max-width: 600px) {
@@ -1250,7 +1242,7 @@
         }
 
         .template-item {
-            max-width: 280px;
+            max-width: 300px;
             margin: 0 auto;
         }
 
@@ -1289,656 +1281,636 @@
         .cert-border {
             padding: 1rem;
         }
+
+        .tree-count-display {
+            font-size: 1.6rem;
+        }
+
+        .cert-description {
+            font-size: 0.95rem;
+        }
+
+        .signature-text {
+            font-size: 1rem;
+        }
     }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // State management
-    let currentStep = 1;
-    let selectedDesign = 'professional';
-    let selectedTemplate = null;
-    let certificateData = {
-        recipientName: '',
-        certificateText: '',
-        signatureText: '{% if language == "ru" %}С уважением, Green Mile{% elif language == "kz" %}Құрметпен, Green Mile{% else %}With respect, Green Mile{% endif %}',
-        treeCount: 10,
-        customerName: '',
-        customerEmail: '',
-        customerPhone: '',
-        currency: 'KZT'
-    };
-
-    const templatesByDesign = JSON.parse('{{ templates_by_design_json|escapejs }}');
-    console.log('templatesByDesign:', templatesByDesign); // Debug: Check template data
-
-    const exchangeRates = {
-        KZT: 1,
-        USD: 0.0021,
-        EUR: 0.0019,
-        RUB: 0.19
-    };
-
-    // Elements
-    const steps = document.querySelectorAll('.js-step-container');
-    const nextButtons = document.querySelectorAll('.js-step-next');
-    const prevButtons = document.querySelectorAll('.js-step-prev');
-    const designCards = document.querySelectorAll('.js-design-card');
-    const templateGrid = document.querySelector('.js-template-grid');
-
-    // Form elements
-    const recipientNameInput = document.getElementById('recipient-name');
-    const certificateTextInput = document.getElementById('certificate-text');
-    const signatureTextInput = document.getElementById('signature-text');
-    const treeCountInput = document.getElementById('tree-count');
-    const currencySelect = document.getElementById('currency');
-    const paymentForm = document.getElementById('payment-form');
-    
-    // Live preview elements
-    const liveRecipientName = document.getElementById('live-recipient-name');
-    const liveCertText = document.getElementById('live-cert-text');
-    const liveSignature = document.getElementById('live-signature');
-    const liveTreeCount = document.getElementById('live-tree-count');
-    const treeLabel = document.getElementById('tree-label');
-    const certNumber = document.getElementById('cert-number');
-    
-    // Summary elements
-    const summaryTrees = document.getElementById('summary-trees');
-    const summaryTotal = document.getElementById('summary-total');
-
-    const templateUrls = {
-        {% for design, template in certificate_templates.items %}
-        '{{ design }}': '{{ template.background_image.url }}',
-        {% endfor %}
-    };
-    
-    const fallbackUrls = {
-        'professional': '{% static "img/default-professional.jpg" %}',
-        'modern': '{% static "img/default-modern.jpg" %}', 
-        'elegant': '{% static "img/default-elegant.jpg" %}'
-    };
-    
-    function getTemplateUrl(design) {
-        if (templateUrls[design] && templateUrls[design] !== 'None') {
-            return templateUrls[design];
+    document.addEventListener('error', function(e) {
+        if (e.target.tagName === 'IMG') {
+            console.warn('Image failed to load:', e.target.src);
+            e.target.style.display = 'none';
+            const placeholder = e.target.nextElementSibling;
+            if (placeholder && placeholder.classList.contains('template-placeholder')) {
+                placeholder.style.display = 'flex';
+            }
         }
-        return fallbackUrls[design] || '';
-    }
+    }, true);
 
-    // Russian pluralization for "дерево"
-    function getRussianTreeLabel(count) {
-        const lastDigit = count % 10;
-        const lastTwoDigits = count % 100;
-        
-        if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentStep = 1;
+        let selectedDesign = 'professional';
+        let selectedTemplate = null;
+        let certificateData = {
+            recipientName: '',
+            certificateText: '',
+            signatureText: '{% if language == "ru" %}С уважением, Наш лес {% elif language == "kz" %}Құрметпен, Наш лес {% else %}With respect, Наш лес {% endif %}',
+            treeCount: 10,
+            customerName: '',
+            customerEmail: '',
+            customerPhone: '',
+            currency: 'KZT'
+        };
+
+        const templatesByDesign = JSON.parse('{{ templates_by_design_json|escapejs }}');
+        console.log('templatesByDesign:', templatesByDesign);
+
+        const exchangeRates = {
+            KZT: 1,
+            USD: 0.0021,
+            EUR: 0.0019,
+            RUB: 0.19
+        };
+
+        const steps = document.querySelectorAll('.js-step-container');
+        const nextButtons = document.querySelectorAll('.js-step-next');
+        const prevButtons = document.querySelectorAll('.js-step-prev');
+        const designCards = document.querySelectorAll('.js-design-card');
+        const templateGrid = document.querySelector('.js-template-grid');
+        const recipientNameInput = document.getElementById('recipient-name');
+        const certificateTextInput = document.getElementById('certificate-text');
+        const signatureTextInput = document.getElementById('signature-text');
+        const treeCountInput = document.getElementById('tree-count');
+        const currencySelect = document.getElementById('currency');
+        const paymentForm = document.getElementById('payment-form');
+        const templateIdInput = document.getElementById('template-id');
+        const liveRecipientName = document.getElementById('live-recipient-name');
+        const liveCertText = document.getElementById('live-cert-text');
+        const liveSignature = document.getElementById('live-signature');
+        const liveTreeCount = document.getElementById('live-tree-count');
+        const treeLabel = document.getElementById('tree-label');
+        const certNumber = document.getElementById('cert-number');
+        const summaryTrees = document.getElementById('summary-trees');
+        const summaryTotal = document.getElementById('summary-total');
+
+        function getTemplateUrl(design) {
+            const fallbackUrls = {
+                'professional': '{% static "img/default-professional.jpg" %}',
+                'modern': '{% static "img/default-modern.jpg" %}', 
+                'elegant': '{% static "img/default-elegant.jpg" %}'
+            };
+            return fallbackUrls[design] || '';
+        }
+
+        function getRussianTreeLabel(count) {
+            const lastDigit = count % 10;
+            const lastTwoDigits = count % 100;
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+                return 'деревьев';
+            }
+            if (lastDigit === 1) {
+                return 'дерево';
+            }
+            if (lastDigit >= 2 && lastDigit <= 4) {
+                return 'дерева';
+            }
             return 'деревьев';
         }
-        if (lastDigit === 1) {
-            return 'дерево';
+
+        function init() {
+            updateCertificateNumber();
+            setupEventListeners();
+            updateLivePreview();
+            updateSummary();
+            selectDesign('professional');
         }
-        if (lastDigit >= 2 && lastDigit <= 4) {
-            return 'дерева';
-        }
-        return 'деревьев';
-    }
 
-    // Initialize
-    function init() {
-        updateCertificateNumber();
-        setupEventListeners();
-        updateLivePreview();
-        updateSummary();
-        selectDesign('professional'); // Ensure initial design is set
-    }
-
-    function setupEventListeners() {
-        // Step navigation
-        nextButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                console.log('Next button clicked, currentStep:', currentStep, 'selectedTemplate:', selectedTemplate); // Debug
-                nextStep();
-            });
-        });
-        prevButtons.forEach(btn => btn.addEventListener('click', prevStep));
-
-        // Design selection
-        designCards.forEach(card => {
-            card.addEventListener('click', () => {
-                console.log('Design selected:', card.dataset.design); // Debug
-                selectDesign(card.dataset.design);
-            });
-        });
-
-        // Form inputs
-        recipientNameInput?.addEventListener('input', updateRecipientName);
-        certificateTextInput?.addEventListener('input', updateCertificateText);
-        signatureTextInput?.addEventListener('input', updateSignatureText);
-        treeCountInput?.addEventListener('input', updateTreeCount);
-        currencySelect?.addEventListener('change', updateCurrency);
-
-        // Character counters
-        setupCharacterCounters();
-
-        // Payment form
-        paymentForm?.addEventListener('submit', handlePayment);
-
-        // Download certificate
-        document.querySelector('.js-download-certificate')?.addEventListener('click', downloadCertificate);
-
-        // Share buttons
-        document.querySelectorAll('.share-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => shareAchievement(e.target.dataset.platform));
-        });
-    }
-
-    function setupCharacterCounters() {
-        const inputs = [recipientNameInput, certificateTextInput, signatureTextInput];
-        inputs.forEach(input => {
-            if (input) {
-                input.addEventListener('input', function() {
-                    const counter = this.parentElement.querySelector('.char-counter');
-                    const maxLength = this.getAttribute('maxlength');
-                    if (counter && maxLength) {
-                        counter.textContent = `${this.value.length}/${maxLength}`;
-                        counter.style.color = this.value.length > maxLength * 0.9 ? '#ef4444' : '#6b7280';
-                    }
+        function setupEventListeners() {
+            nextButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    console.log('Next button clicked, currentStep:', currentStep, 'selectedTemplate:', selectedTemplate);
+                    nextStep();
                 });
-            }
-        });
-    }
-
-    function showStep(step) {
-        currentStep = step;
-        steps.forEach(s => {
-            s.style.display = s.dataset.step == step ? 'block' : 'none';
-        });
-        
-        if (step === 2) {
-            console.log('Showing Step 2, loading templates for:', selectedDesign); // Debug
-            loadTemplatesForDesign(selectedDesign);
-        }
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function nextStep() {
-        if (currentStep < 4) {
-            if (validateCurrentStep()) {
-                showStep(currentStep + 1);
-            } else {
-                console.log('Validation failed for step:', currentStep); // Debug
-            }
-        }
-    }
-
-    function prevStep() {
-        if (currentStep > 1) {
-            showStep(currentStep - 1);
-        }
-    }
-
-    function validateCurrentStep() {
-        switch (currentStep) {
-            case 1:
-                console.log('Validating Step 1, selectedDesign:', selectedDesign); // Debug
-                return true;
-            case 2:
-                return validateTemplateSelection();
-            case 3:
-                return validateCertificateData();
-            case 4:
-                return validatePaymentData();
-            default:
-                return true;
-        }
-    }
-
-    function validateTemplateSelection() {
-        console.log('Validating template selection, selectedTemplate:', selectedTemplate); // Debug
-        if (!selectedTemplate) {
-            alert('{% if language == "ru" %}Пожалуйста, выберите шаблон сертификата{% elif language == "kz" %}Сертификат үлгісін таңдаңыз{% else %}Please select a certificate template{% endif %}');
-            return false;
-        }
-        return true;
-    }
-
-    function validateCertificateData() {
-        if (!certificateData.recipientName.trim()) {
-            alert('{% if language == "ru" %}Пожалуйста, введите имя получателя{% elif language == "kz" %}Алушының атын енгізіңіз{% else %}Please enter recipient name{% endif %}');
-            return false;
-        }
-        return true;
-    }
-
-    function validatePaymentData() {
-        const customerName = document.getElementById('customer-name').value.trim();
-        const customerEmail = document.getElementById('customer-email').value.trim();
-        const privacyConsent = document.getElementById('privacy-consent').checked;
-
-        if (!customerName) {
-            alert('{% if language == "ru" %}Пожалуйста, введите ваше имя{% elif language == "kz" %}Атыңызды енгізіңіз{% else %}Please enter your name{% endif %}');
-            return false;
-        }
-
-        if (!customerEmail || !isValidEmail(customerEmail)) {
-            alert('{% if language == "ru" %}Пожалуйста, введите корректный email{% elif language == "kz" %}Дұрыс email енгізіңіз{% else %}Please enter a valid email{% endif %}');
-            return false;
-        }
-
-        if (!privacyConsent) {
-            alert('{% if language == "ru" %}Необходимо согласие на обработку данных{% elif language == "kz" %}Деректерді өңдеуге келісім қажет{% else %}Privacy consent is required{% endif %}');
-            return false;
-        }
-
-        return true;
-    }
-
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    function selectDesign(design) {
-        selectedDesign = design;
-        selectedTemplate = null; // Reset template when design changes
-        designCards.forEach(card => {
-            card.classList.toggle('active', card.dataset.design === design);
-        });
-        console.log('Selected design:', design, 'Reset selectedTemplate:', selectedTemplate); // Debug
-        // Load templates immediately if on Step 2, otherwise load when Step 2 is shown
-        if (currentStep === 2) {
-            loadTemplatesForDesign(design);
-        }
-        // Ensure Next button is enabled for Step 1, as design selection is valid
-        const nextButton = document.querySelector('.js-step-container[data-step="1"] .js-step-next');
-        if (nextButton) {
-            nextButton.disabled = false;
-            console.log('Next button enabled for Step 1'); // Debug
-        }
-    }
-
-    
-    function loadTemplatesForDesign(design) {
-        const templates = templatesByDesign[design] || [];
-        console.log(`Loading templates for ${design}:`, templates);
-        
-        if (!templateGrid) {
-            console.error('Template grid element not found');
-            return;
-        }
-        
-        templateGrid.innerHTML = '';
-        
-        if (templates.length === 0) {
-            console.warn(`No templates available for ${design}`);
-            templateGrid.innerHTML = `
-                <div class="no-templates">
-                    <div class="no-templates-icon">📄</div>
-                    <p>{% if language == "ru" %}Нет доступных шаблонов{% elif language == "kz" %}Қолжетімді үлгілер жоқ{% else %}No templates available{% endif %}</p>
-                    <p class="no-templates-help">{% if language == "ru" %}Пожалуйста, попробуйте позже или выберите другой дизайн{% elif language == "kz" %}Кейінірек көріңіз немесе басқа дизайнды таңдаңыз{% else %}Please try again later or choose another design{% endif %}</p>
-                </div>
-            `;
-            return;
-        }
-
-        templates.forEach((template, index) => {
-            const templateItem = document.createElement('div');
-            const isSelected = index === 0;
-            
-            // Handle missing background images
-            let imageUrl = template.background_image;
-            if (!imageUrl || imageUrl === 'None') {
-                imageUrl = fallbackUrls[design] || '';
-            }
-            
-            templateItem.className = 'template-item' + (isSelected ? ' selected' : '');
-            templateItem.dataset.templateId = String(template.id);
-            
-            templateItem.innerHTML = `
-                <div class="template-image-container">
-                    <img class="template-preview" src="${imageUrl}" 
-                        alt="${template.name || template.variation || 'Template ' + (index + 1)}"
-                        onerror="this.src='${fallbackUrls[design] || ''}'">
-                    ${!imageUrl ? '<div class="template-placeholder">🌱</div>' : ''}
-                </div>
-                <div class="template-info">
-                    <h4>${template.name || template.variation || `Template ${index + 1}`}</h4>
-                    ${template.description ? `<p>${template.description}</p>` : ''}
-                </div>
-            `;
-            
-            templateItem.addEventListener('click', () => {
-                selectTemplate(template, index);
             });
-            
-            templateGrid.appendChild(templateItem);
-        });
-    }
+            prevButtons.forEach(btn => btn.addEventListener('click', prevStep));
 
-    function selectTemplate(template, index) {
-        selectedTemplate = template;
-        document.querySelectorAll('.template-item').forEach(item => {
-            const isSelected = item.dataset.templateId === String(template.id);
-            item.classList.toggle('selected', isSelected);
-            item.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-        });
-        console.log('Selected template:', selectedTemplate); // Debug
-        const nextButton = document.querySelector('.js-step-container[data-step="2"] .js-step-next');
-        if (nextButton) {
-            nextButton.disabled = false;
-            console.log('Next button enabled after template selection'); // Debug
-        }
-        updateCertificateStyle();
-    }
-
-    function updateCertificateStyle() {
-        const certificate = document.getElementById('live-certificate');
-        if (certificate && selectedTemplate) {
-            certificate.className = `certificate-live ${selectedDesign}-cert`;
-            if (selectedTemplate.background_image) {
-                certificate.style.backgroundImage = `url('${selectedTemplate.background_image}')`;
-                certificate.style.backgroundSize = 'cover';
-                certificate.style.backgroundPosition = 'center';
-            } else {
-                certificate.style.backgroundImage = `url('${getTemplateUrl(selectedDesign)}')`;
-            }
-            console.log('Updated certificate style, background:', certificate.style.backgroundImage); // Debug
-        } else {
-            console.warn('Certificate element or selectedTemplate missing:', { certificate, selectedTemplate }); // Debug
-        }
-    }
-
-    function updateRecipientName() {
-        certificateData.recipientName = recipientNameInput.value;
-        updateLivePreview();
-    }
-
-    function updateCertificateText() {
-        certificateData.certificateText = certificateTextInput.value;
-        updateLivePreview();
-    }
-
-    function updateSignatureText() {
-        certificateData.signatureText = signatureTextInput.value;
-        updateLivePreview();
-    }
-
-    function updateTreeCount() {
-        certificateData.treeCount = parseInt(treeCountInput.value) || 10;
-        updateLivePreview();
-        updateSummary();
-    }
-
-    function updateCurrency() {
-        certificateData.currency = currencySelect.value;
-        updateSummary();
-    }
-
-    function updateLivePreview() {
-        if (liveRecipientName) {
-            liveRecipientName.textContent = certificateData.recipientName || 
-                '{% if language == "ru" %}[Имя получателя]{% elif language == "kz" %}[Алушы аты]{% else %}[Recipient Name]{% endif %}';
-        }
-
-        if (liveCertText) {
-            liveCertText.textContent = certificateData.certificateText || 
-                '{% if language == "ru" %}за вклад в восстановление лесов Казахстана и защиту окружающей среды{% elif language == "kz" %}Қазақстан ормандарын қалпына келтіру және қоршаған ортаны қорғаудағы үлесі үшін{% else %}for contributing to Kazakhstan\'s forest restoration and environmental protection{% endif %}';
-        }
-
-        if (liveSignature) {
-            liveSignature.textContent = certificateData.signatureText;
-        }
-
-        if (liveTreeCount) {
-            liveTreeCount.textContent = certificateData.treeCount;
-        }
-
-        if (treeLabel) {
-            const language = '{{ language }}';
-            if (language === 'ru') {
-                treeLabel.textContent = getRussianTreeLabel(certificateData.treeCount);
-            } else if (language === 'kz') {
-                treeLabel.textContent = 'Ағаштар саны';
-            } else {
-                treeLabel.textContent = 'Number of trees';
-            }
-        }
-    }
-
-    function updateSummary() {
-        const trees = certificateData.treeCount;
-        const totalKZT = trees * 500;
-        const rate = exchangeRates[certificateData.currency] || 1;
-        const total = (totalKZT * rate).toFixed(2);
-
-        if (summaryTrees) summaryTrees.textContent = trees;
-        if (summaryTotal) summaryTotal.textContent = `${total} ${certificateData.currency}`;
-    }
-
-    function updateCertificateNumber() {
-        if (certNumber) {
-            const number = String(Date.now()).slice(-6);
-            certNumber.textContent = number.padStart(6, '0');
-        }
-    }
-
-    async function handlePayment(e) {
-        e.preventDefault();
-        
-        if (!validatePaymentData()) return;
-
-        const submitBtn = e.target.querySelector('.btn-pay');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnLoader = submitBtn.querySelector('.btn-loader');
-
-        submitBtn.disabled = true;
-        btnText.style.display = 'none';
-        btnLoader.style.display = 'inline-block';
-
-        try {
-            const formData = {
-                customerName: document.getElementById('customer-name').value,
-                customerEmail: document.getElementById('customer-email').value,
-                customerPhone: document.getElementById('customer-phone').value || '',
-                recipientName: certificateData.recipientName,
-                certificateText: certificateData.certificateText,
-                signatureText: certificateData.signatureText,
-                treeCount: certificateData.treeCount,
-                selectedTemplateId: selectedTemplate?.id,
-                selectedDesign: selectedDesign,
-                currency: certificateData.currency,
-                totalAmount: (certificateData.treeCount * 500 * (exchangeRates[certificateData.currency] || 1)).toFixed(2)
-            };
-
-            console.log('Submitting payment data:', formData); // Debug
-
-            const response = await fetch('/api/create-certificate/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCsrfToken()
-                },
-                body: JSON.stringify(formData)
+            designCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    console.log('Design selected:', card.dataset.design);
+                    selectDesign(card.dataset.design);
+                });
             });
 
-            const result = await response.json();
+            recipientNameInput?.addEventListener('input', updateRecipientName);
+            certificateTextInput?.addEventListener('input', updateCertificateText);
+            signatureTextInput?.addEventListener('input', updateSignatureText);
+            treeCountInput?.addEventListener('input', updateTreeCount);
+            currencySelect?.addEventListener('change', updateCurrency);
+            paymentForm?.addEventListener('submit', handlePayment);
+            document.querySelector('.js-download-certificate')?.addEventListener('click', downloadCertificate);
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => shareAchievement(e.target.dataset.platform));
+            });
 
-            if (result.success) {
-                await processPayment(formData);
-            } else {
-                throw new Error(result.error || 'Server error');
-            }
-        } catch (error) {
-            console.error('Payment error:', error);
-            alert('{% if language == "ru" %}Ошибка при обработке платежа: {% elif language == "kz" %}Төлемді өңдеу қатесі: {% else %}Payment processing error: {% endif %}' + error.message);
-            
-            submitBtn.disabled = false;
-            btnText.style.display = 'inline-block';
-            btnLoader.style.display = 'none';
-        }
-    }
-
-    async function processPayment(formData) {
-        if (typeof cp === 'undefined' || !cp.CloudPayments) {
-            throw new Error('Payment system not loaded');
+            setupCharacterCounters();
         }
 
-        const widget = new cp.CloudPayments();
-        const amount = parseFloat(formData.totalAmount);
-
-        widget.pay('charge', {
-            publicId: 'test_api_00000000000000000000001',
-            description: `{% if language == "ru" %}Посадка ${formData.treeCount} ${getRussianTreeLabel(formData.treeCount)} - Green Mile{% elif language == "kz" %}${formData.treeCount} ағаш отырғызу - Green Mile{% else %}Planting ${formData.treeCount} trees - Green Mile{% endif %}`,
-            amount: amount,
-            currency: formData.currency,
-            accountId: formData.customerEmail,
-            invoiceId: `GM${Date.now()}`,
-            skin: 'modern',
-            data: formData
-        }, {
-            onSuccess: async function(options) {
-                try {
-                    const response = await fetch('/api/payment-success/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCsrfToken()
-                        },
-                        body: JSON.stringify({
-                            ...formData,
-                            paymentId: options.transactionId,
-                            status: 'completed'
-                        })
+        function setupCharacterCounters() {
+            const inputs = [recipientNameInput, certificateTextInput, signatureTextInput];
+            inputs.forEach(input => {
+                if (input) {
+                    input.addEventListener('input', function() {
+                        const counter = this.parentElement.querySelector('.char-counter');
+                        const maxLength = this.getAttribute('maxlength');
+                        if (counter && maxLength) {
+                            counter.textContent = `${this.value.length}/${maxLength}`;
+                            counter.style.color = this.value.length > maxLength * 0.9 ? '#ef4444' : '#6b7280';
+                        }
                     });
-
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        showStep(5);
-                    } else {
-                        throw new Error(result.error || 'Payment processing failed');
-                    }
-                } catch (error) {
-                    console.error('Post-payment processing error:', error);
-                    showStep(5);
                 }
-            },
-            onFail: function(reason, options) {
-                console.error('Payment failed:', reason);
-                alert('{% if language == "ru" %}Оплата не прошла: {% elif language == "kz" %}Төлем өтпеді: {% else %}Payment failed: {% endif %}' + reason);
+            });
+        }
+
+        function showStep(step) {
+            currentStep = step;
+            steps.forEach(s => {
+                s.style.display = s.dataset.step == step ? 'block' : 'none';
+            });
+            if (step === 2) {
+                console.log('Showing Step 2, loading templates for:', selectedDesign);
+                loadTemplatesForDesign(selectedDesign);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                if (validateCurrentStep()) {
+                    showStep(currentStep + 1);
+                } else {
+                    console.log('Validation failed for step:', currentStep);
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        }
+
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1:
+                    console.log("Validation Step 1, selectedDesign:", selectedDesign);
+                    if (!selectedDesign) {
+                        alert('{% if language == "ru" %}Пожалуйста, выберите дизайн{% elif language == "kz" %}Дизайнды таңдаңыз{% else %}Please select a design{% endif %}');
+                        return false;
+                    }
+                    return true;
+                case 2:
+                    return validateTemplateSelection();
+                case 3: 
+                    return validateCertificateData();
+                case 4:
+                    return validatePaymentData();
+                default:
+                    return true;
+            }
+        }
+
+        function validateTemplateSelection() {
+            console.log("Validating template selection, selectedTemplate:", selectedTemplate);
+            if (!selectedTemplate) {
+                alert('{% if language == "ru" %}Пожалуйста, выберите шаблон сертификата{% elif language == "kz" %}Сертификат үлгісін таңдаңыз{% else %}Please select a certificate template{% endif %}');
+                return false;
+            }
+            return true;
+        }
+
+        function validateCertificateData() {
+            if (!certificateData.recipientName) {
+                alert('{% if language == "ru" %}Пожалуйста, введите имя получателя{% elif language == "kz" %}Алушының атын енгізіңіз{% else %}Please enter the recipient name{% endif %}');
+                return false;
+            }
+            return true;
+        }
+
+        function validatePaymentData() {
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerEmail = document.getElementById('customer-email').value.trim();
+            const privacyConsent = document.getElementById('privacy-consent').checked;
+
+            if (!customerName) {
+                alert('{% if language == "ru" %}Пожалуйста, введите ваше имя{% elif language == "kz" %}Атыңызды енгізіңіз{% else %}Please enter your name{% endif %}');
+                return false;
+            }
+
+            if (!customerEmail || !isValidEmail(customerEmail)) {
+                alert('{% if language == "ru" %}Пожалуйста, введите корректный email{% elif language == "kz" %}Дұрыс email енгізіңіз{% else %}Please enter a valid email{% endif %}');
+                return false;
+            }
+
+            if (!privacyConsent) {
+                alert('{% if language == "ru" %}Необходимо согласие на обработку данных{% elif language == "kz" %}Деректерді өңдеуге келісім қажет{% else %}Privacy consent is required{% endif %}');
+                return false;
+            }
+
+            return true;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function selectDesign(design) {
+            selectedDesign = design;
+            selectedTemplate = null;
+            designCards.forEach(card => {
+                card.classList.toggle('active', card.dataset.design === design);
+            });
+            console.log('Selected design:', design, 'Reset selectedTemplate:', selectedTemplate);
+            if (currentStep === 2) {
+                loadTemplatesForDesign(design);
+            }
+            const nextButton = document.querySelector('.js-step-container[data-step="1"] .js-step-next');
+            if (nextButton) {
+                nextButton.disabled = false;
+                console.log('Next button enabled for Step 1');
+            }
+        }
+
+        function loadTemplatesForDesign(design) {
+            const templates = templatesByDesign[design] || [];
+            console.log(`Loading templates for ${design}:`, templates);
+            
+            if (!templateGrid) {
+                console.error('Template grid element not found');
+                return;
+            }
+            
+            templateGrid.innerHTML = '';
+            
+            if (templates.length === 0) {
+                console.warn(`No templates available for ${design}`);
+                templateGrid.innerHTML = `
+                    <div class="no-templates">
+                        <div class="no-templates-icon">📄</div>
+                        <p>{% if language == "ru" %}Нет доступных шаблонов{% elif language == "kz" %}Қолжетімді үлгілер жоқ{% else %}No templates available{% endif %}</p>
+                        <p class="no-templates-help">{% if language == "ru" %}Пожалуйста, попробуйте позже или выберите другой дизайн{% elif language == "kz" %}Кейінірек көріңіз немесе басқа дизайнды таңдаңыз{% else %}Please try again later or choose another design{% endif %}</p>
+                    </div>
+                `;
+                const nextButton = document.querySelector('.js-step-container[data-step="2"] .js-step-next');
+                if (nextButton) nextButton.disabled = true;
+                return;
+            }
+
+            templates.forEach((template, index) => {
+                const templateItem = document.createElement('div');
+                const isSelected = index === 0;
                 
-                const submitBtn = document.querySelector('.btn-pay');
-                const btnText = submitBtn.querySelector('.btn-text');
-                const btnLoader = submitBtn.querySelector('.btn-loader');
+                let imageUrl = template.background_image || getTemplateUrl(design);
+                
+                templateItem.className = 'template-item' + (isSelected ? ' selected' : '');
+                templateItem.dataset.templateId = String(template.id);
+                
+                templateItem.innerHTML = `
+                    <div class="template-image-container">
+                        <img class="template-preview" src="${imageUrl}" 
+                            alt="${template.name || 'Template ' + (index + 1)}"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="template-placeholder" style="display: none;">
+                            <div class="placeholder-icon">🌱</div>
+                            <div class="placeholder-text">${template.name || 'Template ' + (index + 1)}</div>
+                        </div>
+                    </div>
+                    <div class="template-info">
+                        <h4>${template.name || `${design.charAt(0).toUpperCase() + design.slice(1)} Template ${index + 1}`}</h4>
+                        ${template.description ? `<p>${template.description}</p>` : ''}
+                    </div>
+                `;
+                
+                templateItem.addEventListener('click', () => {
+                    selectTemplate(template, templateItem);
+                });
+                
+                templateGrid.appendChild(templateItem);
+                
+                if (isSelected && !selectedTemplate) {
+                    selectTemplate(template, templateItem);
+                }
+            });
+        }
+
+        function selectTemplate(template, templateElement) {
+            selectedTemplate = template;
+            templateIdInput.value = template.id;
+            document.querySelectorAll('.template-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            templateElement.classList.add('selected');
+            console.log('Selected template:', selectedTemplate);
+            updateCertificateStyle();
+            const nextButton = document.querySelector('.js-step-container[data-step="2"] .js-step-next');
+            if (nextButton) {
+                nextButton.disabled = false;
+            }
+        }
+
+        function updateCertificateStyle() {
+            const certificate = document.getElementById('live-certificate');
+            if (certificate && selectedTemplate) {
+                certificate.className = `certificate-live ${selectedDesign}-cert`;
+                if (selectedTemplate.background_image) {
+                    certificate.style.backgroundImage = `url('${selectedTemplate.background_image}')`;
+                    certificate.style.backgroundSize = 'cover';
+                    certificate.style.backgroundPosition = 'center';
+                } else {
+                    certificate.style.backgroundImage = `url('${getTemplateUrl(selectedDesign)}')`;
+                }
+                console.log('Updated certificate style, background:', certificate.style.backgroundImage);
+            } else {
+                console.warn('Certificate element or selectedTemplate missing:', { certificate, selectedTemplate });
+            }
+        }
+
+        function updateRecipientName() {
+            certificateData.recipientName = recipientNameInput.value;
+            updateLivePreview();
+        }
+
+        function updateCertificateText() {
+            certificateData.certificateText = certificateTextInput.value;
+            updateLivePreview();
+        }
+
+        function updateSignatureText() {
+            certificateData.signatureText = signatureTextInput.value;
+            updateLivePreview();
+        }
+
+        function updateTreeCount() {
+            certificateData.treeCount = parseInt(treeCountInput.value) || 10;
+            updateLivePreview();
+            updateSummary();
+        }
+
+        function updateCurrency() {
+            certificateData.currency = currencySelect.value;
+            updateSummary();
+        }
+
+        function updateLivePreview() {
+            if (liveRecipientName) {
+                liveRecipientName.textContent = certificateData.recipientName || 
+                    '{% if language == "ru" %}Имя получателя{% elif language == "kz" %}Алушы аты{% else %}Recipient Name{% endif %}';
+            }
+
+            if (liveCertText) {
+                liveCertText.textContent = certificateData.certificateText || 
+                    '{% if language == "ru" %}за вклад в восстановление лесов Казахстана и защиту окружающей среды{% elif language == "kz" %}Қазақстан ормандарын қалпына келтіру және қоршаған ортаны қорғаудағы үлесі үшін{% else %}for contributing to Kazakhstan\'s forest restoration and environmental protection{% endif %}';
+            }
+
+            if (liveSignature) {
+                liveSignature.textContent = certificateData.signatureText;
+            }
+
+            if (liveTreeCount) {
+                liveTreeCount.textContent = certificateData.treeCount;
+            }
+
+            if (treeLabel) {
+                const language = '{{ language }}';
+                if (language === 'ru') {
+                    treeLabel.textContent = getRussianTreeLabel(certificateData.treeCount);
+                } else if (language === 'kz') {
+                    treeLabel.textContent = 'Ағаштар саны';
+                } else {
+                    treeLabel.textContent = 'Number of trees';
+                }
+            }
+        }
+
+        function updateSummary() {
+            const trees = certificateData.treeCount;
+            const totalKZT = trees * 5000;
+            const rate = exchangeRates[certificateData.currency] || 1;
+            const total = (totalKZT * rate).toFixed(2);
+
+            if (summaryTrees) summaryTrees.textContent = trees;
+            if (summaryTotal) summaryTotal.textContent = `${total} ${certificateData.currency}`;
+        }
+
+        function updateCertificateNumber() {
+            if (certNumber) {
+                const number = String(Date.now()).slice(-6);
+                certNumber.textContent = number.padStart(6, '0');
+            }
+        }
+
+        async function handlePayment(e) {
+            e.preventDefault();
+            
+            if (!validatePaymentData()) return;
+
+            const submitBtn = e.target.querySelector('.btn-pay');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+
+            try {
+                const formData = {
+                    customerName: document.getElementById('customer-name').value,
+                    customerEmail: document.getElementById('customer-email').value,
+                    customerPhone: document.getElementById('customer-phone').value || '',
+                    recipientName: certificateData.recipientName,
+                    certificateText: certificateData.certificateText,
+                    signatureText: certificateData.signatureText,
+                    treeCount: certificateData.treeCount,
+                    templateId: selectedTemplate?.id,
+                    selectedDesign: selectedDesign,
+                    currency: certificateData.currency,
+                    totalAmount: (certificateData.treeCount * 5000 * (exchangeRates[certificateData.currency] || 1)).toFixed(2)
+                };
+
+                console.log('Submitting payment data:', formData);
+
+                const response = await fetch('/api/create-certificate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    await processPayment(formData);
+                } else {
+                    throw new Error(result.error || 'Server error');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('{% if language == "ru" %}Ошибка при обработке платежа: {% elif language == "kz" %}Төлемді өңдеу қатесі: {% else %}Payment processing error: {% endif %}' + error.message);
                 
                 submitBtn.disabled = false;
                 btnText.style.display = 'inline-block';
                 btnLoader.style.display = 'none';
             }
-        });
-    }
-
-    function downloadCertificate() {
-        const step3Container = document.querySelector('.js-step-container[data-step="3"]');
-        const certificate = document.getElementById('live-certificate');
-
-        if (!step3Container || !certificate) {
-            console.error('Certificate elements not found');
-            alert('Error generating certificate. Please try again or contact support.');
-            return;
         }
 
-        const originalStepDisplay = step3Container.style.display;
-        const originalCertPosition = certificate.style.position;
-        const originalCertLeft = certificate.style.left;
-        const originalCertTop = certificate.style.top;
-
-        try {
-            step3Container.style.display = 'block';
-            certificate.style.position = 'absolute';
-            certificate.style.left = '-9999px';
-            certificate.style.top = '0px';
-
-            html2canvas(certificate, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-                width: certificate.offsetWidth,
-                height: certificate.offsetHeight,
-                logging: false
-            }).then(canvas => {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', [210, 297]);
-
-                const pageWidth = 210;
-                const pageHeight = 297;
-
-                pdf.addImage(
-                    canvas.toDataURL('image/png'),
-                    'PNG',
-                    0,
-                    0,
-                    pageWidth,
-                    pageHeight
-                );
-
-                const certNumber = document.querySelector('#cert-number') || { textContent: 'Unknown' };
-                pdf.save(`GreenMile_Certificate_${certNumber.textContent}.pdf`);
-            }).catch(error => {
-                console.error('html2canvas error:', error);
-                alert('Error generating PDF. Please try again.');
-            });
-        } finally {
-            step3Container.style.display = originalStepDisplay;
-            certificate.style.position = originalCertPosition;
-            certificate.style.left = originalCertLeft;
-            certificate.style.top = originalCertTop;
-        }
-    }
-
-    function shareAchievement(platform) {
-        const text = `{% if language == "ru" %}Я посадил(а) ${certificateData.treeCount} ${getRussianTreeLabel(certificateData.treeCount)} с Green Mile! Присоединяйтесь к восстановлению лесов Казахстана.{% elif language == "kz" %}Мен Green Mile арқылы ${certificateData.treeCount} ағаш отырғыздым! Қазақстан ормандарын қалпына келтіруге қосылыңыз.{% else %}I planted ${certificateData.treeCount} trees with Green Mile! Join Kazakhstan's forest restoration.{% endif %}`;
-        const url = window.location.origin;
-        
-        const shareUrls = {
-            telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-            whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`,
-            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`
-        };
-        
-        if (shareUrls[platform]) {
-            window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-        }
-    }
-
-    function getCsrfToken() {
-        let token = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-        if (!token) {
-            token = document.querySelector('input[name="csrfmiddlewaretoken"]')?.value;
-        }
-        if (!token) {
-            const metaTag = document.querySelector('meta[name="csrf-token"]');
-            if (metaTag) {
-                token = metaTag.getAttribute('content');
+        async function processPayment(formData) {
+            if (typeof cp === 'undefined' || !cp.CloudPayments) {
+                throw new Error('Payment system not loaded');
             }
-        }
-        if (!token) {
-            console.warn('CSRF token not found');
-            return '';
-        }
-        return token;
-    }
 
-    VanillaTilt.init(document.getElementById('live-certificate'), {
-        max: 15,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.3,
-        perspective: 1000,
-        scale: 1.02,
-        gyroscope: false
-    });
+            const widget = new cp.CloudPayments();
+            const amount = parseFloat(formData.totalAmount);
 
-    init();
-});
+            widget.pay('charge', {
+                publicId: 'test_api_00000000000000000000001',
+                description: `{% if language == "ru" %}Посадка ${formData.treeCount} ${getRussianTreeLabel(formData.treeCount)} - Наш лес {% elif language == "kz" %}${formData.treeCount} ағаш отырғызу - Наш лес {% else %}Planting ${formData.treeCount} trees - Наш лес {% endif %}`,
+                amount: amount,
+                currency: formData.currency,
+                accountId: formData.customerEmail,
+                invoiceId: `GM${Date.now()}`,
+                skin: 'modern',
+                data: formData
+            }, {
+                onSuccess: async function(options) {
+                    try {
+                        const response = await fetch('/api/payment-success/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCsrfToken()
+                            },
+                            body: JSON.stringify({
+                                invoiceId: options.invoiceId,
+                                accountId: formData.customerEmail,
+                                transactionId: options.transactionId,
+                                amount: formData.totalAmount,
+                                currency: formData.currency
+                            })
+                        });
+
+                        const paymentResult = await response.json();
+                        if (paymentResult.success) {
+                            console.log('Payment successful, transaction ID:', options.transactionId);
+                            showStep(5); // Show success screen
+                        } else {
+                            throw new Error(paymentResult.error || 'Payment confirmation failed');
+                        }
+                    } catch(error){
+                        console.error('Post-payment processing error:', error);
+                        showStep(5);
+                    }
+                 }, onFail: function(reason, options) {
+                            console.error('Payment failed:', reason);
+                            alert('{% if language == "ru" %}Ошибка платежа: {% elif language == "kz" %}Төлем қатесі: {% else %}Payment error: {% endif %}' + reason);
+                            submitBtn.disabled = false;
+                            btnText.style.display = 'inline-block';
+                            btnLoader.style.display = 'none';
+                        },
+                        onComplete: function() {
+                            submitBtn.disabled = false;
+                            btnText.style.display = 'inline-block';
+                            btnLoader.style.display = 'none';
+                    }
+                });
+            }
+
+            async function downloadCertificate() {
+                const certificate = document.getElementById('live-certificate');
+                if (!certificate) {
+                    console.error('Certificate element not found');
+                    return;
+                }
+
+                try {
+                    const canvas = await html2canvas(certificate, {
+                        scale: 2, // Higher resolution for sharpness
+                        useCORS: true,
+                        backgroundColor: null
+                    });
+
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'landscape',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                    pdf.addImage(imgData, 'PNG', 0, (pdf.internal.pageSize.getHeight() - pdfHeight) / 2, pdfWidth, pdfHeight);
+                    pdf.save(`GreenMile_Certificate_${certNumber.textContent}.pdf`);
+                    console.log('Certificate downloaded successfully');
+                } catch (error) {
+                    console.error('Download error:', error);
+                    alert('{% if language == "ru" %}Ошибка при скачивании сертификата{% elif language == "kz" %}Сертификатты жүктеу қатесі{% else %}Error downloading certificate{% endif %}');
+                }
+            }
+
+            function shareAchievement(platform) {
+                const shareUrl = window.location.origin + '/certificate/' + certNumber.textContent;
+                const shareText = '{% if language == "ru" %}Я посадил(а) деревья с Наш лес ! Посмотрите мой сертификат!{% elif language == "kz" %}Мен Наш лесарқылы ағаш отырғыздым! Менің сертификатымды қараңыз!{% else %}I planted trees with Наш лес ! Check out my certificate!{% endif %}';
+                let url = '';
+
+                switch (platform) {
+                    case 'telegram':
+                        url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+                        break;
+                    case 'whatsapp':
+                        url = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+                        break;
+                    case 'facebook':
+                        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                        break;
+                    default:
+                        console.warn('Unsupported platform:', platform);
+                        return;
+                }
+
+                window.open(url, '_blank');
+                console.log(`Sharing on ${platform}: ${shareUrl}`);
+            }
+
+            function getCsrfToken() {
+                const name = 'csrftoken';
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const [key, value] = cookie.trim().split('=');
+                    if (key === name) {
+                        return decodeURIComponent(value);
+                    }
+                }
+                return '';
+            }
+
+            // Initialize VanillaTilt for certificate preview
+            VanillaTilt.init(document.getElementById('live-certificate'), {
+                max: 15,
+                speed: 400,
+                glare: true,
+                'max-glare': 0.3,
+                scale: 1.02,
+                perspective: 1000,
+                easing: 'cubic-bezier(.03,.98,.52,.99)'
+            });
+
+            // Initialize the page
+            init();
+        });
 </script>
 {% endblock %}

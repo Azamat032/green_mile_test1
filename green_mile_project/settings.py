@@ -3,6 +3,9 @@ from pathlib import Path
 
 import dj_database_url
 from django.core.management.utils import get_random_secret_key
+from django.conf.urls.static import static
+
+from django.conf import settings
 from environs import Env
 
 
@@ -29,6 +32,7 @@ DEFAULT_FROM_EMAIL = os.getenv(
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG_TOOL")
+
 ALLOWED_HOSTS = env.list(
     'ALLOWED_HOSTS', ['127.0.0.1', 'localhost', "172.20.10.2:8000", "*"])
 
@@ -196,11 +200,12 @@ try:
 except ImportError:
     pass
 
-# Static Files
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
