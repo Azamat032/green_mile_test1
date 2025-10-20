@@ -1,0 +1,596 @@
+{% extends "basement/base.html" %}
+{% load static %}
+
+{% block header_section %}
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=de3329d4-ff91-43e7-a39c-42ee66b6557a&lang=ru_RU" type="text/javascript"></script>
+{% endblock header_section %}
+
+{% block style %}
+    html {
+        scroll-behavior: smooth;
+    }
+    section {
+        scroll-margin-top: 80px;
+    }
+    .volunteer-section-link {
+        transition: all 0.3s ease;
+    }
+
+    .volunteer-section-link:hover {
+        transform: translateY(-2px);
+    }
+    .nav-link-white {
+        color: #16a34a; /* White for Home and Organizations */
+    }
+
+    .nav-link-green {
+        color: white; /* Green for other links */
+    }
+    .nav-link-blue {
+        color: deepskyblue;
+    }
+    .logo-link {
+        color: #16a34a;
+    }
+
+    /* Video Background Styling */
+    .video-background {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+    .list-img{
+        width: 100px;
+        height:100px
+    }
+    .list-img-info,
+    .list-img-map,
+    .list-img-cert
+    {
+       height:150px 
+    }
+    .list-img-plant{
+        height: 200px;
+        margin-top: 30px;
+    }
+    .map-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    #yandex-map {
+        width: 100%;
+        height: 300px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    @media (min-width: 640px) {
+        #yandex-map {
+            height: 400px;
+        }
+    }
+    .color-logo{
+        color:white;
+    }
+{% endblock style %}
+
+{% block content %}
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <!-- Video Background -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-black/50 z-10"></div>
+        <video class="video-background" autoplay loop muted playsinline>
+            <source src="{% static 'videos/volunteers.mp4' %}" type="video/mp4">
+            {% if language == 'ru' %}Ваш браузер не поддерживает видео.{% elif language == 'kz' %}Браузеріңіз бейнені қолдамайды.{% else %}Your browser does not support the video.{% endif %}
+        </video>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-20 text-center text-white max-w-4xl mx-auto px-4">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            {% if language == 'ru' %}Восстановим леса вместе!{% elif language == 'kz' %}Ормандарды бірге қалпына келтірейік!{% else %}Let's restore forests together!{% endif %}
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 leading-relaxed">
+            {% if language == 'ru' %}Примите участие в конкурсе волонтерских посадок леса и выиграйте до 150 000 рублей!{% elif language == 'kz' %}Орман отырғызу еріктілерінің байқауына қатысып, 150 000 теңгеге дейін жеңіп алыңыз!{% else %}Take part in the volunteer forest planting competition and win up to 150,000 tenge!{% endif %}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="#volunteer-form" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                {% if language == 'ru' %}Стать волонтером{% elif language == 'kz' %}Ерікті болу{% else %}Become a Volunteer{% endif %}
+            </a>
+            <a href="#organizer" class="bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-full font-bold text-lg backdrop-blur-sm transition-all duration-300 transform hover:scale-105 border border-white/30">
+                {% if language == 'ru' %}Стать организатором{% elif language == 'kz' %}Ұйымдастырушы болу{% else %}Become an Organizer{% endif %}
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- How to Become a Volunteer -->
+<section id="volunteer-steps" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-16">
+            {% if language == 'ru' %}Как стать волонтером на посадке леса:{% elif language == 'kz' %}Орман отырғызу еріктісі қалай болуға болады:{% else %}How to become a forest planting volunteer:{% endif %}
+        </h2>
+
+        <div class="max-w-6xl mx-auto">
+            <!-- Step 1 -->
+            <div class="flex flex-col lg:flex-row items-center mb-20">
+                <div class="lg:w-1/3 mb-8 lg:mb-0 flex justify-center">
+                    <div class="relative">
+                        <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
+                            <img src="{% static 'img/map.png' %}" alt="Map" class="list-img-map">
+                        </div>
+                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                            1
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-2/3 lg:pl-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Найдите посадку в своем регионе{% elif language == 'kz' %}Өз аймағыңыздағы отырғызу табыңыз{% else %}Find a planting in your region{% endif %}
+                    </h3>
+                    <p class="text-xl text-gray-700 leading-relaxed">
+                        {% if language == 'ru' %}Используйте нашу интерактивную карту, чтобы найти ближайшие мероприятия по посадке деревьев в вашем регионе.{% elif language == 'kz' %}Өз аймағыңыздағы ең жақын ағаш отырғызу іс-шараларын табу үшін біздің интерактивті картаны пайдаланыңыз.{% else %}Use our interactive map to find the nearest tree planting events in your region.{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="flex flex-col lg:flex-row items-center mb-20">
+                <div class="lg:w-1/3 mb-8 lg:mb-0 flex justify-center order-2 lg:order-1">
+                    <div class="relative">
+                        <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
+                            <img src="{% static 'img/register.png' %}" alt="Register" class="list-img">
+                        </div>
+                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                            2
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-2/3 lg:pr-16 order-1 lg:order-2">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Зарегистрируйтесь на мероприятие{% elif language == 'kz' %}Іс-шараға тіркеліңіз{% else %}Register for the event{% endif %}
+                    </h3>
+                    <p class="text-xl text-gray-700 leading-relaxed">
+                        {% if language == 'ru' %}Заполните простую форму регистрации, указав свои контактные данные и предпочтительные даты участия.{% elif language == 'kz' %}Байланыс деректеріңізді және қатысуға арналған қалаған күндерін көрсете отырып, қарапайым тіркеу формасын толтырыңыз.{% else %}Fill out a simple registration form with your contact details and preferred participation dates.{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="flex flex-col lg:flex-row items-center mb-20">
+                <div class="lg:w-1/3 mb-8 lg:mb-0 flex justify-center">
+                    <div class="relative">
+                        <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
+                            <img src="{% static 'img/info.png' %}" alt="Information" class="list-img-info">
+                        </div>
+                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                            3
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-2/3 lg:pl-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Получите подробную информацию{% elif language == 'kz' %}Егжей-тегжейлі ақпарат алыңыз{% else %}Get detailed information{% endif %}
+                    </h3>
+                    <p class="text-xl text-gray-700 leading-relaxed">
+                        {% if language == 'ru' %}После регистрации вы получите всю необходимую информацию от организатора: место, время, что взять с собой и инструкции по посадке.{% elif language == 'kz' %}Тіркелгеннен кейін сіз ұйымдастырушыдан барлық қажетті ақпаратты аласыз: орын, уақыт, өзіңізбен нені алу керек және отырғызу бойынша нұсқаулар.{% else %}After registration, you will receive all necessary information from the organizer: location, time, what to bring, and planting instructions.{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="flex flex-col lg:flex-row items-center mb-20">
+                <div class="lg:w-1/3 mb-8 lg:mb-0 flex justify-center order-2 lg:order-1">
+                    <div class="relative">
+                        <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
+                            <img src="{% static 'img/plant.png' %}" alt="Plant" class="list-img-plant">
+                        </div>
+                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                            4
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-2/3 lg:pr-16 order-1 lg:order-2">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Приходите и сажайте деревья{% elif language == 'kz' %}Келіп, ағаштарды отырғызыңыз{% else %}Come and plant trees{% endif %}
+                    </h3>
+                    <p class="text-xl text-gray-700 leading-relaxed">
+                        {% if language == 'ru' %}Приходите на мероприятие, следуйте инструкциям организаторов и помогите посадить новые деревья для будущего нашей страны.{% elif language == 'kz' %}Іс-шараға келіңіз, ұйымдастырушылардың нұсқауларын орындаңыз және еліміздің болашағы үшін жаңа ағаштарды отырғызуға көмектесіңіз.{% else %}Come to the event, follow the organizers' instructions, and help plant new trees for our country's future.{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="flex flex-col lg:flex-row items-center">
+                <div class="lg:w-1/3 mb-8 lg:mb-0 flex justify-center">
+                    <div class="relative">
+                        <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center shadow-lg">
+                            <img src="{% static 'img/certificate.png' %}" alt="Certificate" class="list-img-cert">
+                        </div>
+                        <div class="absolute -top-4 -left-4 w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+                            5
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-2/3 lg:pl-16">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Получите сертификат{% elif language == 'kz' %}Сертификат алыңыз{% else %}Get a certificate{% endif %}
+                    </h3>
+                    <p class="text-xl text-gray-700 leading-relaxed">
+                        {% if language == 'ru' %}После участия вы получите благодарственное письмо и сертификат волонтера, подтверждающий ваш вклад в восстановление лесов.{% elif language == 'kz' %}Қатысқаннан кейін сіз алғыс хаты және ормандарды қалпына келтірудегі үлесіңізді растайтын ерікті сертификатын аласыз.{% else %}After participation, you will receive a letter of appreciation and a volunteer certificate confirming your contribution to forest restoration.{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How to Become an Organizer -->
+<section id="organizer" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-16">
+            {% if language == 'ru' %}Как стать организатором посадки леса:{% elif language == 'kz' %}Орман отырғызу ұйымдастырушысы қалай болуға болады:{% else %}How to become a forest planting organizer:{% endif %}
+        </h2>
+
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <img src="{% static 'img/document.png' %}" alt="Document" class="list-img">
+                    </div>
+                    <div class="text-green-600 font-bold text-lg mb-2">{% if language == 'ru' %}Шаг 1{% elif language == 'kz' %}1-қадам{% else %}Step 1{% endif %}</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Ознакомьтесь с положением{% elif language == 'kz' %}Ережені оқып шығыңыз{% else %}Read the regulations{% endif %}
+                    </h3>
+                    <p class="text-gray-700">
+                        {% if language == 'ru' %}Изучите правила и требования к организаторам посадок.{% elif language == 'kz' %}Отырғызу ұйымдастырушыларына арналған ережелер мен талаптарды зерттеңіз.{% else %}Study the rules and requirements for planting organizers.{% endif %}
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <img src="{% static 'img/register.png' %}" alt="Register" class="list-img-register">
+                    </div>
+                    <div class="text-green-600 font-bold text-lg mb-2">{% if language == 'ru' %}Шаг 2{% elif language == 'kz' %}2-қадам{% else %}Step 2{% endif %}</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Зарегистрируйтесь на сайте{% elif language == 'kz' %}Сайтта тіркеліңіз{% else %}Register on the website{% endif %}
+                    </h3>
+                    <p class="text-gray-700">
+                        {% if language == 'ru' %}Создайте аккаунт организатора на нашей платформе.{% elif language == 'kz' %}Біздің платформада ұйымдастырушы тіркелгісін жасаңыз.{% else %}Create an organizer account on our platform.{% endif %}
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <img src="{% static 'img/event.png' %}" alt="Event" class="list-img">
+                    </div>
+                    <div class="text-green-600 font-bold text-lg mb-2">{% if language == 'ru' %}Шаг 3{% elif language == 'kz' %}3-қадам{% else %}Step 3{% endif %}</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Создайте мероприятие{% elif language == 'kz' %}Іс-шара құрыңыз{% else %}Create an event{% endif %}
+                    </h3>
+                    <p class="text-gray-700">
+                        {% if language == 'ru' %}Заполните форму создания мероприятия с деталями посадки.{% elif language == 'kz' %}Отырғызу мәліметтері бар іс-шараны құру формасын толтырыңыз.{% else %}Fill out the event creation form with planting details.{% endif %}
+                    </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <img src="{% static 'img/plant.png' %}" alt="Plant" class="list-img">
+                    </div>
+                    <div class="text-green-600 font-bold text-lg mb-2">{% if language == 'ru' %}Шаг 4{% elif language == 'kz' %}4-қадам{% else %}Step 4{% endif %}</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        {% if language == 'ru' %}Проведите посадку{% elif language == 'kz' %}Отырғызуды өткізіңіз{% else %}Conduct the planting{% endif %}
+                    </h3>
+                    <p class="text-gray-700">
+                        {% if language == 'ru' %}Организуйте и проведите мероприятие с волонтерами.{% elif language == 'kz' %}Еріктілермен іс-шараны ұйымдастырыңыз және өткізіңіз.{% else %}Organize and conduct the event with volunteers.{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="#organizer-form" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    {% if language == 'ru' %}Стать организатором{% elif language == 'kz' %}Ұйымдастырушы болу{% else %}Become an Organizer{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-12">
+            {% if language == 'ru' %}Карта посадок{% elif language == 'kz' %}Отырғызу картасы{% else %}Planting Map{% endif %}
+        </h2>
+        
+        <div class="max-w-6xl mx-auto">
+            <div class="map-container relative bg-green-50 rounded-xl p-6 sm:p-8 shadow-md" data-language="{{ language }}">
+                <div id="yandex-map" style="width: 100%; height: 300px; border-radius: 8px; overflow: hidden;"></div>
+                <div class="mt-8 sm:mt-12 bg-white rounded-xl p-5 sm:p-6 shadow-md">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-bold text-green-800 mb-3 sm:mb-4" id="region-title">
+                                {% if language == 'ru' %}Выберите регион{% elif language == 'kz' %}Аймақты таңдаңыз{% else %}Select a region{% endif %}
+                            </h3>
+                            <div class="space-y-2" id="region-stats">
+                                <p class="text-gray-600 text-sm sm:text-base">
+                                    {% if language == 'ru' %}Нажмите на метку на карте, чтобы увидеть информацию о лесах и проектах{% elif language == 'kz' %}Ормандар мен жобалар туралы ақпаратты көру үшін картадағы белгіні басыңыз{% else %}Click on a marker on the map to see information about forests and projects{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-base sm:text-lg font-semibold text-green-700 mb-2 sm:mb-3">
+                                {% if language == 'ru' %}Статистика посадок{% elif language == 'kz' %}Отырғызу статистикасы{% else %}Planting Statistics{% endif %}
+                            </h4>
+                            <div class="bg-green-50 rounded-lg p-3 sm:p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-green-800 text-sm sm:text-base">{% if language == 'ru' %}Всего посажено{% elif language == 'kz' %}Барлығы отырғызылды{% else %}Total Planted{% endif %}</span>
+                                    <span class="font-bold text-green-900 text-sm sm:text-base">{{ statistics.treesPlanted|floatformat:0 }} {{ hero.treesText }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-green-800 text-sm sm:text-base">{% if language == 'ru' %}Цель{% elif language == 'kz' %}Мақсат{% else %}Target{% endif %}</span>
+                                    <span class="font-bold text-green-900 text-sm sm:text-base">{{ statistics.targetTrees|floatformat:0 }} {{ hero.treesText }}</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1.5 sm:h-2 mt-2 sm:mt-3">
+                                    <div class="bg-green-600 h-1.5 sm:h-2 rounded-full" style="width: {{ progress_percentage|floatformat:0 }}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <a href="{% url 'main_app:reports' %}" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    {% if language == 'ru' %}Смотреть отчеты о посадках{% elif language == 'kz' %}Отырғызу есептерін көру{% else %}View Planting Reports{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/card.js' %}"></script>
+</section>
+
+<!-- Volunteer Form Section -->
+<section id="volunteer-form" class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-16">
+            {% if language == 'ru' %}Стать волонтером{% elif language == 'kz' %}Ерікті болу{% else %}Become a Volunteer{% endif %}
+        </h2>
+        
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl p-8 shadow-lg">
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="volunteer-name" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Имя{% elif language == 'kz' %}Аты{% else %}Name{% endif %} *
+                            </label>
+                            <input type="text" id="volunteer-name" name="name" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label for="volunteer-email" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Электронная почта{% elif language == 'kz' %}Электрондық пошта{% else %}Email{% endif %} *
+                            </label>
+                            <input type="email" id="volunteer-email" name="email" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="volunteer-phone" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Телефон{% elif language == 'kz' %}Телефон{% else %}Phone{% endif %}
+                            </label>
+                            <input type="tel" id="volunteer-phone" name="phone" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label for="volunteer-region" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Регион{% elif language == 'kz' %}Аймақ{% else %}Region{% endif %} *
+                            </label>
+                            <select id="volunteer-region" name="region" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                                <option value="">{% if language == 'ru' %}Выберите регион{% elif language == 'kz' %}Аймақты таңдаңыз{% else %}Select a region{% endif %}</option>
+                                <option value="almaty">{% if language == 'ru' %}Алматы{% elif language == 'kz' %}Алматы{% else %}Almaty{% endif %}</option>
+                                <option value="nur-sultan">{% if language == 'ru' %}Нур-Султан{% elif language == 'kz' %}Нұр-Сұлтан{% else %}Nur-Sultan{% endif %}</option>
+                                <option value="shymkent">{% if language == 'ru' %}Шымкент{% elif language == 'kz' %}Шымкент{% else %}Shymkent{% endif %}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            {% if language == 'ru' %}Предпочтительные даты{% elif language == 'kz' %}Қалаған күндер{% else %}Preferred dates{% endif %}
+                        </label>
+                        <div class="flex flex-wrap gap-4">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="dates" value="weekends" class="rounded border-gray-300 text-green-500 focus:ring-green-500">
+                                <span class="ml-2">{% if language == 'ru' %}Выходные{% elif language == 'kz' %}Демалыс күндері{% else %}Weekends{% endif %}</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="dates" value="weekdays" class="rounded border-gray-300 text-green-500 focus:ring-green-500">
+                                <span class="ml-2">{% if language == 'ru' %}Будни{% elif language == 'kz' %}Жұмыс күндері{% else %}Weekdays{% endif %}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <label for="volunteer-experience" class="block text-gray-700 font-semibold mb-2">
+                            {% if language == 'ru' %}Опыт волонтерства{% elif language == 'kz' %}Еріктілік тәжірибесі{% else %}Volunteer experience{% endif %}
+                        </label>
+                        <textarea id="volunteer-experience" name="experience" rows="4" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="{% if language == 'ru' %}Расскажите о вашем опыте волонтерства (если есть){% elif language == 'kz' %}Еріктілік тәжірибеңіз туралы айтыңыз (егер бар болса){% else %}Tell us about your volunteer experience (if any){% endif %}"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        {% if language == 'ru' %}Отправить заявку{% elif language == 'kz' %}Өтініш жіберу{% else %}Submit Application{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Organizer Form Section -->
+<section id="organizer-form" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-16">
+            {% if language == 'ru' %}Стать организатором{% elif language == 'kz' %}Ұйымдастырушы болу{% else %}Become an Organizer{% endif %}
+        </h2>
+        
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl p-8 shadow-lg border-2 border-green-100">
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="organizer-name" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Имя и фамилия{% elif language == 'kz' %}Аты және тегі{% else %}Full Name{% endif %} *
+                            </label>
+                            <input type="text" id="organizer-name" name="name" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label for="organizer-email" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Электронная почта{% elif language == 'kz' %}Электрондық пошта{% else %}Email{% endif %} *
+                            </label>
+                            <input type="email" id="organizer-email" name="email" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="organizer-phone" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Телефон{% elif language == 'kz' %}Телефон{% else %}Phone{% endif %} *
+                            </label>
+                            <input type="tel" id="organizer-phone" name="phone" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label for="organizer-organization" class="block text-gray-700 font-semibold mb-2">
+                                {% if language == 'ru' %}Организация{% elif language == 'kz' %}Ұйым{% else %}Organization{% endif %}
+                            </label>
+                            <input type="text" id="organizer-organization" name="organization" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="organizer-region" class="block text-gray-700 font-semibold mb-2">
+                            {% if language == 'ru' %}Регион планируемой посадки{% elif language == 'kz' %}Жоспарланған отырғызу аймағы{% else %}Region of planned planting{% endif %} *
+                        </label>
+                        <select id="organizer-region" name="region" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                            <option value="">{% if language == 'ru' %}Выберите регион{% elif language == 'kz' %}Аймақты таңдаңыз{% else %}Select a region{% endif %}</option>
+                            <option value="almaty">{% if language == 'ru' %}Алматы{% elif language == 'kz' %}Алматы{% else %}Almaty{% endif %}</option>
+                            <option value="nur-sultan">{% if language == 'ru' %}Нур-Султан{% elif language == 'kz' %}Нұр-Сұлтан{% else %}Nur-Sultan{% endif %}</option>
+                            <option value="shymkent">{% if language == 'ru' %}Шымкент{% elif language == 'kz' %}Шымкент{% else %}Shymkent{% endif %}</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-8">
+                        <label for="organizer-plan" class="block text-gray-700 font-semibold mb-2">
+                            {% if language == 'ru' %}План посадки{% elif language == 'kz' %}Отырғызу жоспары{% else %}Planting Plan{% endif %}
+                        </label>
+                        <textarea id="organizer-plan" name="plan" rows="5" class="w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="{% if language == 'ru' %}Опишите ваш план посадки: предполагаемое количество деревьев, сроки, доступные ресурсы и т.д.{% elif language == 'kz' %}Отырғызу жоспарыңызды сипаттаңыз: болжамды ағаш саны, мерзімдер, қолжетімді ресурстар және т.б.{% else %}Describe your planting plan: estimated number of trees, timelines, available resources, etc.{% endif %}"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        {% if language == 'ru' %}Отправить заявку{% elif language == 'kz' %}Өтініш жіберу{% else %}Submit Application{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-20 bg-green-600 text-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">
+            {% if language == 'ru' %}Наши достижения{% elif language == 'kz' %}Біздің жетістіктеріміз{% else %}Our Achievements{% endif %}
+        </h2>
+        
+        <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div class="text-center">
+                <div class="text-5xl md:text-6xl font-bold mb-2">10+</div>
+                <div class="text-xl">{% if language == 'ru' %}лет работы{% elif language == 'kz' %}жыл жұмыс{% else %}years of work{% endif %}</div>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl md:text-6xl font-bold mb-2">1M+</div>
+                <div class="text-xl">{% if language == 'ru' %}посаженных деревьев{% elif language == 'kz' %}отырғызылған ағаш{% else %}planted trees{% endif %}</div>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl md:text-6xl font-bold mb-2">50+</div>
+                <div class="text-xl">{% if language == 'ru' %}регионов{% elif language == 'kz' %}аймақ{% else %}regions{% endif %}</div>
+            </div>
+            <div class="text-center">
+                <div class="text-5xl md:text-6xl font-bold mb-2">10K+</div>
+                <div class="text-xl">{% if language == 'ru' %}волонтеров{% elif language == 'kz' %}ерікті{% else %}volunteers{% endif %}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form submission handling
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simple form validation
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            if (isValid) {
+                // Show success message
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalText = submitButton.textContent;
+                
+                submitButton.textContent = '{% if language == "ru" %}Отправляется...{% elif language == "kz" %}Жіберілуде...{% else %}Sending...{% endif %}';
+                submitButton.disabled = true;
+                
+                setTimeout(() => {
+                    submitButton.textContent = '{% if language == "ru" %}Успешно отправлено!{% elif language == "kz" %}Сәтті жіберілді!{% else %}Successfully sent!{% endif %}';
+                    submitButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    submitButton.classList.add('bg-green-600');
+                    
+                    setTimeout(() => {
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
+                        submitButton.classList.remove('bg-green-600');
+                        submitButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                        form.reset();
+                    }, 2000);
+                }, 1000);
+            }
+        });
+    });
+
+    // Add loading states to buttons
+    const buttons = document.querySelectorAll('a[href^="#"]');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            this.classList.add('transform', 'scale-95');
+            setTimeout(() => {
+                this.classList.remove('transform', 'scale-95');
+            }, 150);
+        });
+    });
+});
+</script>
+
+{% endblock %}

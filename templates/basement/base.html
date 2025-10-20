@@ -10,281 +10,284 @@
     <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     {% block header_section %}{% endblock header_section %}
 </head>
+
+
+
 <style>
 {% block style %}
-/* Reset default margins and padding globally */
-html, body, main {
-    margin: 0;
-    padding: 0;
-}
-
-@media (max-width: 640px) {
-    body, main {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
+    /* Reset default margins and padding globally */
+    html, body, main {
+        margin: 0;
+        padding: 0;
     }
-}
 
-/* Ensure toast container doesn't affect layout when empty */
-#toast-container:empty {
-    pointer-events: none;
-    display: none;
-}
+    @media (max-width: 640px) {
+        body, main {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+    }
 
-.fixed-bg-section {
-    position: relative;
-    min-height: 100vh;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-.fixed-bg-section2 {
-    position: relative;
-    min-height: 50vh;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-radius: 20px;
-    align-items: center;
-}
+    /* Ensure toast container doesn't affect layout when empty */
+    #toast-container:empty {
+        pointer-events: none;
+        display: none;
+    }
 
-.scrolling-content {
-    position: relative;
-    z-index: 3;
-}
+    .fixed-bg-section {
+        position: relative;
+        min-height: 100vh;
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+    .fixed-bg-section2 {
+        position: relative;
+        min-height: 50vh;
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        border-radius: 20px;
+        align-items: center;
+    }
 
-.importance-card {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-}
+    .scrolling-content {
+        position: relative;
+        z-index: 3;
+    }
 
-.importance-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-}
+    .importance-card {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+    }
 
-.icon-container {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
+    .importance-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
 
-.bubble-wrapper {
-    position: relative;
-    margin-left: 60px;
-}
+    .icon-container {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
 
-.bubble-left {
-    position: absolute;
-    left: -60px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 50px;
-    height: 40px;
-}
+    .bubble-wrapper {
+        position: relative;
+        margin-left: 60px;
+    }
 
-.segment-border1 {
-    position: absolute;
-    top: 15px;
-    left: 0;
-    width: 30px;
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.5);
-}
+    .bubble-left {
+        position: absolute;
+        left: -60px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 40px;
+    }
 
-.segment--corner-tail {
-    position: absolute;
-    top: 15px;
-    left: 30px;
-    width: 20px;
-    height: 20px;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-    border-left: 2px solid rgba(255, 255, 255, 0.5);
-    border-bottom-left-radius: 10px;
-}
+    .segment-border1 {
+        position: absolute;
+        top: 15px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
 
-.segment-border-3 {
-    position: absolute;
-    top: 35px;
-    left: 0;
-    width: 10px;
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.5);
-}
-
-.bubble-text {
-    line-height: 1.4;
-}
-
-.story-highlight {
-    border-left: 4px solid #16a34a;
-    padding-left: 1rem;
-    font-style: italic;
-    margin: 1.5rem 0;
-}
-
-.big-centered-button {
-    display: flex;
-    justify-content: center;
-    margin-top: 3rem;
-    width: 100%;
-}
-
-.big-button {
-    background-color: #16a34a;
-    color: white;
-    padding: 1.5rem 3rem;
-    font-size: 1.5rem;
-    font-weight: bold;
-    border-radius: 50px;
-    text-decoration: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-align: center;
-    min-width: 280px;
-}
-
-.big-button:hover {
-    background-color: #15803d;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-
-.map-container {
-    position: relative;
-    overflow: visible;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.map-point {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #16a34a;
-    border: 3px solid white;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    z-index: 100;
-}
-
-.map-point:hover, .map-point.active {
-    transform: translate(-50%, -50%) scale(1.3);
-    background: #15803d;
-}
-
-.map-point::before {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    border: 2px solid #16a34a;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0.6;
-}
-
-.map-point:hover::before, .map-point.active::before {
-    border-color: #15803d;
-}
-
-.map-point span {
-    position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    padding: 6px 12px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #166534;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    white-space: nowrap;
-    pointer-events: none;
-}
-
-.map-point:hover span, .map-point.active span {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-5px);
-}
-
-@keyframes pulse {
-    0% {
+    .segment--corner-tail {
+        position: absolute;
+        top: 15px;
+        left: 30px;
         width: 20px;
         height: 20px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+        border-left: 2px solid rgba(255, 255, 255, 0.5);
+        border-bottom-left-radius: 10px;
+    }
+
+    .segment-border-3 {
+        position: absolute;
+        top: 35px;
+        left: 0;
+        width: 10px;
+        height: 2px;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .bubble-text {
+        line-height: 1.4;
+    }
+
+    .story-highlight {
+        border-left: 4px solid #16a34a;
+        padding-left: 1rem;
+        font-style: italic;
+        margin: 1.5rem 0;
+    }
+
+    .big-centered-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 3rem;
+        width: 100%;
+    }
+
+    .big-button {
+        background-color: #16a34a;
+        color: white;
+        padding: 1.5rem 3rem;
+        font-size: 1.5rem;
+        font-weight: bold;
+        border-radius: 50px;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        display: inline-block;
+        text-align: center;
+        min-width: 280px;
+    }
+
+    .big-button:hover {
+        background-color: #15803d;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .map-container {
+        position: relative;
+        overflow: visible;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .map-point {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #16a34a;
+        border: 3px solid white;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        z-index: 100;
+    }
+
+    .map-point:hover, .map-point.active {
+        transform: translate(-50%, -50%) scale(1.3);
+        background: #15803d;
+    }
+
+    .map-point::before {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        border: 2px solid #16a34a;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         opacity: 0.6;
     }
-    100% {
-        width: 40px;
-        height: 40px;
-        opacity: 0;
-    }
-}
 
-#yandex-map {
-    width: 100%;
-    height: 500px;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-@media (max-width: 640px) {
-    .map-point {
-        width: 15px;
-        height: 15px;
+    .map-point:hover::before, .map-point.active::before {
+        border-color: #15803d;
     }
 
     .map-point span {
-        font-size: 10px;
-        padding: 4px 8px;
+        position: absolute;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #166534;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    .map-point:hover span, .map-point.active span {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-5px);
+    }
+
+    @keyframes pulse {
+        0% {
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+        }
+        100% {
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+        }
     }
 
     #yandex-map {
-        height: 350px;
+        width: 100%;
+        height: 500px;
+        border-radius: 12px;
+        overflow: hidden;
     }
-}
 
-.map-container {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
+    @media (max-width: 640px) {
+        .map-point {
+            width: 15px;
+            height: 15px;
+        }
 
-#yandex-map {
-    width: 100%;
-    height: 500px;
-    border-radius: 12px;
-    overflow: hidden;
-}
+        .map-point span {
+            font-size: 10px;
+            padding: 4px 8px;
+        }
 
-@media (max-width: 640px) {
+        #yandex-map {
+            height: 350px;
+        }
+    }
+
+    .map-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
     #yandex-map {
-        height: 350px;
+        width: 100%;
+        height: 500px;
+        border-radius: 12px;
+        overflow: hidden;
     }
-}
+
+    @media (max-width: 640px) {
+        #yandex-map {
+            height: 350px;
+        }
+    }
 {% endblock style %}
 </style>
 <body class="bg-gray-100">
@@ -302,7 +305,11 @@ html, body, main {
         </div>
     {% endif %}
     <header>
-        {% include "basement/navbar.html" %}
+        {% if request.path == '/volunteers/' or request.path|slice:":11" == '/volunteers' %}
+            {% include "basement/navbar_volunteers.html" %}
+        {% else %}
+            {% include "basement/navbar.html" %}
+        {% endif %}
     </header>
     <main>
         {% block content %}

@@ -31,6 +31,16 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
+        :root {
+            --primary-green: #16a34a;
+            --dark-green: #14532d;
+            --sage-green: #a3e635;
+            --light-beige: #f5f5f4;
+            --warm-gray: #d4d4d8;
+            --text-dark: #1f2937;
+            --text-light: #f9fafb;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -39,9 +49,61 @@
             font-family: 'Playfair Display', serif;
         }
 
+        /* Logo Styles */
+        .logo-container {
+            background: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            transform: scale(2);
+        }
+
+        .logo-box:hover .logo-container {
+            box-shadow: 0 0 1px 3px green inset;
+        }
+
+        /* Modern Navbar Styles */
+        .navbar {
+            background: transparent;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .navbar.scrolled {
+            background: rgba(21, 144, 24, 0.5);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .nav-link {
             position: relative;
             padding: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .navbar.scrolled .nav-link {
+            color: white;
         }
 
         .nav-link::after {
@@ -51,7 +113,7 @@
             height: 2px;
             bottom: 0;
             left: 0;
-            background-color: #16a34a;
+            background: linear-gradient(90deg, #16a34a, #22c55e);
             transition: width 0.3s ease;
         }
 
@@ -63,13 +125,25 @@
             width: 100%;
         }
 
+        .nav-link:hover {
+            color: #22c55e;
+        }
+
+        /* Dropdown Styles */
         .dropdown-options {
+            position: absolute;
             opacity: 0;
             transform: translateY(-10px);
             transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: none;
             display: none;
-            animation: slideUp 0.3s ease;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            top: 100%;
+            left: 0;
         }
 
         .dropdown-selector:hover .dropdown-options {
@@ -77,15 +151,47 @@
             transform: translateY(0);
             pointer-events: auto;
             display: block;
-            animation: slideDown 0.3s ease;
         }
 
+        .dropdown-options.upward {
+            top: auto;
+            bottom: 100%;
+            transform: translateY(10px);
+        }
+
+        .dropdown-selector:hover .dropdown-options.upward {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            display: block;
+        }
+
+        .dropdown-options.language-options {
+            min-width: 120px;
+            left: auto;
+            right: 0;
+        }
+
+        .dropdown-options a {
+            color: #4b5563;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-options a:hover {
+            color: #16a34a;
+            background: rgba(22, 163, 74, 0.05);
+            transform: translateX(4px);
+        }
+
+        /* Mobile Menu */
         .mobile-menu {
             transform: translateY(-10px);
             opacity: 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
             pointer-events: none;
             display: none;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
         }
 
         .mobile-menu.open {
@@ -93,7 +199,6 @@
             opacity: 1;
             pointer-events: auto;
             display: block;
-            background-color: white;
             padding-bottom: 1rem;
         }
 
@@ -103,7 +208,18 @@
             transform: translateY(0);
             pointer-events: auto;
             z-index: 60;
-            animation: slideDown 0.3s ease;
+        }
+
+        .mobile-menu a.nav-link-white {
+            color: #16a34a;
+        }
+
+        .mobile-menu a.nav-link-green {
+            color: #16a34a;
+        }
+
+        .navbar.scrolled .mobile-menu a {
+            color: white;
         }
 
         .menu-btn {
@@ -114,43 +230,179 @@
             transform: rotate(90deg);
         }
 
-        @keyframes slideDown {
-            0% {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Button Styles */
+        .modern-btn {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+            transition: all 0.3s ease;
+            color: #ffffff;
+            border-radius: 50px;
         }
 
-        @keyframes slideUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
+        .modern-btn:hover {
+            background: linear-gradient(135deg, #15803d, #16a34a);
+            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .language-btn {
+            background: rgba(243, 244, 246, 0);
+            border: 1px solid rgba(229, 231, 235, 0.6);
+            border-radius: 100%;
+            color: white;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled .language-btn {
+            color: white;
+        }
+
+        .language-btn:hover {
+            background: rgba(249, 250, 251, 1);
+            border-color: #16a34a;
+            color: #16a34a;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.open {
+            display: flex;
+            animation: fadeInDown 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: var(--text-light);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 28rem;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.open .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-green);
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-dark);
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--warm-gray);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content input:focus {
+            border-color: var(--primary-green);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .modal-content button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-green), var(--sage-green));
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background: linear-gradient(135deg, var(--dark-green), var(--primary-green));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+        }
+
+        .modal-content .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: -0.75rem;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .modal-content .success-message {
+            color: var(--primary-green);
+            font-size: 0.875rem;
+            margin-top: -0.75rem;
+            margin-bottom: 1rem;
+            display: none;
+            text-align: center;
+        }
+
+        .modal-content .switch-link {
+            color: var(--primary-green);
+            text-decoration: underline;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .modal-content .switch-link:hover {
+            color: var(--dark-green);
         }
     </style>
 </head>
+
 <body>
-    <header class="bg-white/95 backdrop-blur-md border-b border-green-100/50 sticky top-0 z-50 shadow-sm min-h-[64px]">
-        <div class="container mx-auto">
+    <header class="navbar fixed top-0 left-0 right-0 z-50 min-h-[64px]">
+        <div class="container mx-auto px-4 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <div class="flex items-center space-x-3">
-                    <a href="{% url 'main_app:home' %}" class="flex items-center space-x-3 group">
-                        <div class="bg-green-600 p-2 rounded-lg group-hover:bg-green-700 transition-colors duration-300 shadow-md">
-                            <img src="{% static 'img/logo.png' %}" alt="Tree" class="h-6 w-6" />
+                <div class="flex items-center space-x-3 logo-box">
+                    <a href="{% url 'main_app:home' %}" class="flex items-center space-x-3 logo-link">
+                        <div class="logo-container">
+                            <img src="{% static 'img/logo.png' %}" alt="Tree" />
                         </div>
                         <div>
-                            <h1 class="text-xl font-bold text-green-900 logo-text group-hover:text-green-700 transition-colors duration-300">Наш лес</h1>
-                            <p class="text-xs text-green-600/80 group-hover:text-green-700 transition-colors duration-300">
-                                Восстановление лесов Казахстана
+                            <h1 class="color-logo text-xl font-bold logo-text">Наш лес</h1>
+                            <p class="text-xs color-logo">
+                                Сервис восстановления лесов
                             </p>
                         </div>
                     </a>
@@ -159,54 +411,49 @@
                 <!-- Desktop Navigation -->
                 <nav class="hidden lg:flex items-center space-x-8">
                     <div class="relative dropdown-selector" id="about-selector">
-                        <a href="{% url 'main_app:about' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium flex items-center">
+                        <a href="{% url 'main_app:about' %}" class="nav-link nav-link-white flex items-center">
                             О нас
                             <svg class="w-4 h-4 ml-1 transition-transform duration-300 about-selector-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </a>
-                        <div class="dropdown-options bg-white border border-gray-200/80 rounded-lg shadow-lg mt-36 py-1.5 w-48 backdrop-blur-sm bg-white/95" id="about-options">
-                            <a href="{% url 'main_app:history' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">История</a>
-                            <a href="{% url 'main_app:team' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Команда</a>
-                            <a href="{% url 'main_app:faq' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200 active">FAQ</a>
-                            <a href="{% url 'main_app:reports' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Отчеты</a>
-                            <a href="{% url 'main_app:contact' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Контакты</a>
+                        <div class="dropdown-options rounded-xl mt-2 py-8 w-48" id="about-options">
+                            <a href="{% url 'main_app:history' %}" class="block px-4 py-2.5 roundedraisal-lg mx-2">История</a>
+                            <a href="{% url 'main_app:team' %}" class="block px-4 py-2.5 rounded-lg mx-2">Команда</a>
+                            <a href="{% url 'main_app:faq' %}" class="block px-4 py-2.5 rounded-lg mx-2">FAQ</a>
+                            <a href="{% url 'main_app:reports' %}" class="block px-4 py-2.5 rounded-lg mx-2">Отчеты</a>
+                            <a href="{% url 'main_app:contact' %}" class="block px-4 py-2.5 rounded-lg mx-2">Контакты</a>
                         </div>
                     </div>
-                    <a href="{% url 'main_app:reports' %}" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Отчеты</a>
-                    <a href="#help" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Частным лицам</a>
-                    <a href="#volunteers" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Волонтерам</a>
-                    <a href="#organizations" class="text-gray-700 hover:text-green-600 transition-colors duration-300 nav-link font-medium">Организациям</a>
+                    <a href="{% url 'main_app:reports' %}" class="nav-link nav-link-white">Отчеты</a>
+                    <a href="{% url 'main_app:volunteers' %}" class="nav-link nav-link-white">Волонтерам</a>
+                    <a href="{% url 'main_app:organizations' %}" class="nav-link nav-link-blue">Организациям</a>
                 </nav>
 
                 <!-- Right side -->
                 <div class="flex items-center space-x-4">
                     <!-- Language selector -->
-                    <div class="relative language-selector" id="language-selector">
-                        <button class="border-green-200/70 text-green-700 hover:bg-green-50 border rounded-lg px-3 py-1.5 flex items-center transition-all duration-300 shadow-sm hover:shadow-md">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.5 0a9 9 0 019 9 9 9 0 01-9 9 9 9 0 01-9-9 9 9 0 019-9zm0 2c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z"></path>
-                            </svg>
-                            Рус
-                            <svg class="w-4 h-4 ml-1 transition-transform duration-300 language-selector-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                    <div class="relative dropdown-selector" id="language-selector">
+                        <button class="language-btn mt-2 px-2 mr-5 py-3 flex items-center">
+                            lang
                         </button>
-                        <div class="dropdown-options bg-white border border-gray-200/80 rounded-lg shadow-lg mt-16 py-1.5 w-full min-w-max backdrop-blur-sm bg-white/95" id="language-options">
-                            <a href="{% url 'main_app:set_language' 'ru' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Русский</a>
-                            <a href="{% url 'main_app:set_language' 'kz' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">Қазақша</a>
-                            <a href="{% url 'main_app:set_language' 'en' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-50/80 transition-colors duration-200">English</a>
+                        <div class="dropdown-options language-options rounded-xl py-2 w-full min-w-max" id="language-options">
+                            <a href="{% url 'main_app:set_language' 'ru' %}" class="block px-4 py-2.5 rounded-lg mx-2">Русский</a>
+                            <a href="{% url 'main_app:set_language' 'kz' %}" class="block px-4 py-2.5 rounded-lg mx-2">Қазақша</a>
+                            <a href="{% url 'main_app:set_language' 'en' %}" class="block px-4 py-2.5 rounded-lg mx-2">English</a>
                         </div>
                     </div>
 
-                    <!-- Login button -->
-                    <a href="#" class="hidden md:block bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-lg transition-colors duration-300 shadow-sm hover:shadow-md font-medium">
-                        Войти
-                    </a>
+                    <!-- Register button -->
+                    <button id="register-btn" class="hidden md:block modern-btn text-white mt-2 px-4 py-2 rounded-lg font-medium">
+                        
+                        {% if language == 'ru' %}вход/рег{% elif language == 'kz' %}кіру/тіркелу{% else %}login{% endif %}
+
+                    </button>
 
                     <!-- Mobile menu button -->
-                    <button class="lg:hidden menu-btn p-1.5 rounded-lg hover:bg-green-50 transition-colors duration-300" id="mobile-menu-button">
-                        <svg class="h-6 w-6 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="lg:hidden menu-btn p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300" id="mobile-menu-button">
+                        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
@@ -214,91 +461,95 @@
             </div>
 
             <!-- Mobile Navigation -->
-            <div class="lg:hidden border-t border-green-100/50 mobile-menu" id="mobile-menu">
-                <nav class="bg-white">
+            <div class="lg:hidden mobile-menu" id="mobile-menu">
+                <nav class="py-4">
                     <div class="relative">
-                        <a href="{% url 'main_app:about' %}" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold flex items-center text-base" id="mobile-about-toggle" aria-expanded="false">
+                        <a href="{% url 'main_app:about' %}" class="block nav-link-green hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold flex items-center text-base" id="mobile-about-toggle" aria-expanded="false">
                             О нас
                             <svg class="w-5 h-5 ml-2 transition-transform duration-300 mobile-about-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </a>
-                        <div class="dropdown-options bg-white border-2 border-green-200 rounded-xl shadow-md mt-1 py-2 w-full backdrop-blur-sm bg-white/95 hidden" id="mobile-about-options">
-                            <a href="{% url 'main_app:history' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">История</a>
-                            <a href="{% url 'main_app:team' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">Команда</a>
-                            <a href="{% url 'main_app:faq' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm active">FAQ</a>
-                            <a href="{% url 'main_app:reports' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">Отчеты</a>
-                            <a href="{% url 'main_app:contact' %}" class="block px-4 py-2 text-gray-700 hover:bg-green-100/90 hover:scale-105 transition-all duration-200 font-medium text-sm">Контакты</a>
+                        <div class="dropdown-options rounded-xl shadow-md mt-1 py-2 w-full hidden" id="mobile-about-options">
+                            <a href="{% url 'main_app:history' %}" class="block px-4 py-2.5 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-medium rounded-lg mx-2">История</a>
+                            <a href="{% url 'main_app:team' %}" class="block px-4 py-2.5 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-medium rounded-lg mx-2">Команда</a>
+                            <a href="{% url 'main_app:faq' %}" class="block px-4 py-2.5 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-medium rounded-lg mx-2">FAQ</a>
+                            <a href="{% url 'main_app:reports' %}" class="block px-4 py-2.5 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-medium rounded-lg mx-2">Отчеты</a>
+                            <a href="{% url 'main_app:contact' %}" class="block px-4 py-2.5 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-all duration-200 font-medium rounded-lg mx-2">Контакты</a>
                         </div>
                     </div>
-                    <a href="{% url 'main_app:reports' %}" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Отчеты</a>
-                    <a href="#help" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Частным лицам</a>
-                    <a href="#volunteers" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Волонтерам</a>
-                    <a href="#organizations" class="block text-gray-700 hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-100/90 font-semibold text-base">Организациям</a>
-                    <a href="#" class="block bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">Войти</a>
+                    <a href="{% url 'main_app:reports' %}" class="block nav-link-green hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">Отчеты</a>
+                    <a href="{% url 'main_app:volunteers' %}" class="block nav-link-green hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">Волонтерам</a>
+                    <a href="{% url 'main_app:organizations' %}" class="block nav-link-white hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">Организациям</a>
+                    <button id="mobile-register-btn" class="block modern-btn text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">Вход/рег</button>
                 </nav>
+            </div>
+        </div>
+
+        <!-- Registration Modal -->
+        <div class="modal" id="register-modal">
+            <div class="modal-content">
+                <button class="modal-close">&times;</button>
+                <h2>Регистрация</h2>
+                <form id="register-form" method="POST" action="{% url 'main_app:register' %}">
+                    {% csrf_token %}
+                    <input type="text" name="name" placeholder="Имя" required>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="password" name="password" placeholder="Пароль" required>
+                    <input type="password" name="password_confirm" placeholder="Подтвердите пароль" required>
+                    <p class="error-message" id="error-message"></p>
+                    <p class="success-message" id="success-message"></p>
+                    <button type="submit">Зарегистрироваться</button>
+                    <p class="text-center mt-4">
+                        Уже есть аккаунт? <a href="{% url 'main_app:login' %}" class="switch-link">Войти</a>
+                    </p>
+                </form>
             </div>
         </div>
     </header>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const navbar = document.querySelector('.navbar');
+            let lastScrollTop = 0;
+
+            // Scroll direction handler
+            window.addEventListener('scroll', function() {
+                let currentScroll = window.scrollY;
+                if (currentScroll > lastScrollTop && currentScroll > 20) {
+                    navbar.classList.add('hidden');
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('hidden');
+                    if (currentScroll <= 20) {
+                        navbar.classList.remove('scrolled');
+                    } else {
+                        navbar.classList.add('scrolled');
+                    }
+                }
+                lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+            });
+
             // Language selector functionality
             const languageSelector = document.getElementById('language-selector');
             const languageOptions = document.getElementById('language-options');
-            const languageArrow = document.querySelector('.language-selector-arrow');
             let languageMenuOpen = false;
             let languageHoverTimeout;
 
             languageSelector.addEventListener('mouseenter', function() {
                 clearTimeout(languageHoverTimeout);
                 languageHoverTimeout = setTimeout(() => {
-                    openMenu(languageOptions, languageArrow);
+                    openMenu(languageOptions, null);
                     languageMenuOpen = true;
                 }, 150);
             });
 
             languageSelector.addEventListener('mouseleave', function() {
                 clearTimeout(languageHoverTimeout);
-                if (!languageMenuOpen) {
-                    languageHoverTimeout = setTimeout(() => {
-                        closeMenu(languageOptions, languageArrow);
-                    }, 300);
-                }
-            });
-
-            languageOptions.addEventListener('mouseenter', function() {
-                clearTimeout(languageHoverTimeout);
-            });
-
-            languageOptions.addEventListener('mouseleave', function() {
-                if (!languageMenuOpen) {
-                    languageHoverTimeout = setTimeout(() => {
-                        closeMenu(languageOptions, languageArrow);
-                    }, 150);
-                }
-            });
-
-            languageSelector.querySelector('button').addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (languageMenuOpen) {
-                    closeMenu(languageOptions, languageArrow);
+                languageHoverTimeout = setTimeout(() => {
+                    closeMenu(languageOptions, null);
                     languageMenuOpen = false;
-                } else {
-                    openMenu(languageOptions, languageArrow);
-                    languageMenuOpen = true;
-                }
-            });
-
-            document.addEventListener('click', function(event) {
-                if (languageMenuOpen && !languageSelector.contains(event.target)) {
-                    closeMenu(languageOptions, languageArrow);
-                    languageMenuOpen = false;
-                }
-            });
-
-            languageOptions.addEventListener('click', function(e) {
-                e.stopPropagation();
+                }, 300);
             });
 
             // About dropdown functionality
@@ -318,62 +569,23 @@
 
             aboutSelector.addEventListener('mouseleave', function() {
                 clearTimeout(aboutHoverTimeout);
-                if (!aboutMenuOpen) {
-                    aboutHoverTimeout = setTimeout(() => {
-                        closeMenu(aboutOptions, aboutArrow);
-                    }, 300);
-                }
-            });
-
-            aboutOptions.addEventListener('mouseenter', function() {
-                clearTimeout(aboutHoverTimeout);
-            });
-
-            aboutOptions.addEventListener('mouseleave', function() {
-                if (!aboutMenuOpen) {
-                    aboutHoverTimeout = setTimeout(() => {
-                        closeMenu(aboutOptions, aboutArrow);
-                    }, 150);
-                }
-            });
-
-            aboutSelector.querySelector('a').addEventListener('click', function(e) {
-                e.preventDefault();
-                if (aboutMenuOpen) {
+                aboutHoverTimeout = setTimeout(() => {
                     closeMenu(aboutOptions, aboutArrow);
                     aboutMenuOpen = false;
-                } else {
-                    openMenu(aboutOptions, aboutArrow);
-                    aboutMenuOpen = true;
-                }
+                }, 300);
             });
 
-            document.addEventListener('click', function(event) {
-                if (aboutMenuOpen && !aboutSelector.contains(event.target)) {
-                    closeMenu(aboutOptions, aboutArrow);
-                    aboutMenuOpen = false;
-                }
-            });
-
-            aboutOptions.addEventListener('click', function(e) {
-                e.stopPropagation();
-            });
-
-            // Mobile about dropdown functionality
+            // Mobile about dropdown
             const mobileAboutToggle = document.getElementById('mobile-about-toggle');
             const mobileAboutOptions = document.getElementById('mobile-about-options');
             const mobileAboutArrow = document.querySelector('.mobile-about-arrow');
-            let mobileAboutOpen = false;
 
             if (mobileAboutToggle && mobileAboutOptions) {
                 mobileAboutToggle.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Mobile About Toggle Clicked');
                     mobileAboutOptions.classList.toggle('hidden');
                     mobileAboutArrow.style.transform = mobileAboutOptions.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-                    mobileAboutToggle.setAttribute('aria-expanded', !mobileAboutOptions.classList.contains('hidden'));
-                    mobileAboutOpen = !mobileAboutOptions.classList.contains('hidden');
                 });
             }
 
@@ -389,40 +601,105 @@
                 });
             }
 
-            document.addEventListener('click', function(event) {
-                const isClickInsideMenu = mobileMenu && mobileMenu.contains(event.target);
-                const isClickOnMenuButton = mobileMenuButton && mobileMenuButton.contains(event.target);
+            // Registration modal toggle
+            const registerBtn = document.getElementById('register-btn');
+            const mobileRegisterBtn = document.getElementById('mobile-register-btn');
+            const registerModal = document.getElementById('register-modal');
+            const modalClose = document.querySelector('.modal-close');
+            const registerForm = document.getElementById('register-form');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
 
-                if (!isClickInsideMenu && !isClickOnMenuButton && mobileMenu && mobileMenu.classList.contains('open')) {
-                    mobileMenu.classList.remove('open');
-                    mobileMenuButton.classList.remove('open');
-                    if (mobileAboutOpen && mobileAboutOptions) {
-                        mobileAboutOptions.classList.add('hidden');
-                        mobileAboutArrow.style.transform = 'rotate(0deg)';
-                        mobileAboutToggle.setAttribute('aria-expanded', 'false');
-                        mobileAboutOpen = false;
-                    }
+            function openModal() {
+                registerModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                registerModal.classList.remove('open');
+                document.body.style.overflow = '';
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+                registerForm.reset();
+            }
+
+            registerBtn.addEventListener('click', openModal);
+            mobileRegisterBtn.addEventListener('click', openModal);
+            modalClose.addEventListener('click', closeModal);
+
+            registerModal.addEventListener('click', function(e) {
+                if (e.target === registerModal) {
+                    closeModal();
                 }
             });
 
-            // Helper functions
+            // Form submission
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                errorMessage.style.display = 'none';
+                successMessage.style.display = 'none';
+
+                const formData = new FormData(registerForm);
+                try {
+                    const response = await fetch('{% url 'main_app:register' %}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        successMessage.textContent = data.message;
+                        successMessage.style.display = 'block';
+                        setTimeout(() => {
+                            closeModal();
+                            window.location.href = '{% url 'main_app:test' %}';
+                        }, 2000);
+                    } else {
+                        errorMessage.textContent = data.message;
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    errorMessage.textContent = 'Ошибка сети. Попробуйте позже.';
+                    errorMessage.style.display = 'block';
+                }
+            });
+
             function openMenu(options, arrow) {
+                const parent = options.parentElement;
+                const parentRect = parent.getBoundingClientRect();
+                const dropdownHeight = options.offsetHeight || 200;
+                const spaceBelow = window.innerHeight - parentRect.bottom;
+                const spaceAbove = parentRect.top;
+
+                if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
+                    options.classList.add('upward');
+                } else {
+                    options.classList.remove('upward');
+                }
+
                 options.style.opacity = '1';
                 options.style.transform = 'translateY(0)';
                 options.style.pointerEvents = 'auto';
                 options.style.display = 'block';
-                arrow.style.transform = 'rotate(180deg)';
+                if (arrow) {
+                    arrow.style.transform = options.classList.contains('upward') ? 'rotate(0deg)' : 'rotate(180deg)';
+                }
             }
 
             function closeMenu(options, arrow) {
                 options.style.opacity = '0';
-                options.style.transform = 'translateY(-10px)';
+                options.style.transform = options.classList.contains('upward') ? 'translateY(10px)' : 'translateY(-10px)';
                 options.style.pointerEvents = 'none';
                 options.style.display = 'none';
-                arrow.style.transform = 'rotate(0deg)';
+                if (arrow) {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+                options.classList.remove('upward');
             }
 
-            // Add active class to current page link
             const currentLocation = window.location.href;
             const navLinks = document.querySelectorAll('nav a');
 

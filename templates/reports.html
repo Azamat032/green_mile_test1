@@ -1,5 +1,22 @@
 {% extends "basement/base.html" %}
 {% load static %}
+
+{% block style %}
+.nav-link-white {
+    color: #16a34a; /* White for Home and Organizations */
+}
+
+.nav-link-green {
+    color: white; /* Green for other links */
+}
+.nav-link-blue{
+    color: deepskyblue;
+}
+.logo-link{
+    color: #16a34a;
+}
+{% endblock style %}
+
 {% block content %}
 <section class="py-20 min-h-screen pt-32 bg-gray-50">
     <div class="container mx-auto px-4">

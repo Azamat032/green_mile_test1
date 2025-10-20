@@ -14,6 +14,13 @@ from django.template.loader import render_to_string
 from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 import logging
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from django.core.exceptions import ValidationError
+import re
 
 from .models import CertificateTemplate
 
@@ -615,8 +622,98 @@ def set_language(request, lang):
     return redirect(request.META.get('HTTP_REFERER', reverse('main_app:home')))
 
 
+@csrf_protect
+def register(request):
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
+        password_confirm = request.POST.get('password_confirm', '')
+
+        # Validation
+        if not name or len(name) < 2:
+            logger.error(f"Registration failed: Invalid name - {name}")
+            return JsonResponse({'success': False, 'message': 'Имя должно содержать минимум 2 символа'})
+
+        if not email or not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            logger.error(f"Registration failed: Invalid email - {email}")
+            return JsonResponse({'success': False, 'message': 'Некорректный email'})
+
+        if User.objects.filter(email=email).exists():
+            logger.error(
+                f"Registration failed: Email already exists - {email}")
+            return JsonResponse({'success': False, 'message': 'Email уже зарегистрирован'})
+
+        if User.objects.filter(username=email).exists():
+            logger.error(
+                f"Registration failed: Username already exists - {email}")
+            return JsonResponse({'success': False, 'message': 'Email уже используется как имя пользователя'})
+
+        if len(password) < 8:
+            logger.error(
+                f"Registration failed: Password too short - {len(password)} chars")
+            return JsonResponse({'success': False, 'message': 'Пароль должен содержать минимум 8 символов'})
+
+        if password != password_confirm:
+            logger.error("Registration failed: Passwords do not match")
+            return JsonResponse({'success': False, 'message': 'Пароли не совпадают'})
+
+        try:
+            # Create user
+            user = User.objects.create_user(
+                username=email,  # Using email as username
+                email=email,
+                password=password,
+                first_name=name
+            )
+            user.save()
+            auth_login(request, user)
+            logger.info(f"User registered and logged in successfully: {email}")
+            return JsonResponse({'success': True, 'message': 'Регистрация успешна! Перенаправление...'})
+        except ValidationError as e:
+            logger.error(f"Registration failed: ValidationError - {str(e)}")
+            return JsonResponse({'success': False, 'message': f'Ошибка валидации: {str(e)}'})
+        except Exception as e:
+            logger.error(f"Registration failed: Unexpected error - {str(e)}")
+            return JsonResponse({'success': False, 'message': 'Ошибка сервера. Попробуйте позже.'})
+
+    return redirect('main_app:test')
+
+
 def test(request):
-    return render(request, "test.html")
+
+    language = get_language(request)
+
+    if not request.user.is_authenticated:
+        logger.info("Unauthenticated user redirected to register")
+        return redirect('main_app:register')
+
+    # Validate user data
+    if not request.user.first_name or len(request.user.first_name) < 2 or not request.user.email:
+        logger.error(
+            f"Invalid user data for {request.user.username}: first_name={request.user.first_name}, email={request.user.email}")
+        return JsonResponse({'success': False, 'message': 'Недостаточно данных пользователя. Пожалуйста, обновите профиль.'})
+
+    logger.info(f"Rendering test.html for user: {request.user.username}")
+    context = {
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'contact': site_data.get('contact', {}),
+        'navigation_links': site_data.get('navigation_links', {}),
+        'user': request.user
+    }
+    return render(request, 'test.html', context)
+
+
+def login(request):
+    logger.info("Login view accessed, redirecting to register")
+    return redirect('main_app:register')
+
+
+def logout(request):
+    auth_logout(request)
+    logger.info("User logged out")
+    return redirect('main_app:home')
 
 
 def home(request):
@@ -1146,3 +1243,30 @@ def download_certificate(request, certificate_id):
             'success': False,
             'error': 'Internal server error'
         }, status=500)
+
+
+def volunteers(request):
+    language = get_language(request)
+    context = {
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'navigation_links': site_data.get('navigation_links', {}),
+        'contact': site_data.get('contact', {}),
+    }
+
+    return render(request, 'volunteers.html', context)
+
+
+def organizations(request):
+    language = get_language(request)
+    context = {
+        'title': 'Для организаций - Наш лес',
+        'description': 'Сотрудничество с организациями по восстановлению лесов Казахстана. Корпоративные посадки, сертификаты, углеродная нейтральность.',
+        'keywords': 'организации, корпоративные посадки, сертификаты, углеродный след, экология Казахстан',
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'contact': site_data.get('contact', {}),
+        'navigation_links': site_data.get('navigation_links', {}),
+        'user': request.user
+    }
+    return render(request, "organizations.html", context)

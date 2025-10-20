@@ -10,6 +10,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 {% endblock %}
 
+{% block style %}
+.nav-link-white {
+    color: #16a34a; /* White for Home and Organizations */
+}
+
+.nav-link-green {
+    color: white; /* Green for other links */
+}
+.nav-link-blue{
+    color: deepskyblue;
+}
+.logo-link{
+    color: #16a34a;
+}
+{% endblock style %}
+
+
 {% block content %}
 <div class="certificate-page">
     <div class="page-header">
@@ -187,7 +204,10 @@
                         <div class="cert-border">
                             <div class="cert-header-section">
                                 <div class="cert-logo-section">
-                                    <div class="logo-icon">🌱</div>
+                                    <div class="logo-icon">
+                                        <img src="{% static 'img/logo-white.png' %}" alt="Tree" />
+                                    
+                                    </div>
                                     <div class="org-name">Наш лес </div>
                                 </div>
                                 <div class="cert-number">№ <span id="cert-number">000001</span> / {% now "d.m.Y" %}</div>
