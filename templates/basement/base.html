@@ -327,5 +327,255 @@
     </script>
     {% block js %}
     {% endblock js %}
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 animate-fadeIn">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800" id="authModalTitle">Вход / Регистрация</h2>
+                <button onclick="closeAuthModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <input type="email" name="email" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="your@email.com">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль *</label>
+                    <input type="password" name="password" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="Ваш пароль">
+                </div>
+                
+                <div class="error-message text-red-500 text-sm hidden" id="loginError"></div>
+                
+                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors">
+                    Войти
+                </button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="space-y-4 hidden">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Имя *</label>
+                    <input type="text" name="name" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="Ваше имя">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                    <input type="email" name="email" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="your@email.com">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Телефон (необязательно)</label>
+                    <input type="tel" name="phone"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="+7 XXX XXX XX XX">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль *</label>
+                    <input type="password" name="password" required minlength="8"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="Минимум 8 символов">
+                </div>
+                
+                <!-- ДОБАВЬТЕ ЭТО ПОЛЕ -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль *</label>
+                    <input type="password" name="password_confirm" required minlength="8"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        placeholder="Повторите пароль">
+                </div>
+                
+                <div class="error-message text-red-500 text-sm hidden" id="registerError"></div>
+                
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition-colors">
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <button id="switchToRegister" class="text-blue-500 hover:text-blue-700 text-sm font-medium">
+                    Нет аккаунта? Зарегистрироваться
+                </button>
+                <button id="switchToLogin" class="text-blue-500 hover:text-blue-700 text-sm font-medium hidden">
+                    Есть аккаунт? Войти
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Auth Modal functionality
+        let isLoginForm = true;
+
+        function showAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+            showLoginForm();
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+            resetForms();
+        }
+
+        function showLoginForm() {
+            isLoginForm = true;
+            document.getElementById('authModalTitle').textContent = 'Вход';
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('switchToRegister').classList.remove('hidden');
+            document.getElementById('switchToLogin').classList.add('hidden');
+            clearErrors();
+        }
+
+        function showRegisterForm() {
+            isLoginForm = false;
+            document.getElementById('authModalTitle').textContent = 'Регистрация';
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('switchToRegister').classList.add('hidden');
+            document.getElementById('switchToLogin').classList.remove('hidden');
+            clearErrors();
+        }
+
+        function resetForms() {
+            document.getElementById('loginForm').reset();
+            document.getElementById('registerForm').reset();
+            clearErrors();
+        }
+
+        function clearErrors() {
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('registerError').classList.add('hidden');
+        }
+
+        // Event listeners
+        document.getElementById('switchToRegister').addEventListener('click', showRegisterForm);
+        document.getElementById('switchToLogin').addEventListener('click', showLoginForm);
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            try {
+                submitBtn.textContent = 'Вход...';
+                submitBtn.disabled = true;
+                
+                const response = await fetch('{% url "main_app:login_api" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = result.redirect || '{% url "main_app:profile" %}';
+                } else {
+                    document.getElementById('loginError').textContent = result.message;
+                    document.getElementById('loginError').classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('loginError').textContent = 'Ошибка сети';
+                document.getElementById('loginError').classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        // Register form submission
+        // Register form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const password = formData.get('password');
+            const passwordConfirm = formData.get('password_confirm');
+            
+            // Проверка совпадения паролей на клиенте
+            if (password !== passwordConfirm) {
+                document.getElementById('registerError').textContent = 'Пароли не совпадают';
+                document.getElementById('registerError').classList.remove('hidden');
+                return;
+            }
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            try {
+                submitBtn.textContent = 'Регистрация...';
+                submitBtn.disabled = true;
+                
+                const response = await fetch('{% url "main_app:register_api" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCsrfToken(),
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = '{% url "main_app:profile" %}';
+                } else {
+                    document.getElementById('registerError').textContent = result.message;
+                    document.getElementById('registerError').classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                document.getElementById('registerError').textContent = 'Ошибка сети';
+                document.getElementById('registerError').classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAuthModal();
+            }
+        });
+
+        // Utility function to get CSRF token
+        function getCsrfToken() {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+            return csrfToken ? csrfToken.value : '';
+        }
+
+        
+        </script>
 </body>
 </html>

@@ -1,0 +1,275 @@
+{% extends "basement/base.html" %}
+{% load static %}
+
+{% block style %}
+.nav-link-white { color: #16a34a; }
+.nav-link-green { color: white; }
+.nav-link-blue { color: deepskyblue; }
+.logo-link { color: #16a34a; }
+
+.donation-banner {
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pulse-ring {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+{% endblock style %}
+
+{% block content %}
+<!-- Donation Success Banner (shown if user just donated) -->   
+{% if show_donation_prompt %}
+<div class="donation-banner bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <div class="flex items-center justify-center gap-3">
+            <div class="pulse-ring">🎉</div>
+            <p class="text-lg font-semibold">
+                {% if language == 'ru' %}
+                    Спасибо за пожертвование! Зарегистрируйтесь, чтобы получить сертификат и отслеживать ваш вклад
+                {% elif language == 'kz' %}
+                    Қайырымдылық үшін рахмет! Сертификат алу және үлесіңізді қадағалау үшін тіркеліңіз
+                {% else %}
+                    Thank you for your donation! Register to receive your certificate and track your impact
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<section class="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center py-20 px-4">
+    <div class="max-w-md w-full">
+        <!-- Registration Card -->
+        <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10">
+            <div class="text-center mb-8">
+                <div class="inline-block bg-gradient-to-br from-green-500 to-emerald-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl mb-4">
+                    🌱
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">
+                    {% if language == 'ru' %}Создать аккаунт{% elif language == 'kz' %}Аккаунт жасау{% else %}Create Account{% endif %}
+                </h2>
+                <p class="text-gray-600">
+                    {% if language == 'ru' %}Присоединяйтесь к движению за зеленое будущее{% elif language == 'kz' %}Жасыл болашақ қозғалысына қосылыңыз{% else %}Join the movement for a greener future{% endif %}
+                </p>
+            </div>
+
+            <!-- Registration Form -->
+            <form id="register-form" method="POST" action="{% url 'main_app:register' %}" class="space-y-5">
+                {% csrf_token %}
+                
+                <!-- Name Input -->
+                <div>
+                    <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                        {% if language == 'ru' %}Полное имя{% elif language == 'kz' %}Толық аты{% else %}Full Name{% endif %}
+                    </label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required 
+                        minlength="2"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors"
+                        placeholder="{% if language == 'ru' %}Иван Иванов{% elif language == 'kz' %}Иван Иванов{% else %}John Doe{% endif %}"
+                    >
+                </div>
+
+                <!-- Email Input -->
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Email
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required 
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors"
+                        placeholder="{% if language == 'ru' %}ivan@example.com{% elif language == 'kz' %}ivan@example.com{% else %}john@example.com{% endif %}"
+                    >
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">
+                        {% if language == 'ru' %}Пароль{% elif language == 'kz' %}Құпия сөз{% else %}Password{% endif %}
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required 
+                        minlength="8"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors"
+                        placeholder="{% if language == 'ru' %}Минимум 8 символов{% elif language == 'kz' %}Кемінде 8 таңба{% else %}Minimum 8 characters{% endif %}"
+                    >
+                    <p class="mt-1 text-xs text-gray-500">
+                        {% if language == 'ru' %}Используйте не менее 8 символов{% elif language == 'kz' %}Кемінде 8 таңба пайдаланыңыз{% else %}Use at least 8 characters{% endif %}
+                    </p>
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div>
+                    <label for="password_confirm" class="block text-sm font-semibold text-gray-700 mb-2">
+                        {% if language == 'ru' %}Подтвердите пароль{% elif language == 'kz' %}Құпия сөзді растаңыз{% else %}Confirm Password{% endif %}
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password_confirm" 
+                        name="password_confirm" 
+                        required 
+                        minlength="8"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors"
+                        placeholder="{% if language == 'ru' %}Повторите пароль{% elif language == 'kz' %}Құпия сөзді қайталаңыз{% else %}Repeat password{% endif %}"
+                    >
+                </div>
+
+                <!-- Error Message -->
+                <div id="error-message" class="hidden bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"></div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    id="submit-btn"
+                    class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-lg"
+                >
+                    <span id="submit-text">
+                        {% if language == 'ru' %}Зарегистрироваться{% elif language == 'kz' %}Тіркелу{% else %}Register{% endif %}
+                    </span>
+                    <span id="submit-loader" class="hidden">
+                        ⏳ {% if language == 'ru' %}Регистрация...{% elif language == 'kz' %}Тіркеу...{% else %}Registering...{% endif %}
+                    </span>
+                </button>
+
+                <!-- Login Link -->
+                <p class="text-center text-gray-600 text-sm mt-4">
+                    {% if language == 'ru' %}Уже есть аккаунт?{% elif language == 'kz' %}Аккаунтыңыз бар ма?{% else %}Already have an account?{% endif %}
+                    <a href="{% url 'main_app:login' %}" class="text-green-600 hover:text-green-700 font-semibold">
+                        {% if language == 'ru' %}Войти{% elif language == 'kz' %}Кіру{% else %}Login{% endif %}
+                    </a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Benefits Section -->
+        {% if has_pending_order %}
+        <div class="mt-8 bg-white rounded-2xl p-6 shadow-lg">
+            <h3 class="font-bold text-lg text-gray-800 mb-4 text-center">
+                {% if language == 'ru' %}После регистрации вы получите:{% elif language == 'kz' %}Тіркелгеннен кейін сіз аласыз:{% else %}After registration you'll get:{% endif %}
+            </h3>
+            <ul class="space-y-3">
+                <li class="flex items-center gap-3 text-gray-700">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">📜</div>
+                    <span>{% if language == 'ru' %}Персональный сертификат посадки деревьев{% elif language == 'kz' %}Жеке ағаш отырғызу сертификаты{% else %}Personal tree planting certificate{% endif %}</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">📍</div>
+                    <span>{% if language == 'ru' %}GPS-координаты и фото ваших деревьев{% elif language == 'kz' %}GPS-координаттар және ағаштардың фотосы{% else %}GPS coordinates and photos of your trees{% endif %}</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">📊</div>
+                    <span>{% if language == 'ru' %}Статистику вашего экологического вклада{% elif language == 'kz' %}Экологиялық үлесіңіздің статистикасы{% else %}Statistics of your environmental impact{% endif %}</span>
+                </li>
+                <li class="flex items-center gap-3 text-gray-700">
+                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">🏆</div>
+                    <span>{% if language == 'ru' %}Достижения и награды{% elif language == 'kz' %}Жетістіктер мен сыйлықтар{% else %}Achievements and rewards{% endif %}</span>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+document.getElementById('register-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submit-btn');
+    const submitText = document.getElementById('submit-text');
+    const submitLoader = document.getElementById('submit-loader');
+    const errorMessage = document.getElementById('error-message');
+    
+    // Disable button
+    submitBtn.disabled = true;
+    submitText.classList.add('hidden');
+    submitLoader.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success message
+            errorMessage.classList.remove('hidden', 'bg-red-50', 'border-red-200', 'text-red-700');
+            errorMessage.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+            errorMessage.textContent = data.message;
+            
+            // Redirect after short delay
+            setTimeout(() => {
+                window.location.href = data.redirectUrl || '/profile/';
+            }, 1500);
+        } else {
+            // Show error
+            errorMessage.classList.remove('hidden');
+            errorMessage.textContent = data.message;
+            
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitText.classList.remove('hidden');
+            submitLoader.classList.add('hidden');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        errorMessage.classList.remove('hidden');
+        errorMessage.textContent = '{% if language == "ru" %}Ошибка сервера. Попробуйте позже.{% elif language == "kz" %}Сервер қатесі. Кейінірек көріңіз.{% else %}Server error. Please try again later.{% endif %}';
+        
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoader.classList.add('hidden');
+    }
+});
+
+// Password confirmation validation
+document.getElementById('password_confirm').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (confirmPassword && password !== confirmPassword) {
+        this.setCustomValidity('{% if language == "ru" %}Пароли не совпадают{% elif language == "kz" %}Құпия сөздер сәйкес келмейді{% else %}Passwords do not match{% endif %}');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+
+{% endblock %}

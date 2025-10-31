@@ -1,3 +1,11 @@
+# views.py
+from threading import Thread
+import time
+from typing import Dict, Set
+# Уберите или закомментируйте эту строку, если вызывает проблемы:
+# from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.db.models import Q
 import os
 import json
 import asyncio
@@ -15,15 +23,26 @@ from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 import logging
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate  # Добавьте authenticate
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import ValidationError
 import re
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+from datetime import datetime
+from django.utils import timezone
+from datetime import timedelta
 
-from .models import CertificateTemplate
+from .telegram_bot import TelegramNotifier, TelegramBot
+from .models import CertificateTemplate, VolunteerApplication, OrganizerApplication, Certificate
 
+# Уберите эти строки из views.py и перенесите в telegram_bot.py:
+# class TelegramBot, class TelegramNotifier, telegram_bot, telegram_notifier, start_telegram_bot()
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -466,98 +485,6 @@ site_data = {
 }
 
 
-class TelegramNotifier:
-    """Telegram notification service for Наш лесorders and contact form submissions"""
-
-    def __init__(self, bot_token=None, chat_id=None):
-        self.bot_token = "8254680657:AAG4JY-2nUxvnSO1HKLleoJW8673hWHpdfI"
-        self.chat_id = "128610465"
-        self.api_url = f"https://api.telegram.org/bot{self.bot_token}"
-
-    def send_order_notification(self, order_data):
-        """Send order notification to Telegram"""
-        try:
-            message = self._format_order_message(order_data)
-            return self._send_message(message)
-        except Exception as e:
-            logger.error(f"Failed to send Telegram notification: {e}")
-            return False
-
-    def send_contact_notification(self, contact_data):
-        """Send contact form submission notification to Telegram"""
-        try:
-            message = self._format_contact_message(contact_data)
-            return self._send_message(message)
-        except Exception as e:
-            logger.error(
-                f"Failed to send contact form Telegram notification: {e}")
-            return False
-
-    def _format_order_message(self, data):
-        """Format order data into a Telegram message"""
-        status_emoji = "✅" if data.get('status') == 'completed' else "🔄"
-
-        message = f"""
-            {status_emoji} <b>New Наш лесOrder</b>
-
-            📋 <b>Order Details:</b>
-            • Order ID: <code>{data.get('orderId', 'N/A')}</code>
-            • Date: <code>{datetime.now().strftime('%Y-%m-%d %H:%M')}</code>
-
-            👤 <b>Customer Information:</b>
-            • Name: <code>{data.get('customerName', 'N/A')}</code>
-            • Email: <code>{data.get('customerEmail', 'N/A')}</code>
-            • Phone: <code>{data.get('customerPhone', 'N/A') or 'Not provided'}</code>
-
-            🎯 <b>Certificate Details:</b>
-            • Recipient: <code>{data.get('recipientName', 'N/A')}</code>
-            • Trees: <code>{data.get('treeCount', 'N/A')}</code>
-            • Design: <code>{data.get('selectedDesign', 'N/A')}</code>
-            • Certificate Text: <code>{data.get('certificateText', 'N/A')[:100]}...</code>
-
-            💰 <b>Payment Information:</b>
-            • Amount: <code>{data.get('totalAmount', 'N/A')} {data.get('currency', 'KZT')}</code>
-            • Payment ID: <code>{data.get('paymentId', 'N/A')}</code>
-            • Status: <code>{data.get('status', 'pending').upper()}</code>
-
-            🌱 <b>Environmental Impact:</b>
-            • CO2 Absorption: ~<code>{int(data.get('treeCount', 0)) * 22} kg/year</code>
-            • Oxygen Production: ~<code>{int(data.get('treeCount', 0)) * 16} kg/year</code>
-            """
-        return message.strip()
-
-    def _format_contact_message(self, data):
-        """Format contact form data into a Telegram message"""
-        message = f"""
-            📬 <b>New Contact Form Submission</b>
-
-            📋 <b>Details:</b>
-            • Name: <code>{data.get('name', 'N/A')}</code>
-            • Email: <code>{data.get('email', 'N/A')}</code>
-            • Subject: <code>{data.get('subject', 'No subject provided')}</code>
-            • Submitted: <code>{data.get('submitted_at', 'N/A')}</code>
-
-            💬 <b>Message:</b>
-            <code>{data.get('message', 'N/A')[:200]}{'...' if len(data.get('message', '')) > 200 else ''}</code>
-        """
-        return message.strip()
-
-    def _send_message(self, message):
-        """Send message to Telegram chat"""
-        url = f"{self.api_url}/sendMessage"
-        payload = {
-            'chat_id': self.chat_id,
-            'text': message,
-            'parse_mode': 'HTML',
-            'disable_web_page_preview': True
-        }
-
-        response = requests.post(url, data=payload, timeout=10)
-        if response.status_code != 200:
-            logger.error(f"Telegram API error: {response.text}")
-        return response.status_code == 200
-
-
 class CertificateService:
     """Service for handling certificate operations"""
 
@@ -607,6 +534,59 @@ class CertificateService:
             return False
 
 
+# Глобальные переменные для бота и нотификатора
+telegram_bot = None
+telegram_notifier = None
+
+
+def start_telegram_bot():
+    """Start Telegram bot in background thread"""
+    global telegram_bot, telegram_notifier
+
+    telegram_bot = TelegramBot(
+        bot_token=settings.TELEGRAM_BOT_TOKEN,
+        admin_password=settings.TELEGRAM_ADMIN_PASSWORD
+    )
+
+    telegram_notifier = TelegramNotifier(telegram_bot)
+
+    # Запуск бота в отдельном потоке
+    bot_thread = Thread(target=telegram_bot.start_polling, daemon=True)
+    bot_thread.start()
+    logger.info("Telegram bot started successfully")
+
+
+# views.py
+
+
+def create_order(request):
+    """Example view that sends Telegram notification"""
+    if request.method == 'POST':
+        # Ваша логика создания заказа...
+        order_data = {
+            'orderId': 'GM20241225123000',
+            'customerName': request.POST.get('name'),
+            'customerEmail': request.POST.get('email'),
+            'customerPhone': request.POST.get('phone'),
+            'recipientName': request.POST.get('recipient_name'),
+            'treeCount': request.POST.get('tree_count'),
+            'selectedDesign': request.POST.get('design'),
+            'totalAmount': request.POST.get('amount'),
+            'currency': request.POST.get('currency', 'KZT'),
+            'status': 'completed'
+        }
+
+        # Отправка уведомления через бота - используем глобальный notifier
+        from .telegram_bot import get_telegram_notifier
+        notifier = get_telegram_notifier()
+        if notifier:
+            notifier.send_order_notification(order_data)
+
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
+
+
 def list_media_files(request):
     media_files = settings.MEDIA_ROOT
     return JsonResponse({'files': media_files})
@@ -627,8 +607,12 @@ def register(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip().lower()
+        phone = request.POST.get('phone', '').strip()
         password = request.POST.get('password', '')
         password_confirm = request.POST.get('password_confirm', '')
+
+        print(
+            f"Registration attempt - Name: {name}, Email: {email}, Phone: {phone}")
 
         # Validation
         if not name or len(name) < 2:
@@ -667,9 +651,22 @@ def register(request):
                 first_name=name
             )
             user.save()
+
+            # Link any pending certificates to this user
+            if phone:
+                normalized_phone = normalize_phone_number(phone)
+                # Find certificates with this email or phone and link them
+                certificates = Certificate.objects.filter(
+                    Q(customer_email=email) | Q(customer_phone=phone)
+                )
+                certificates.update(user=user)
+                print(
+                    f"Linked {certificates.count()} certificates to user {email}")
+
             auth_login(request, user)
             logger.info(f"User registered and logged in successfully: {email}")
-            return JsonResponse({'success': True, 'message': 'Регистрация успешна! Перенаправление...'})
+            return JsonResponse({'success': True, 'message': 'Регистрация успешна! Перенаправление в профиль...'})
+
         except ValidationError as e:
             logger.error(f"Registration failed: ValidationError - {str(e)}")
             return JsonResponse({'success': False, 'message': f'Ошибка валидации: {str(e)}'})
@@ -677,7 +674,7 @@ def register(request):
             logger.error(f"Registration failed: Unexpected error - {str(e)}")
             return JsonResponse({'success': False, 'message': 'Ошибка сервера. Попробуйте позже.'})
 
-    return redirect('main_app:test')
+    return redirect('main_app:home')
 
 
 def test(request):
@@ -694,7 +691,7 @@ def test(request):
             f"Invalid user data for {request.user.username}: first_name={request.user.first_name}, email={request.user.email}")
         return JsonResponse({'success': False, 'message': 'Недостаточно данных пользователя. Пожалуйста, обновите профиль.'})
 
-    logger.info(f"Rendering test.html for user: {request.user.username}")
+    logger.info(f"Rendering profile.html for user: {request.user.username}")
     context = {
         'language': language,
         'navigation': site_data['navigation'][language],
@@ -702,7 +699,7 @@ def test(request):
         'navigation_links': site_data.get('navigation_links', {}),
         'user': request.user
     }
-    return render(request, 'test.html', context)
+    return render(request, 'profile.html', context)
 
 
 def login(request):
@@ -711,8 +708,10 @@ def login(request):
 
 
 def logout(request):
+    """Log out user and redirect to home"""
     auth_logout(request)
     logger.info("User logged out")
+    messages.success(request, 'Вы успешно вышли из системы')
     return redirect('main_app:home')
 
 
@@ -844,10 +843,13 @@ def contact(request):
                 'submitted_at': datetime.now().strftime('%Y-%m-%d %H:%M'),
             }
 
-            # Send Telegram notification
-            telegram_notifier = TelegramNotifier()
-            notification_sent = telegram_notifier.send_contact_notification(
-                contact_data)
+            # Send Telegram notification - используем глобальный notifier
+            from .telegram_bot import get_telegram_notifier
+            notifier = get_telegram_notifier()
+            notification_sent = False
+            if notifier:
+                notification_sent = notifier.send_contact_notification(
+                    contact_data)
 
             if notification_sent:
                 messages.success(
@@ -1024,10 +1026,10 @@ def create_certificate(request):
                     'error': f'Missing required field: {field}'
                 }, status=400)
 
-        # Generate certificate ID
-        certificate_id = CertificateService.generate_certificate_id()
+        # Generate certificate ID - use the same format as payment
+        certificate_id = f"GM{int(datetime.now().timestamp() * 1000)}"
 
-        # Prepare order data
+        # Prepare order data with all necessary fields
         order_data = {
             'orderId': certificate_id,
             'customerName': data.get('customerName'),
@@ -1037,15 +1039,19 @@ def create_certificate(request):
             'certificateText': data.get('certificateText', ''),
             'signatureText': data.get('signatureText', ''),
             'treeCount': int(data.get('treeCount', 1)),
-            'currency': data.get('currency', 'KZT'),
+            'templateId': data.get('templateId'),
             'selectedDesign': data.get('selectedDesign', 'professional'),
+            'currency': data.get('currency', 'KZT'),
             'totalAmount': data.get('totalAmount'),
             'status': 'pending',
             'createdAt': datetime.now().isoformat()
         }
 
-        # Store order data in session for payment processing
+        # Store order data in session with consistent key
         request.session[f'order_{certificate_id}'] = order_data
+        request.session.modified = True
+
+        print(f"Order created and stored: order_{certificate_id}")  # Debug
 
         return JsonResponse({
             'success': True,
@@ -1066,86 +1072,217 @@ def create_certificate(request):
         }, status=500)
 
 
+# Updated payment_success function in views.py
+
+# Add this enhanced debugging version of payment_success in views.py
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def payment_success(request):
-    """Handle successful payment"""
+    """Handle successful payment with FAST authentication and registration"""
     try:
         # Try to get data from both JSON and form data
         if request.content_type == 'application/json':
             data = json.loads(request.body)
         else:
-            # Handle form data or URL parameters
             data = request.POST.dict()
             if not data:
-                # Try GET parameters as fallback
                 data = request.GET.dict()
 
-        order_id = data.get('orderId') or data.get('order_id')
-        payment_id = data.get('paymentId') or data.get(
-            'payment_id') or data.get('payment_reference')
+        print("=" * 80)
+        print("FAST PAYMENT SUCCESS - DEBUG INFO")
+        print("=" * 80)
 
-        if not order_id:
-            logger.error(
-                f"Missing order ID in payment success. Data received: {data}")
-            return JsonResponse({
-                'success': False,
-                'error': 'Missing order ID'
-            }, status=400)
+        # Extract data
+        order_id = (data.get('orderId') or data.get('order_id') or
+                    data.get('invoiceId') or data.get('invoice_id'))
+        payment_id = (data.get('paymentId') or data.get('payment_id') or
+                      data.get('transactionId') or data.get('transaction_id'))
+        customer_email = (data.get('customerEmail') or data.get('customer_email') or
+                          data.get('accountId') or data.get('account_id'))
+        customer_name = data.get('customerName') or data.get('customer_name')
+        customer_phone = data.get(
+            'customerPhone') or data.get('customer_phone')
+        amount = data.get('amount')
+        currency = data.get('currency')
 
-        # Retrieve order data from session
+        print(f"Extracted - Order ID: {order_id}")
+        print(f"Extracted - Phone: {customer_phone}")
+        print(f"Extracted - Email: {customer_email}")
+        print(f"Extracted - Name: {customer_name}")
+        print(f"User authenticated: {request.user.is_authenticated}")
+
+        # FAST USER AUTHENTICATION - PRIMARY PATH
+        user_authenticated = False
+        auth_method = None
+
+        # Check if user is already authenticated
+        if request.user.is_authenticated:
+            user_authenticated = True
+            auth_method = 'existing_session'
+            print(f"✓ User already authenticated: {request.user.username}")
+
+        # FAST: Quick email lookup for existing users
+        elif customer_email:
+            try:
+                user = User.objects.get(email=customer_email)
+                auth_login(request, user)
+                user_authenticated = True
+                auth_method = 'fast_email'
+                print(
+                    f"✓ FAST AUTH: Logged in existing user by email: {customer_email}")
+
+                # Link any pending certificates immediately
+                link_certificates_to_user(user, customer_phone, customer_email)
+
+            except User.DoesNotExist:
+                print(
+                    f"➡ No user found with email: {customer_email} - will show registration")
+
+        # FAST: Quick phone lookup
+        elif not user_authenticated and customer_phone:
+            user = find_user_by_phone(customer_phone)
+            if user:
+                auth_login(request, user)
+                user_authenticated = True
+                auth_method = 'fast_phone'
+                print(
+                    f"✓ FAST AUTH: Logged in existing user by phone: {customer_phone}")
+
+                # Link any pending certificates immediately
+                link_certificates_to_user(user, customer_phone, customer_email)
+
+        print(
+            f"FAST AUTH RESULT: {user_authenticated} (method: {auth_method})")
+
+        # Retrieve or create order data (simplified)
         order_data = request.session.get(f'order_{order_id}')
         if not order_data:
-            logger.error(f"Order not found in session: {order_id}")
-            return JsonResponse({
-                'success': False,
-                'error': 'Order not found'
-            }, status=404)
+            # Create minimal order data from payment info
+            order_data = {
+                'orderId': order_id or f'GM{int(datetime.now().timestamp() * 1000)}',
+                'customerName': customer_name or 'Customer',
+                'customerEmail': customer_email,
+                'customerPhone': customer_phone or '',
+                'recipientName': data.get('recipientName', 'Recipient'),
+                'certificateText': data.get('certificateText', ''),
+                'signatureText': data.get('signatureText', ''),
+                'treeCount': int(data.get('treeCount', 10)),
+                'selectedDesign': data.get('selectedDesign', 'professional'),
+                'totalAmount': amount or '50000',
+                'currency': currency or 'KZT',
+                'status': 'completed',
+                'paymentId': payment_id or f'pay_{order_id}',
+                'createdAt': datetime.now().isoformat(),
+                'completedAt': datetime.now().isoformat()
+            }
+            if order_id:
+                request.session[f'order_{order_id}'] = order_data
 
-        # Update order with payment information
-        order_data.update({
-            'paymentId': payment_id,
-            'status': 'completed',
-            'completedAt': datetime.now().isoformat()
-        })
+        # Save certificate to database (fast path)
+        certificate_saved = False
+        try:
+            certificate = Certificate.objects.create(
+                certificate_id=order_id,
+                customer_name=order_data.get('customerName', ''),
+                customer_email=order_data.get('customerEmail', ''),
+                customer_phone=order_data.get('customerPhone', ''),
+                recipient_name=order_data.get('recipientName', ''),
+                certificate_text=order_data.get('certificateText', ''),
+                signature_text=order_data.get('signatureText', ''),
+                tree_count=order_data.get('treeCount', 1),
+                design=order_data.get('selectedDesign', 'professional'),
+                total_amount=float(order_data.get('totalAmount', 0)),
+                currency=order_data.get('currency', 'KZT'),
+                payment_id=payment_id or f'pay_{order_id}',
+                status='completed',
+                completed_at=timezone.now(),
+                user=request.user if request.user.is_authenticated else None
+            )
+            certificate_saved = True
+            print(f"✓ Certificate saved to database: {order_id}")
 
-        # Save updated order data back to session
-        request.session[f'order_{order_id}'] = order_data
-        request.session.modified = True
+        except Exception as e:
+            logger.error(f"Failed to save certificate: {e}")
+            certificate_saved = False
 
-        # Send Telegram notification
-        telegram_notifier = TelegramNotifier()
-        notification_sent = telegram_notifier.send_order_notification(
-            order_data)
+        # BACKGROUND PROCESSING - Don't block response
+        import threading
 
-        if not notification_sent:
-            logger.warning(
-                f"Failed to send Telegram notification for order {order_id}")
+        # Send Telegram notification in background
+        def send_telegram_async():
+            try:
+                from .telegram_bot import get_telegram_notifier
+                notifier = get_telegram_notifier()
+                if notifier:
+                    notifier.send_order_notification(order_data)
+            except Exception as e:
+                logger.error(f"Background Telegram failed: {e}")
 
-        # Send certificate email
-        email_sent = CertificateService.send_certificate_email(
-            order_data['customerEmail'],
-            order_data
-        )
+        telegram_thread = threading.Thread(target=send_telegram_async)
+        telegram_thread.daemon = True
+        telegram_thread.start()
 
-        if not email_sent:
-            logger.warning(
-                f"Failed to send certificate email for order {order_id}")
+        # Send email in background
+        def send_email_async():
+            try:
+                if customer_email:
+                    CertificateService.send_certificate_email(
+                        customer_email, order_data)
+            except Exception as e:
+                logger.error(f"Background email failed: {e}")
+
+        email_thread = threading.Thread(target=send_email_async)
+        email_thread.daemon = True
+        email_thread.start()
 
         # Update statistics
         site_data['statistics']['treesPlanted'] += order_data['treeCount']
         site_data['statistics']['totalDonations'] += int(
             float(order_data.get('totalAmount', 0)))
 
-        # Return success response with redirect URL
-        return JsonResponse({
+        # PREPARE FAST RESPONSE
+        response_data = {
             'success': True,
-            'message': 'Payment processed successfully',
             'certificateId': order_id,
-            # Add this redirect URL
-            'redirectUrl': f'/certificate/success/{order_id}/',
-            'environmentalImpact': CertificateService.calculate_environmental_impact(order_data['treeCount'])
-        })
+            'environmentalImpact': CertificateService.calculate_environmental_impact(order_data['treeCount']),
+            'userAuthenticated': user_authenticated,
+            'authMethod': auth_method,
+            'certificateSaved': certificate_saved,
+            'customerEmail': customer_email,
+            'customerName': customer_name,
+            'customerPhone': customer_phone
+        }
+
+        # FAST REDIRECT LOGIC
+        if user_authenticated:
+            # User is authenticated - immediate redirect info
+            response_data.update({
+                'redirectUrl': reverse('main_app:profile'),
+                'message': 'Платеж успешен! Перенаправление в профиль...',
+                'showRegistration': False,
+                'immediateRedirect': True  # Signal for immediate JS redirect
+            })
+            print("✓ AUTHENTICATED: Immediate redirect to profile")
+        else:
+            # User needs registration - provide fast registration data
+            response_data.update({
+                'redirectUrl': reverse('main_app:home'),
+                'message': 'Платеж успешен! Быстрая регистрация...',
+                'showRegistration': True,
+                'immediateRedirect': False,
+                'registrationData': {
+                    'email': customer_email,
+                    'name': customer_name,
+                    'phone': customer_phone
+                }
+            })
+            print("➡ NOT AUTHENTICATED: Show fast registration")
+
+        print(f"\nFAST RESPONSE DATA: {response_data}\n")
+        print("=" * 80 + "\n")
+
+        return JsonResponse(response_data)
 
     except json.JSONDecodeError:
         logger.error("JSON decode error in payment success")
@@ -1155,10 +1292,170 @@ def payment_success(request):
         }, status=400)
     except Exception as e:
         logger.error(f"Error processing payment success: {e}")
+        import traceback
+        traceback.print_exc()
         return JsonResponse({
             'success': False,
-            'error': 'Internal server error'
+            'error': f'Internal server error: {str(e)}'
         }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def quick_register(request):
+    """Ultra-fast registration for payment users"""
+    try:
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        name = request.POST.get('name', '')
+        phone = request.POST.get('phone', '')
+
+        # Ultra-fast validation
+        if not email or not password:
+            return JsonResponse({'success': False, 'message': 'Email and password required'})
+
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'success': False, 'message': 'Email already registered'})
+
+        # Create user instantly
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=name
+        )
+
+        # Login immediately
+        auth_login(request, user)
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Registration successful',
+            'redirect': reverse('main_app:profile')
+        })
+
+    except Exception as e:
+        logger.error(f"Quick registration error: {e}")
+        return JsonResponse({'success': False, 'message': 'Registration failed'})
+
+
+def profile(request):
+    """User profile with certificates and statistics"""
+    language = get_language(request)
+
+    if not request.user.is_authenticated:
+        logger.info("Unauthenticated user redirected to register")
+        return redirect('main_app:register')
+
+    # Get user's phone number
+    user_phone = request.user.username if request.user.username.startswith(
+        '+') or request.user.username.replace('+', '').isdigit() else None
+
+    # Get certificates - match by user, email, or phone
+    from django.db.models import Q
+
+    query = Q(user=request.user)
+    if request.user.email:
+        query |= Q(customer_email=request.user.email)
+    if user_phone:
+        query |= Q(customer_phone=user_phone)
+
+    user_certificates = Certificate.objects.filter(
+        query).order_by('-created_at')
+
+    # Link unlinked certificates to this user
+    unlinked_certificates = user_certificates.filter(user__isnull=True)
+    if unlinked_certificates.exists():
+        count = unlinked_certificates.update(user=request.user)
+        logger.info(
+            f"Linked {count} certificates to user {request.user.username}")
+
+    # Calculate user statistics
+    total_trees = sum(cert.tree_count for cert in user_certificates)
+    total_donations = sum(float(cert.total_amount)
+                          for cert in user_certificates)
+
+    user_stats = {
+        'total_trees': total_trees,
+        'total_certificates': user_certificates.count(),
+        'total_donations': total_donations,
+        'joined_days': (timezone.now() - request.user.date_joined).days,
+        'tree_progress_percentage': min(100, total_trees),
+        'co2_absorption': total_trees * 22,  # kg per year
+        'oxygen_production': total_trees * 16,  # kg per year
+        'air_quality_impact': total_trees * 2,  # people supported
+    }
+
+    # FIX: Handle UserProfile creation safely
+    try:
+        from .models import UserProfile
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+            # Profile exists, update phone if needed
+            if user_phone and not profile.phone_number:
+                profile.phone_number = user_phone
+                profile.save()
+        except UserProfile.DoesNotExist:
+            # Profile doesn't exist, create one
+            # Check if phone number already exists in another profile
+            if user_phone and UserProfile.objects.filter(phone_number=user_phone).exists():
+                # Phone exists in another profile, create without phone
+                profile = UserProfile.objects.create(
+                    user=request.user, phone_number='')
+            else:
+                # Safe to create with phone
+                profile = UserProfile.objects.create(
+                    user=request.user,
+                    phone_number=user_phone or ''
+                )
+
+        # Update statistics if profile exists
+        profile.update_statistics()
+
+    except ImportError:
+        # UserProfile model doesn't exist, skip
+        pass
+    except Exception as e:
+        logger.error(f"Error handling UserProfile: {e}")
+        # Continue without profile to avoid breaking the page
+
+    context = {
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'contact': site_data.get('contact', {}),
+        'navigation_links': site_data.get('navigation_links', {}),
+        'user': request.user,
+        'user_phone': user_phone,
+        'user_stats': user_stats,
+        'user_certificates': [
+            {
+                'certificate_id': cert.certificate_id,
+                'status': cert.status,
+                'tree_count': cert.tree_count,
+                'created_at': cert.created_at,
+                'recipient_name': cert.recipient_name,
+                'design': cert.design,
+                'total_amount': cert.total_amount,
+                'currency': cert.currency,
+                'customer_phone': cert.customer_phone,
+                'customer_email': cert.customer_email
+            }
+            for cert in user_certificates
+        ],
+        'recent_activities': [
+            {
+                'type': 'certificate',
+                'description': f'Создан сертификат на {cert.tree_count} деревьев' if language == 'ru'
+                else f'{cert.tree_count} ағашқа сертификат жасалды' if language == 'kz'
+                else f'Certificate created for {cert.tree_count} trees',
+                'date': cert.created_at,
+                'amount': f'+{cert.tree_count} 🌳'
+            }
+            for cert in user_certificates[:5]
+        ]
+    }
+
+    return render(request, 'profile.html', context)
 
 
 def certificate_success(request, certificate_id):
@@ -1270,3 +1567,566 @@ def organizations(request):
         'user': request.user
     }
     return render(request, "organizations.html", context)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def volunteer_submit(request):
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+
+    # ---- SAVE TO DB -------------------------------------------------
+    app = VolunteerApplication(
+        name=data.get('name'),
+        email=data.get('email'),
+        phone=data.get('phone', ''),
+        region=data.get('region'),
+        dates=','.join(data.get('dates', [])),
+        experience=data.get('experience', '')
+    )
+    app.save()
+
+    # ---- SEND TO TELEGRAM -------------------------------------------
+    tg_data = {
+        **data,
+        'dates': ','.join(data.get('dates', [])),
+        'submitted': datetime.now().strftime('%Y-%m-%d %H:%M')
+    }
+
+    # Используем глобальный notifier вместо создания нового
+    from .telegram_bot import get_telegram_notifier
+    notifier = get_telegram_notifier()
+    if notifier:
+        notifier.send_volunteer_notification(tg_data)
+
+    return JsonResponse({"success": True})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def organizer_submit(request):
+    try:
+        data = json.loads(request.body)
+
+        # Сохраняем в БД
+        app = OrganizerApplication(
+            name=data.get('name', ''),
+            email=data.get('email', ''),
+            phone=data.get('phone', ''),
+            organization=data.get('organization', ''),
+            region=data.get('region', 'Казахстан'),
+            plan=data.get('plan', '')
+        )
+        app.save()
+
+        # Отправляем в Telegram
+        tg_data = {
+            **data,
+            'submitted': datetime.now().strftime('%Y-%m-%d %H:%M')
+        }
+
+        # Используем глобальный notifier вместо создания нового
+        from .telegram_bot import get_telegram_notifier
+        notifier = get_telegram_notifier()
+        if notifier:
+            notifier.send_organizer_notification(tg_data)
+
+        return JsonResponse({'status': 'success'})
+
+    except Exception as e:
+        logger.error(f"Error in organizer_submit: {e}")
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def generate_certificate_pdf(request, certificate_id):
+    """Generate certificate PDF for download"""
+    try:
+        # Get certificate data from session
+        order_data = request.session.get(f'order_{certificate_id}')
+
+        if not order_data:
+            # Try to get from database if user is authenticated
+            if request.user.is_authenticated:
+                try:
+                    from .models import Certificate
+                    certificate = Certificate.objects.get(
+                        certificate_id=certificate_id,
+                        user=request.user
+                    )
+                    order_data = {
+                        'certificateId': certificate.certificate_id,
+                        'orderId': certificate.certificate_id,
+                        'recipientName': certificate.recipient_name,
+                        'certificateText': certificate.certificate_text,
+                        'signatureText': certificate.signature_text,
+                        'treeCount': certificate.tree_count,
+                        'selectedDesign': certificate.design,
+                        'totalAmount': certificate.total_amount,
+                        'currency': certificate.currency,
+                        'createdAt': certificate.created_at.isoformat()
+                    }
+                except Certificate.DoesNotExist:
+                    pass
+
+        if not order_data:
+            return JsonResponse({
+                'success': False,
+                'error': 'Certificate not found'
+            }, status=404)
+
+        return JsonResponse({
+            'success': True,
+            'certificateData': order_data
+        })
+
+    except Exception as e:
+        logger.error(f"Error generating certificate PDF: {e}")
+        return JsonResponse({
+            'success': False,
+            'error': 'Internal server error'
+        }, status=500)
+
+
+# Add these helper functions to views.py or create a new utils.py file
+
+def normalize_phone_number(phone):
+    """
+    Fast phone normalization
+    """
+    if not phone:
+        return None
+
+    # Remove all non-digit characters except leading +
+    phone = re.sub(r'[\s\-\(\)]', '', phone)
+
+    # Ensure it starts with + for international format
+    if not phone.startswith('+'):
+        # Assume Kazakhstan number if no country code
+        if phone.startswith('7') or phone.startswith('8'):
+            phone = '+7' + phone[1:]
+        else:
+            phone = '+7' + phone
+
+    return phone
+
+
+def find_user_by_phone(phone):
+    """
+    Fast phone lookup for authentication
+    """
+    if not phone:
+        return None
+
+    normalized_phone = normalize_phone_number(phone)
+
+    # Try exact match first
+    user = User.objects.filter(username=normalized_phone).first()
+    if user:
+        return user
+
+    # Try partial match (last 10 digits)
+    phone_digits = re.sub(r'\D', '', phone)
+    if len(phone_digits) >= 10:
+        last_10 = phone_digits[-10:]
+        user = User.objects.filter(username__icontains=last_10).first()
+        if user:
+            return user
+
+    # Try UserProfile if exists
+    try:
+        from .models import UserProfile
+        profile = UserProfile.objects.filter(
+            Q(phone_number=normalized_phone) |
+            Q(phone_number__icontains=phone_digits[-10:])
+        ).first()
+        if profile:
+            return profile.user
+    except ImportError:
+        pass
+
+    return None
+
+
+def find_or_create_user_by_phone(phone, email, name):
+    """
+    Find existing user by phone or create new one
+    Returns (user, created) tuple
+    """
+    normalized_phone = normalize_phone_number(phone)
+
+    # Try to find existing user
+    user = find_user_by_phone(normalized_phone)
+
+    if user:
+        return user, False
+
+    # Create new user
+    import secrets
+    import string
+    password = ''.join(secrets.choice(
+        string.ascii_letters + string.digits) for _ in range(12))
+
+    user = User.objects.create_user(
+        username=normalized_phone,
+        email=email,
+        password=password,
+        first_name=name or 'User'
+    )
+
+    # Create or update profile if model exists
+    try:
+        from .models import UserProfile
+        profile, _ = UserProfile.objects.get_or_create(
+            user=user,
+            defaults={'phone_number': normalized_phone}
+        )
+    except ImportError:
+        pass
+
+    return user, True
+
+
+def link_certificates_to_user(user, phone, email):
+    """
+    Fast linking of certificates to user
+    """
+    from .models import Certificate
+    from django.db.models import Q
+
+    try:
+        # Find certificates without user that match phone or email
+        query = Q(user__isnull=True)
+        if email:
+            query |= Q(customer_email=email)
+        if phone:
+            query |= Q(customer_phone=phone)
+
+        certificates = Certificate.objects.filter(query)
+        count = certificates.update(user=user)
+
+        if count > 0:
+            print(f"✓ Linked {count} certificates to user {user.username}")
+            return count
+        return 0
+
+    except Exception as e:
+        logger.error(f"Error linking certificates: {e}")
+        return 0
+
+
+def send_auth_notification(user, phone, email, password, language='ru'):
+    """
+    Send authentication notification email with credentials
+    """
+    from django.core.mail import send_mail
+    from django.conf import settings
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    messages = {
+        'ru': {
+            'subject': 'Добро пожаловать в Наш лес!',
+            'body': f'''
+Добро пожаловать в Наш лес!
+
+Вы были автоматически зарегистрированы после успешного пожертвования.
+
+Ваши данные для входа:
+Телефон: {phone}
+Email: {email}
+Пароль: {password}
+
+Вы можете войти в систему используя номер телефона или email.
+
+Рекомендуем сменить пароль после первого входа в личном кабинете.
+
+Спасибо за ваш вклад в озеленение Казахстана!
+
+С уважением,
+Команда Наш лес
+            '''
+        },
+        'kz': {
+            'subject': 'Наш лесқа қош келдіңіз!',
+            'body': f'''
+Наш лесқа қош келдіңіз!
+
+Сіз сәтті қайырымдылықтан кейін автоматты түрде тіркелдіңіз.
+
+Кіру деректеріңіз:
+Телефон: {phone}
+Email: {email}
+Құпия сөз: {password}
+
+Жүйеге телефон нөміріңізді немесе email арқылы кіре аласыз.
+
+Жеке кабинетке алғаш кіргеннен кейін құпия сөзді өзгертуді ұсынамыз.
+
+Қазақстанды көгалдандыруға қосқан үлесіңіз үшін рахмет!
+
+Құрметпен,
+Наш лескомандасы
+            '''
+        },
+        'en': {
+            'subject': 'Welcome to Наш лес!',
+            'body': f'''
+Welcome to Наш лес!
+
+You have been automatically registered after your successful donation.
+
+Your login credentials:
+Phone: {phone}
+Email: {email}
+Password: {password}
+
+You can log in using your phone number or email.
+
+We recommend changing your password after first login in your profile.
+
+Thank you for your contribution to greening Kazakhstan!
+
+Best regards,
+Наш лесTeam
+            '''
+        }
+    }
+
+    msg = messages.get(language, messages['en'])
+
+    try:
+        send_mail(
+            subject=msg['subject'],
+            message=msg['body'],
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=True
+        )
+        logger.info(f"Auth notification sent to {email}")
+        return True
+    except Exception as e:
+        logger.warning(f"Failed to send auth notification: {e}")
+        return False
+
+
+def register_page(request):
+    """Standalone registration page"""
+    language = get_language(request)
+
+    if request.user.is_authenticated:
+        return redirect('main_app:profile')
+
+    context = {
+        'language': language,
+        'navigation': site_data['navigation'][language],
+        'navigation_links': site_data.get('navigation_links', {}),
+        'contact': site_data.get('contact', {}),
+    }
+
+    return render(request, 'register.html', context)
+
+
+# Добавьте эти импорты в начало views.py
+
+# Добавьте эти функции в конец views.py
+
+
+@csrf_protect
+@require_http_methods(["POST"])
+def change_password(request):
+    """Смена пароля с проверкой старого"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'message': 'Требуется авторизация'})
+
+    try:
+        data = json.loads(request.body)
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+
+        # Валидация
+        if not all([current_password, new_password, confirm_password]):
+            return JsonResponse({'success': False, 'message': 'Все поля обязательны'})
+
+        if new_password != confirm_password:
+            return JsonResponse({'success': False, 'message': 'Новые пароли не совпадают'})
+
+        if len(new_password) < 8:
+            return JsonResponse({'success': False, 'message': 'Пароль должен содержать минимум 8 символов'})
+
+        # Проверка текущего пароля
+        if not request.user.check_password(current_password):
+            return JsonResponse({'success': False, 'message': 'Текущий пароль неверен'})
+
+        # Смена пароля
+        request.user.set_password(new_password)
+        request.user.save()
+
+        # Обновление сессии чтобы пользователь не разлогинился
+        update_session_auth_hash(request, request.user)
+
+        logger.info(f"Password changed for user: {request.user.email}")
+        return JsonResponse({'success': True, 'message': 'Пароль успешно изменен'})
+
+    except Exception as e:
+        logger.error(f"Password change error: {e}")
+        return JsonResponse({'success': False, 'message': 'Ошибка при смене пароля'})
+
+
+@csrf_protect
+@require_http_methods(["POST"])
+def change_email(request):
+    """Смена email с проверкой уникальности"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'message': 'Требуется авторизация'})
+
+    try:
+        data = json.loads(request.body)
+        new_email = data.get('new_email', '').strip().lower()
+
+        # Валидация email
+        if not new_email or not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', new_email):
+            return JsonResponse({'success': False, 'message': 'Некорректный email'})
+
+        # Проверка уникальности
+        if User.objects.filter(email=new_email).exclude(id=request.user.id).exists():
+            return JsonResponse({'success': False, 'message': 'Этот email уже используется'})
+
+        if User.objects.filter(username=new_email).exclude(id=request.user.id).exists():
+            return JsonResponse({'success': False, 'message': 'Этот email уже используется как имя пользователя'})
+
+        # Обновление email
+        old_email = request.user.email
+        request.user.email = new_email
+        request.user.username = new_email  # Если используем email как username
+        request.user.save()
+
+        logger.info(
+            f"Email changed for user {request.user.id}: {old_email} -> {new_email}")
+        return JsonResponse({'success': True, 'message': 'Email успешно изменен'})
+
+    except Exception as e:
+        logger.error(f"Email change error: {e}")
+        return JsonResponse({'success': False, 'message': 'Ошибка при смене email'})
+
+
+@require_http_methods(["GET"])
+def get_user_confidential_data(request):
+    """Получение конфиденциальных данных пользователя"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'message': 'Требуется авторизация'})
+
+    try:
+        from .models import UserProfile
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+        data = {
+            'success': True,
+            'email': profile.get_visible_email(),
+            'phone': profile.get_visible_phone(),
+            'full_email': request.user.email,  # Полный email только для владельца
+            'full_phone': profile.phone_number,  # Полный телефон только для владельца
+            'joined_date': request.user.date_joined.strftime('%d.%m.%Y'),
+            'last_login': request.user.last_login.strftime('%d.%m.%Y %H:%M') if request.user.last_login else 'Никогда'
+        }
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        logger.error(f"Error getting user data: {e}")
+        return JsonResponse({'success': False, 'message': 'Ошибка получения данных'})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def register_api(request):
+    """API endpoint for registration (used by navbar modal and fast registration)"""
+    try:
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip().lower()
+        phone = request.POST.get('phone', '').strip()
+        password = request.POST.get('password', '')
+
+        print(
+            f"API Registration attempt - Name: {name}, Email: {email}, Phone: {phone}")
+
+        # Validation
+        if not name or len(name) < 2:
+            return JsonResponse({'success': False, 'message': 'Имя должно содержать минимум 2 символа'})
+
+        if not email or not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email):
+            return JsonResponse({'success': False, 'message': 'Некорректный email'})
+
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'success': False, 'message': 'Email уже зарегистрирован'})
+
+        if User.objects.filter(username=email).exists():
+            return JsonResponse({'success': False, 'message': 'Email уже используется как имя пользователя'})
+
+        if len(password) < 8:
+            return JsonResponse({'success': False, 'message': 'Пароль должен содержать минимум 8 символов'})
+
+        try:
+            # Create user
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=name
+            )
+            user.save()
+
+            # Link any pending certificates to this user
+            if phone:
+                normalized_phone = normalize_phone_number(phone)
+                certificates = Certificate.objects.filter(
+                    Q(customer_email=email) | Q(customer_phone=phone)
+                )
+                certificates.update(user=user)
+                print(
+                    f"Linked {certificates.count()} certificates to user {email}")
+
+            auth_login(request, user)
+            logger.info(f"User registered via API: {email}")
+            return JsonResponse({'success': True, 'message': 'Регистрация успешна!'})
+
+        except Exception as e:
+            logger.error(f"API Registration failed: {str(e)}")
+            return JsonResponse({'success': False, 'message': 'Ошибка сервера. Попробуйте позже.'})
+
+    except Exception as e:
+        logger.error(f"API Registration error: {str(e)}")
+        return JsonResponse({'success': False, 'message': 'Ошибка сервера'})
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def login_api(request):
+    """API endpoint for login"""
+    try:
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password', '')
+
+        print(f"Login attempt for: {email}")
+
+        if not email or not password:
+            return JsonResponse({'success': False, 'message': 'Email и пароль обязательны'})
+
+        # Try to authenticate user
+        user = authenticate(request, username=email, password=password)
+
+        if user is not None:
+            auth_login(request, user)
+            logger.info(f"User logged in: {email}")
+            return JsonResponse({'success': True, 'message': 'Вход успешен!', 'redirect': reverse('main_app:profile')})
+        else:
+            return JsonResponse({'success': False, 'message': 'Неверный email или пароль'})
+
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}")
+        return JsonResponse({'success': False, 'message': 'Ошибка сервера'})

@@ -1313,6 +1313,20 @@
         .signature-text {
             font-size: 1rem;
         }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
     }
 </style>
 
@@ -1729,6 +1743,178 @@
                 certNumber.textContent = number.padStart(6, '0');
             }
         }
+        
+        function handlePaymentSuccess(paymentResult) {
+            console.log('Payment success handling:', paymentResult);
+            
+            if (paymentResult.userAuthenticated) {
+                // IMMEDIATE redirect for authenticated users
+                console.log('User authenticated, immediate redirect to profile');
+                window.location.href = paymentResult.redirectUrl;
+                return; // Stop further execution
+            }
+            
+            if (paymentResult.showRegistration) {
+                // Show registration modal immediately
+                console.log('Showing registration modal');
+                showFastRegistrationModal(paymentResult);
+            } else {
+                // Fallback to success screen
+                showStep(5);
+                updateSuccessScreen(paymentResult);
+            }
+        }
+
+        function showFastRegistrationModal(paymentResult) {
+            const modal = document.createElement('div');
+            modal.id = 'fast-registration-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-6 max-w-md w-full animate-fadeIn">
+                    <div class="text-center mb-4">
+                        <div class="text-4xl mb-2">🎉</div>
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">Платеж успешен!</h2>
+                        <p class="text-gray-600 text-sm">Быстрая регистрация для доступа к профилю</p>
+                    </div>
+                    
+                    <form id="fast-register-form" class="space-y-3">
+                        <input type="hidden" name="email" value="${paymentResult.customerEmail}">
+                        <input type="hidden" name="name" value="${paymentResult.customerName || ''}">
+                        <input type="hidden" name="phone" value="${paymentResult.customerPhone || ''}">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Пароль *</label>
+                            <input type="password" name="password" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                                required minlength="8" placeholder="Минимум 8 символов">
+                        </div>
+                        
+                        <div class="error-message text-red-500 text-sm hidden" id="fast-error"></div>
+                        
+                        <div class="flex gap-2 pt-2">
+                            <button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-colors text-sm">
+                                Быстрая регистрация
+                            </button>
+                            <button type="button" onclick="closeFastRegistration()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg transition-colors text-sm">
+                                Позже
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Handle form submission
+            const form = modal.querySelector('#fast-register-form');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                
+                try {
+                    submitBtn.textContent = 'Регистрация...';
+                    submitBtn.disabled = true;
+                    
+                    // Use the same endpoint as navbar registration
+                    const response = await fetch('{% url "main_app:register" %}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': getCsrfToken(),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Immediate redirect after successful registration
+                        window.location.href = '{% url "main_app:profile" %}';
+                    } else {
+                        document.getElementById('fast-error').textContent = result.message;
+                        document.getElementById('fast-error').classList.remove('hidden');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                    
+                } catch (error) {
+                    console.error('Fast registration error:', error);
+                    document.getElementById('fast-error').textContent = 'Ошибка сети';
+                    document.getElementById('fast-error').classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            });
+        }
+
+        function closeFastRegistration() {
+            const modal = document.getElementById('fast-registration-modal');
+            if (modal) {
+                modal.remove();
+            }
+            showStep(5);
+        }
+
+        function skipRegistration() {
+            // Remove modal and show success screen
+            const modal = document.getElementById('post-payment-registration-modal');
+            if (modal) {
+                modal.remove();
+            }
+            showStep(5);
+            
+            // Update success screen for non-registered users
+            const successMessage = document.querySelector('.success-screen h2');
+            const successText = document.querySelector('.success-screen p');
+            
+            if (successMessage && successText) {
+                successMessage.textContent = 'Спасибо за ваш вклад!';
+                successText.innerHTML = 'Ваш платеж успешно обработан. Сертификат отправлен на email.<br><strong>Вы можете зарегистрироваться позже в любое время!</strong>';
+            }
+        }
+
+        // Update the existing updateSuccessScreen function
+        function updateSuccessScreen(paymentResult) {
+            const successMessage = document.querySelector('.success-screen h2');
+            const successText = document.querySelector('.success-screen p');
+            const downloadSection = document.querySelector('.download-section');
+            
+            // Clear existing buttons except download
+            const existingButtons = downloadSection.querySelectorAll('button:not(.js-download-certificate)');
+            existingButtons.forEach(btn => btn.remove());
+
+            if (paymentResult.userAuthenticated) {
+                successMessage.textContent = 'Платеж успешно обработан!';
+                successText.innerHTML = 'Ваш платеж успешно обработан. Сертификат отправлен на email.';
+                
+                // Add profile button
+                const profileButton = document.createElement('button');
+                profileButton.className = 'btn-primary js-go-to-profile';
+                profileButton.innerHTML = '👤 Перейти в профиль';
+                profileButton.addEventListener('click', () => {
+                    window.location.href = paymentResult.redirectUrl;
+                });
+                downloadSection.appendChild(profileButton);
+                
+            } else {
+                successMessage.textContent = 'Спасибо за ваш вклад!';
+                successText.innerHTML = 'Ваш платеж успешно обработан. Сертификат отправлен на email.<br><strong>Зарегистрируйтесь чтобы получить доступ к вашему профилю!</strong>';
+                
+                // Add register button
+                const registerButton = document.createElement('button');
+                registerButton.className = 'btn-primary js-go-to-register';
+                registerButton.innerHTML = '📝 Зарегистрироваться';
+                registerButton.addEventListener('click', () => {
+                    window.location.href = '{% url "main_app:register" %}';
+                });
+                downloadSection.appendChild(registerButton);
+            }
+        }
+
+      
 
         async function handlePayment(e) {
             e.preventDefault();
@@ -1744,10 +1930,11 @@
             btnLoader.style.display = 'inline-block';
 
             try {
+                // CRITICAL: Ensure phone is included in formData
                 const formData = {
                     customerName: document.getElementById('customer-name').value,
                     customerEmail: document.getElementById('customer-email').value,
-                    customerPhone: document.getElementById('customer-phone').value || '',
+                    customerPhone: document.getElementById('customer-phone').value || '', // CRITICAL: Get phone value
                     recipientName: certificateData.recipientName,
                     certificateText: certificateData.certificateText,
                     signatureText: certificateData.signatureText,
@@ -1758,9 +1945,10 @@
                     totalAmount: (certificateData.treeCount * 5000 * (exchangeRates[certificateData.currency] || 1)).toFixed(2)
                 };
 
-                console.log('Submitting payment data:', formData);
+                console.log('Submitting payment with form data:', formData); // Debug log
 
-                const response = await fetch('/api/create-certificate/', {
+                // Create the certificate order
+                const createResponse = await fetch('/api/create-certificate/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1769,12 +1957,17 @@
                     body: JSON.stringify(formData)
                 });
 
-                const result = await response.json();
+                const createResult = await createResponse.json();
+                console.log('Create certificate result:', createResult);
 
-                if (result.success) {
-                    await processPayment(formData);
+                if (createResult.success) {
+                    const orderId = createResult.orderId;
+                    console.log('Order created with ID:', orderId);
+                    
+                    // Process payment with the order ID
+                    await processPayment(formData, orderId);
                 } else {
-                    throw new Error(result.error || 'Server error');
+                    throw new Error(createResult.error || 'Failed to create certificate order');
                 }
             } catch (error) {
                 console.error('Payment error:', error);
@@ -1786,7 +1979,7 @@
             }
         }
 
-        async function processPayment(formData) {
+        async function processPayment(formData, orderId) {
             if (typeof cp === 'undefined' || !cp.CloudPayments) {
                 throw new Error('Payment system not loaded');
             }
@@ -1794,143 +1987,232 @@
             const widget = new cp.CloudPayments();
             const amount = parseFloat(formData.totalAmount);
 
-            widget.pay('charge', {
-                publicId: 'test_api_00000000000000000000001',
-                description: `{% if language == "ru" %}Посадка ${formData.treeCount} ${getRussianTreeLabel(formData.treeCount)} - Наш лес {% elif language == "kz" %}${formData.treeCount} ағаш отырғызу - Наш лес {% else %}Planting ${formData.treeCount} trees - Наш лес {% endif %}`,
-                amount: amount,
-                currency: formData.currency,
-                accountId: formData.customerEmail,
-                invoiceId: `GM${Date.now()}`,
-                skin: 'modern',
-                data: formData
-            }, {
-                onSuccess: async function(options) {
-                    try {
-                        const response = await fetch('/api/payment-success/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': getCsrfToken()
-                            },
-                            body: JSON.stringify({
-                                invoiceId: options.invoiceId,
+            console.log('Starting payment with data:', formData); // Debug log
+
+            return new Promise((resolve, reject) => {
+                widget.pay('charge', {
+                    publicId: 'test_api_00000000000000000000001',
+                    description: `{% if language == "ru" %}Посадка ${formData.treeCount} деревьев - Наш лес {% elif language == "kz" %}${formData.treeCount} ағаш отырғызу - Наш лес {% else %}Planting ${formData.treeCount} trees - Наш лес {% endif %}`,
+                    amount: amount,
+                    currency: formData.currency,
+                    accountId: formData.customerEmail,
+                    invoiceId: orderId,
+                    skin: 'modern',
+                    data: {
+                        customerName: formData.customerName,
+                        customerEmail: formData.customerEmail,
+                        customerPhone: formData.customerPhone, // CRITICAL: Include phone in widget data
+                        recipientName: formData.recipientName,
+                        certificateText: formData.certificateText,
+                        signatureText: formData.signatureText,
+                        treeCount: formData.treeCount,
+                        selectedDesign: formData.selectedDesign,
+                        orderId: orderId
+                    }
+                }, {
+                    onSuccess: async function(options) {
+                        try {
+                            console.log('Payment successful, options:', options);
+                            
+                            // CRITICAL: Construct complete payment data including phone
+                            const paymentData = {
+                                invoiceId: options.invoiceId || orderId,
                                 accountId: formData.customerEmail,
                                 transactionId: options.transactionId,
                                 amount: formData.totalAmount,
-                                currency: formData.currency
-                            })
-                        });
+                                currency: formData.currency,
+                                customerName: formData.customerName,
+                                customerEmail: formData.customerEmail,
+                                customerPhone: formData.customerPhone, // CRITICAL: Include phone
+                                recipientName: formData.recipientName,
+                                certificateText: formData.certificateText,
+                                signatureText: formData.signatureText,
+                                treeCount: formData.treeCount,
+                                selectedDesign: formData.selectedDesign,
+                                orderId: orderId
+                            };
 
-                        const paymentResult = await response.json();
-                        if (paymentResult.success) {
-                            console.log('Payment successful, transaction ID:', options.transactionId);
-                            showStep(5); // Show success screen
-                        } else {
-                            throw new Error(paymentResult.error || 'Payment confirmation failed');
+                            console.log('Sending payment success data with phone:', paymentData);
+
+                            const response = await fetch('/api/payment-success/', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': getCsrfToken()
+                                },
+                                body: JSON.stringify(paymentData)
+                            });
+
+                            const paymentResult = await response.json();
+                            console.log('Payment result:', paymentResult);
+                            
+                            if (paymentResult.success) {
+                                handlePaymentSuccess(paymentResult);
+                                resolve(paymentResult);
+                            } else {
+                                throw new Error(paymentResult.error || 'Payment confirmation failed');
+                            }
+                        } catch(error) {
+                            console.error('Post-payment processing error:', error);
+                            showStep(5);
+                            alert('{% if language == "ru" %}Платеж завершен, но возникла ошибка при обработке. Свяжитесь с поддержкой.{% elif language == "kz" %}Төлем аяқталды, бірақ өңдеу кезінде қате орын алды. Қолдау қызметіне хабарласыңыз.{% else %}Payment completed but there was an error processing. Contact support.{% endif %}');
+                            reject(error);
                         }
-                    } catch(error){
-                        console.error('Post-payment processing error:', error);
-                        showStep(5);
-                    }
-                 }, onFail: function(reason, options) {
-                            console.error('Payment failed:', reason);
-                            alert('{% if language == "ru" %}Ошибка платежа: {% elif language == "kz" %}Төлем қатесі: {% else %}Payment error: {% endif %}' + reason);
-                            submitBtn.disabled = false;
-                            btnText.style.display = 'inline-block';
-                            btnLoader.style.display = 'none';
-                        },
-                        onComplete: function() {
-                            submitBtn.disabled = false;
-                            btnText.style.display = 'inline-block';
-                            btnLoader.style.display = 'none';
+                    },
+                    onFail: function(reason, options) {
+                        console.error('Payment failed:', reason, options);
+                        alert('{% if language == "ru" %}Ошибка платежа: {% elif language == "kz" %}Төлем қатесі: {% else %}Payment error: {% endif %}' + reason);
+                        
+                        const submitBtn = document.querySelector('.btn-pay');
+                        const btnText = submitBtn.querySelector('.btn-text');
+                        const btnLoader = submitBtn.querySelector('.btn-loader');
+                        
+                        submitBtn.disabled = false;
+                        btnText.style.display = 'inline-block';
+                        btnLoader.style.display = 'none';
+                        
+                        reject(new Error(reason));
+                    },
+                    onComplete: function() {
+                        console.log('Payment widget completed');
                     }
                 });
-            }
-
-            async function downloadCertificate() {
-                const certificate = document.getElementById('live-certificate');
-                if (!certificate) {
-                    console.error('Certificate element not found');
-                    return;
-                }
-
-                try {
-                    const canvas = await html2canvas(certificate, {
-                        scale: 2, // Higher resolution for sharpness
-                        useCORS: true,
-                        backgroundColor: null
-                    });
-
-                    const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF({
-                        orientation: 'landscape',
-                        unit: 'mm',
-                        format: 'a4'
-                    });
-
-                    const imgData = canvas.toDataURL('image/png');
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-                    pdf.addImage(imgData, 'PNG', 0, (pdf.internal.pageSize.getHeight() - pdfHeight) / 2, pdfWidth, pdfHeight);
-                    pdf.save(`GreenMile_Certificate_${certNumber.textContent}.pdf`);
-                    console.log('Certificate downloaded successfully');
-                } catch (error) {
-                    console.error('Download error:', error);
-                    alert('{% if language == "ru" %}Ошибка при скачивании сертификата{% elif language == "kz" %}Сертификатты жүктеу қатесі{% else %}Error downloading certificate{% endif %}');
-                }
-            }
-
-            function shareAchievement(platform) {
-                const shareUrl = window.location.origin + '/certificate/' + certNumber.textContent;
-                const shareText = '{% if language == "ru" %}Я посадил(а) деревья с Наш лес ! Посмотрите мой сертификат!{% elif language == "kz" %}Мен Наш лесарқылы ағаш отырғыздым! Менің сертификатымды қараңыз!{% else %}I planted trees with Наш лес ! Check out my certificate!{% endif %}';
-                let url = '';
-
-                switch (platform) {
-                    case 'telegram':
-                        url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
-                        break;
-                    case 'whatsapp':
-                        url = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
-                        break;
-                    case 'facebook':
-                        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
-                        break;
-                    default:
-                        console.warn('Unsupported platform:', platform);
-                        return;
-                }
-
-                window.open(url, '_blank');
-                console.log(`Sharing on ${platform}: ${shareUrl}`);
-            }
-
-            function getCsrfToken() {
-                const name = 'csrftoken';
-                const cookies = document.cookie.split(';');
-                for (let cookie of cookies) {
-                    const [key, value] = cookie.trim().split('=');
-                    if (key === name) {
-                        return decodeURIComponent(value);
-                    }
-                }
-                return '';
-            }
-
-            // Initialize VanillaTilt for certificate preview
-            VanillaTilt.init(document.getElementById('live-certificate'), {
-                max: 15,
-                speed: 400,
-                glare: true,
-                'max-glare': 0.3,
-                scale: 1.02,
-                perspective: 1000,
-                easing: 'cubic-bezier(.03,.98,.52,.99)'
             });
+        }
 
-            // Initialize the page
-            init();
+        function showRegistrationPrompt(paymentResult) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center animate-fadeIn">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        Спасибо за ваш вклад!
+                    </h2>
+                    <p class="text-gray-600 mb-6">
+                        Ваш платеж успешно обработан! Зарегистрируйтесь, чтобы получить сертификат и отслеживать ваши посаженные деревья.
+                    </p>
+                    <div class="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-6">
+                        <p class="text-sm text-gray-700">
+                            <strong>Ваш вклад:</strong><br>
+                            🌳 ${paymentResult.environmentalImpact?.co2_absorption_per_year || 0} кг CO₂ в год<br>
+                            💨 ${paymentResult.environmentalImpact?.oxygen_production_per_year || 0} кг O₂ в год
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="window.location.href='${paymentResult.redirectUrl}'" 
+                                class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 rounded-xl transition-all">
+                            Зарегистрироваться
+                        </button>
+                        <button onclick="window.location.href='/'" 
+                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl transition-all">
+                            На главную
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        async function downloadCertificate() {
+            const certificate = document.getElementById('live-certificate');
+            if (!certificate) {
+                console.error('Certificate element not found');
+                return;
+            }
+
+            try {
+                const canvas = await html2canvas(certificate, {
+                    scale: 2, // Higher resolution for sharpness
+                    useCORS: true,
+                    backgroundColor: null
+                });
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                pdf.addImage(imgData, 'PNG', 0, (pdf.internal.pageSize.getHeight() - pdfHeight) / 2, pdfWidth, pdfHeight);
+                pdf.save(`GreenMile_Certificate_${certNumber.textContent}.pdf`);
+                console.log('Certificate downloaded successfully');
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('{% if language == "ru" %}Ошибка при скачивании сертификата{% elif language == "kz" %}Сертификатты жүктеу қатесі{% else %}Error downloading certificate{% endif %}');
+            }
+        }
+
+        function shareAchievement(platform) {
+            const shareUrl = window.location.origin + '/certificate/' + certNumber.textContent;
+            const shareText = '{% if language == "ru" %}Я посадил(а) деревья с Наш лес ! Посмотрите мой сертификат!{% elif language == "kz" %}Мен Наш лесарқылы ағаш отырғыздым! Менің сертификатымды қараңыз!{% else %}I planted trees with Наш лес ! Check out my certificate!{% endif %}';
+            let url = '';
+
+            switch (platform) {
+                case 'telegram':
+                    url = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+                    break;
+                case 'whatsapp':
+                    url = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+                    break;
+                case 'facebook':
+                    url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+                    break;
+                default:
+                    console.warn('Unsupported platform:', platform);
+                    return;
+            }
+
+            window.open(url, '_blank');
+            console.log(`Sharing on ${platform}: ${shareUrl}`);
+        }
+
+        function getCsrfToken() {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+            return csrfToken ? csrfToken.value : '';
+        }
+
+          // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            .animate-fadeIn {
+                animation: fadeIn 0.3s ease-out;
+            }
+            .hidden {
+                display: none !important;
+            }
+        `;
+        document.head.appendChild(style);
+        // Initialize VanillaTilt for certificate preview
+        VanillaTilt.init(document.getElementById('live-certificate'), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            'max-glare': 0.3,
+            scale: 1.02,
+            perspective: 1000,
+            easing: 'cubic-bezier(.03,.98,.52,.99)'
         });
+
+        // Initialize the page
+        init();
+    });
 </script>
 {% endblock %}

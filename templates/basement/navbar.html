@@ -444,12 +444,20 @@
                         </div>
                     </div>
 
-                    <!-- Register button -->
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'main_app:profile' %}" class="nav-link-green">👤 Профиль</a>
+                        <a href="{% url 'main_app:logout' %}" class="nav-link-green">🚪 Выйти</a>
+                    {% else %}
+                        <button onclick="showAuthModal()" class="nav-link-green bg-transparent border-none cursor-pointer">
+                            Вход / регистрация
+                        </button>
+                    {% endif %}
+                    {% comment %} <!-- Register button -->
                     <button id="register-btn" class="hidden md:block modern-btn text-white mt-2 px-4 py-2 rounded-lg font-medium">
                         
                         {% if language == 'ru' %}вход/рег{% elif language == 'kz' %}кіру/тіркелу{% else %}login{% endif %}
 
-                    </button>
+                    </button> {% endcomment %}
 
                     <!-- Mobile menu button -->
                     <button class="lg:hidden menu-btn p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300" id="mobile-menu-button">
@@ -481,7 +489,16 @@
                     <a href="{% url 'main_app:reports' %}" class="block nav-link-green hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">Отчеты</a>
                     <a href="{% url 'main_app:volunteers' %}" class="block nav-link-green hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">Волонтерам</a>
                     <a href="{% url 'main_app:organizations' %}" class="block nav-link-white hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">Организациям</a>
-                    <button id="mobile-register-btn" class="block modern-btn text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">Вход/рег</button>
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'main_app:profile' %}" class="nav-link-green">👤 Профиль</a>
+                        <a href="{% url 'main_app:logout' %}" class="nav-link-green">🚪 Выйти</a>
+                    {% else %}
+                        <button onclick="showAuthModal()" class="nav-link-green bg-transparent border-none cursor-pointer">
+                            Вход / регистрация
+                        </button>
+                    {% endif %}
+                    {% comment %} <button id="mobile-register-btn" class="block modern-btn text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">Вход/рег</button> {% endcomment %}
                 </nav>
             </div>
         </div>
@@ -496,6 +513,7 @@
                     <input type="text" name="name" placeholder="Имя" required>
                     <input type="email" name="email" placeholder="Email" required>
                     <input type="password" name="password" placeholder="Пароль" required>
+                    <!-- ДОБАВЬТЕ ЭТО ПОЛЕ -->
                     <input type="password" name="password_confirm" placeholder="Подтвердите пароль" required>
                     <p class="error-message" id="error-message"></p>
                     <p class="success-message" id="success-message"></p>
@@ -639,6 +657,16 @@
                 errorMessage.style.display = 'none';
                 successMessage.style.display = 'none';
 
+                // Проверка совпадения паролей
+                const password = registerForm.querySelector('input[name="password"]').value;
+                const passwordConfirm = registerForm.querySelector('input[name="password_confirm"]').value;
+                
+                if (password !== passwordConfirm) {
+                    errorMessage.textContent = 'Пароли не совпадают';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
                 const formData = new FormData(registerForm);
                 try {
                     const response = await fetch('{% url 'main_app:register' %}', {
@@ -654,7 +682,7 @@
                         successMessage.style.display = 'block';
                         setTimeout(() => {
                             closeModal();
-                            window.location.href = '{% url 'main_app:test' %}';
+                            window.location.href = '{% url 'main_app:profile' %}';
                         }, 2000);
                     } else {
                         errorMessage.textContent = data.message;

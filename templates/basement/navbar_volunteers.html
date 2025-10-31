@@ -275,6 +275,122 @@
                 transform: translateY(0);
             }
         }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.open {
+            display: flex;
+            animation: fadeInDown 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 28rem;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.open .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #1f2937;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #16a34a;
+        }
+
+        .modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            color: #1f2937;
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d4d4d8;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content input:focus {
+            border-color: #16a34a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
+
+        .modal-content button[type="submit"] {
+            width: 100%;
+            background: linear-gradient(135deg, #16a34a, #a3e635);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+
+        .modal-content button[type="submit"]:hover {
+            background: linear-gradient(135deg, #14532d, #16a34a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(22, 163, 74, 0.4);
+        }
+
+        .modal-content .error-message,
+        .modal-content .success-message {
+            font-size: 0.875rem;
+            margin-top: -0.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .modal-content .error-message { color: #dc2626; }
+        .modal-content .success-message { color: #16a34a; }
+
+        .modal-content .switch-link {
+            color: #16a34a;
+            text-decoration: underline;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .modal-content .switch-link:hover {
+            color: #14532d;
+        }
     </style>
 </head>
 <body>
@@ -330,9 +446,23 @@
                     </div>
 
                     <!-- Login button -->
-                    <a href="#" class="hidden md:block modern-btn text-white mt-2 px-4 py-2 rounded-lg font-medium">
-                        {% if language == 'ru' %}Войти{% elif language == 'kz' %}Кіру{% else %}Login{% endif %}
-                    </a>
+                     
+{% comment %} 
+                    <button id="register-btn" class="hidden md:block modern-btn text-white mt-2 px-4 py-2 rounded-lg font-medium">
+                        
+                        {% if language == 'ru' %}вход/рег{% elif language == 'kz' %}кіру/тіркелу{% else %}login{% endif %}
+
+                    </button> {% endcomment %}
+
+
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'main_app:profile' %}" class="nav-link-green">👤 Профиль</a>
+                        <a href="{% url 'main_app:logout' %}" class="nav-link-green">🚪 Выйти</a>
+                    {% else %}
+                        <button onclick="showAuthModal()" class="nav-link-green bg-transparent border-none cursor-pointer">
+                            Вход / регистрация
+                        </button>
+                    {% endif %}
 
                     <!-- Mobile menu button -->
                     <button class="lg:hidden menu-btn p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300" id="mobile-menu-button">
@@ -340,6 +470,26 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
+                </div>
+            </div>
+            <!-- Registration Modal -->
+            <div class="modal" id="register-modal">
+                <div class="modal-content">
+                    <button class="modal-close">&times;</button>
+                    <h2>Регистрация</h2>
+                    <form id="register-form" method="POST" action="{% url 'main_app:register' %}">
+                        {% csrf_token %}
+                        <input type="text" name="name" placeholder="Имя" required>
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="password" name="password" placeholder="Пароль" required>
+                        <input type="password" name="password_confirm" placeholder="Подтвердите пароль" required>
+                        <p class="error-message" id="error-message"></p>
+                        <p class="success-message" id="success-message"></p>
+                        <button type="submit">Зарегистрироваться</button>
+                        <p class="text-center mt-4">
+                            Уже есть аккаунт? <a href="{% url 'main_app:login' %}" class="switch-link">Войти</a>
+                        </p>
+                    </form>
                 </div>
             </div>
 
@@ -361,7 +511,7 @@
                     <a href="{% url 'main_app:reports' %}" class="block nav-link-green hover:text-green-600 transition-colors duration-300 py-3 px-4 rounded-lg hover:bg-green-50 font-semibold text-base">
                         {% if language == 'ru' %}Карта посадок{% elif language == 'kz' %}Отырғызу картасы{% else %}Planting Map{% endif %}
                     </a>
-                    <a href="#" class="block modern-btn text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">
+                    <a href="{% url 'main_app:login' %}" class="block modern-btn text-white px-4 py-3 rounded-lg transition-colors duration-300 text-center font-semibold text-base mt-2 mx-4">
                         {% if language == 'ru' %}Войти{% elif language == 'kz' %}Кіру{% else %}Login{% endif %}
                     </a>
                 </nav>
@@ -374,16 +524,13 @@
             const navbar = document.querySelector('.navbar');
             let lastScrollTop = 0;
 
-            // Scroll direction handler
+            // Scroll handler
             window.addEventListener('scroll', function() {
                 let currentScroll = window.scrollY;
-
                 if (currentScroll > lastScrollTop && currentScroll > 20) {
-                    // Scrolling down
                     navbar.classList.add('hidden');
                     navbar.classList.add('scrolled');
                 } else {
-                    // Scrolling up or at top
                     navbar.classList.remove('hidden');
                     if (currentScroll <= 20) {
                         navbar.classList.remove('scrolled');
@@ -394,27 +541,22 @@
                 lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
             });
 
-            // Language selector functionality
+            // Language dropdown
             const languageSelector = document.getElementById('language-selector');
             const languageOptions = document.getElementById('language-options');
-            const languageArrow = document.querySelector('.language-selector-arrow');
-            let languageMenuOpen = false;
             let languageHoverTimeout;
 
             if (languageSelector && languageOptions) {
                 languageSelector.addEventListener('mouseenter', function() {
                     clearTimeout(languageHoverTimeout);
                     languageHoverTimeout = setTimeout(() => {
-                        openMenu(languageOptions, languageArrow);
-                        languageMenuOpen = true;
+                        openMenu(languageOptions, null);
                     }, 150);
                 });
-
                 languageSelector.addEventListener('mouseleave', function() {
                     clearTimeout(languageHoverTimeout);
                     languageHoverTimeout = setTimeout(() => {
-                        closeMenu(languageOptions, languageArrow);
-                        languageMenuOpen = false;
+                        closeMenu(languageOptions, null);
                     }, 300);
                 });
             }
@@ -446,13 +588,11 @@
                 options.style.transform = options.classList.contains('upward') ? 'translateY(10px)' : 'translateY(-10px)';
                 options.style.pointerEvents = 'none';
                 options.style.display = 'none';
-                if (arrow) {
-                    arrow.style.transform = 'rotate(0deg)';
-                    options.classList.remove('upward');
-                }
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+                options.classList.remove('upward');
             }
 
-            // Mobile menu toggle
+            // Mobile menu
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
 
@@ -464,33 +604,89 @@
                 });
             }
 
-            document.addEventListener('click', function(event) {
-                const isClickInsideMenu = mobileMenu && mobileMenu.contains(event.target);
-                const isClickOnMenuButton = mobileMenuButton && mobileMenuButton.contains(event.target);
+            // === МОДАЛЬНОЕ ОКНО ===
+            const registerBtn = document.getElementById('register-btn');
+            const registerModal = document.getElementById('register-modal');
+            const modalClose = document.querySelector('.modal-close');
+            const registerForm = document.getElementById('register-form');
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
 
-                if (!isClickInsideMenu && !isClickOnMenuButton && mobileMenu && mobileMenu.classList.contains('open')) {
-                    mobileMenu.classList.remove('open');
-                    mobileMenuButton.classList.remove('open');
+            function openModal() {
+                if (registerModal) {
+                    registerModal.classList.add('open');
+                    document.body.style.overflow = 'hidden';
                 }
-            });
+            }
 
-            // Smooth scroll functionality for volunteer section links
+            function closeModal() {
+                if (registerModal) {
+                    registerModal.classList.remove('open');
+                    document.body.style.overflow = '';
+                    if (errorMessage) errorMessage.style.display = 'none';
+                    if (successMessage) successMessage.style.display = 'none';
+                    if (registerForm) registerForm.reset();
+                }
+            }
+
+            if (registerBtn) registerBtn.addEventListener('click', openModal);
+            if (modalClose) modalClose.addEventListener('click', closeModal);
+
+            if (registerModal) {
+                registerModal.addEventListener('click', function(e) {
+                    if (e.target === registerModal) closeModal();
+                });
+            }
+
+            if (registerForm) {
+                registerForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    if (errorMessage) errorMessage.style.display = 'none';
+                    if (successMessage) successMessage.style.display = 'none';
+
+                    const formData = new FormData(registerForm);
+                    try {
+                        const response = await fetch('{% url 'main_app:register' %}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            if (successMessage) {
+                                successMessage.textContent = data.message;
+                                successMessage.style.display = 'block';
+                            }
+                            setTimeout(() => {
+                                closeModal();
+                                window.location.href = '{% url 'main_app:profile' %}';
+                            }, 2000);
+                        } else {
+                            if (errorMessage) {
+                                errorMessage.textContent = data.message;
+                                errorMessage.style.display = 'block';
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        if (errorMessage) {
+                            errorMessage.textContent = 'Ошибка сети. Попробуйте позже.';
+                            errorMessage.style.display = 'block';
+                        }
+                    }
+                });
+            }
+
+            // Smooth scroll
             document.addEventListener('click', function(e) {
                 if (e.target.classList.contains('volunteer-section-link')) {
                     e.preventDefault();
                     const targetId = e.target.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
-                    
                     if (targetElement) {
                         const headerHeight = 80;
                         const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
-                        
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
+                        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
                         if (mobileMenu && mobileMenu.classList.contains('open')) {
                             mobileMenu.classList.remove('open');
                             mobileMenuButton.classList.remove('open');
@@ -499,23 +695,21 @@
                 }
             });
 
-            // Highlight active section while scrolling
+            // Highlight active section
             function highlightActiveSection() {
                 const sections = document.querySelectorAll('section[id]');
                 const navLinks = document.querySelectorAll('.volunteer-section-link');
-                
                 let currentSection = '';
                 const scrollPosition = window.scrollY + 100;
-                
+
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
                     const sectionHeight = section.clientHeight;
-                    
                     if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
                         currentSection = section.getAttribute('id');
                     }
                 });
-                
+
                 navLinks.forEach(link => {
                     link.classList.remove('active', 'text-green-600');
                     const href = link.getAttribute('href');
@@ -525,41 +719,17 @@
                 });
             }
 
-            // Throttle scroll events for better performance
             let scrollTimeout;
             function throttleScroll() {
                 if (!scrollTimeout) {
-                    scrollTimeout = setTimeout(function() {
+                    scrollTimeout = setTimeout(() => {
                         scrollTimeout = null;
                         highlightActiveSection();
                     }, 100);
                 }
             }
-
             window.addEventListener('scroll', throttleScroll);
-            
-            // Initialize on load
             highlightActiveSection();
-
-            // Language selector click functionality
-            const languageSelectorButton = document.querySelector('.language-selector');
-            if (languageSelectorButton) {
-                languageSelectorButton.addEventListener('click', function() {
-                    const currentLang = '{{ language|default:"ru" }}';
-                    let nextLang = 'ru';
-                    
-                    if (currentLang === 'ru') nextLang = 'kz';
-                    else if (currentLang === 'kz') nextLang = 'en';
-                    else nextLang = 'ru';
-                    
-                    const urls = {
-                        'ru': '{% url "main_app:set_language" "ru" %}?next={{ request.path }}',
-                        'kz': '{% url "main_app:set_language" "kz" %}?next={{ request.path }}',
-                        'en': '{% url "main_app:set_language" "en" %}?next={{ request.path }}'
-                    };
-                    window.location.href = urls[nextLang];
-                });
-            }
         });
     </script>
 </body>

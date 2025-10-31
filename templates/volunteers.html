@@ -368,7 +368,7 @@
         
         <div class="max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl p-8 shadow-lg">
-                <form method="post" action="#">
+                <form method="post" id="volunteer-form-element" action="#">
                     {% csrf_token %}
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -446,7 +446,7 @@
         
         <div class="max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl p-8 shadow-lg border-2 border-green-100">
-                <form method="post" action="#">
+                <form method="post" id="organizer-form-element" action="#">
                     {% csrf_token %}
                     <div class="grid md:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -535,62 +535,90 @@
 </section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form submission handling
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Simple form validation
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('border-red-500');
-                    isValid = false;
-                } else {
-                    field.classList.remove('border-red-500');
-                }
-            });
-            
-            if (isValid) {
-                // Show success message
-                const submitButton = form.querySelector('button[type="submit"]');
-                const originalText = submitButton.textContent;
-                
-                submitButton.textContent = '{% if language == "ru" %}Отправляется...{% elif language == "kz" %}Жіберілуде...{% else %}Sending...{% endif %}';
-                submitButton.disabled = true;
-                
-                setTimeout(() => {
-                    submitButton.textContent = '{% if language == "ru" %}Успешно отправлено!{% elif language == "kz" %}Сәтті жіберілді!{% else %}Successfully sent!{% endif %}';
-                    submitButton.classList.remove('bg-green-500', 'hover:bg-green-600');
-                    submitButton.classList.add('bg-green-600');
-                    
-                    setTimeout(() => {
-                        submitButton.textContent = originalText;
-                        submitButton.disabled = false;
-                        submitButton.classList.remove('bg-green-600');
-                        submitButton.classList.add('bg-green-500', 'hover:bg-green-600');
-                        form.reset();
-                    }, 2000);
-                }, 1000);
+document.addEventListener('DOMContentLoaded', function () {
+    const volunteerForm = document.getElementById('volunteer-form-element');
+    const organizerForm = document.getElementById('organizer-form-element');
+
+    // ---------- Helper ----------
+    function collectFormData(form) {
+        const data = {};
+        new FormData(form).forEach((value, key) => {
+            if (data[key]) {
+                if (Array.isArray(data[key])) data[key].push(value);
+                else data[key] = [data[key], value];
+            } else {
+                data[key] = value;
             }
         });
-    });
+        // convert checkbox arrays back to real arrays
+        if (data['dates'] && typeof data['dates'] === 'string')
+            data['dates'] = [data['dates']];
+        return data;
+    }
 
-    // Add loading states to buttons
-    const buttons = document.querySelectorAll('a[href^="#"]');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            this.classList.add('transform', 'scale-95');
-            setTimeout(() => {
-                this.classList.remove('transform', 'scale-95');
-            }, 150);
+    // ---------- Volunteer ----------
+    if (volunteerForm) {
+        volunteerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const orig = btn.textContent.trim();
+
+            btn.disabled = true;
+            btn.textContent = '{% if language == "ru" %}Отправляется...{% elif language == "kz" %}Жіберілуде...{% else %}Sending...{% endif %}';
+
+            try {
+                const resp = await fetch('{% url "main_app:volunteer_submit" %}', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(collectFormData(this))
+                });
+                const json = await resp.json();
+                if (json.success) {
+                    btn.textContent = '{% if language == "ru" %}Успешно отправлено!{% elif language == "kz" %}Сәтті жіберілді!{% else %}Sent!{% endif %}';
+                    btn.classList.replace('bg-green-500', 'bg-green-700');
+                    setTimeout(() => { volunteerForm.reset(); btn.textContent = orig; btn.disabled = false; btn.classList.replace('bg-green-700','bg-green-500'); }, 2000);
+                } else {
+                    throw new Error(json.error || 'unknown');
+                }
+            } catch (err) {
+                console.error(err);
+                btn.textContent = 'Ошибка';
+                setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2000);
+            }
         });
-    });
+    }
+
+    // ---------- Organizer ----------
+    if (organizerForm) {
+        organizerForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const orig = btn.textContent.trim();
+
+            btn.disabled = true;
+            btn.textContent = '{% if language == "ru" %}Отправляется...{% elif language == "kz" %}Жіберілуде...{% else %}Sending...{% endif %}';
+
+            try {
+                const resp = await fetch('{% url "main_app:organizer_submit" %}', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(collectFormData(this))
+                });
+                const json = await resp.json();
+                if (json.success) {
+                    btn.textContent = '{% if language == "ru" %}Успешно отправлено!{% elif language == "kz" %}Сәтті жіберілді!{% else %}Sent!{% endif %}';
+                    btn.classList.replace('bg-green-500', 'bg-green-700');
+                    setTimeout(() => { organizerForm.reset(); btn.textContent = orig; btn.disabled = false; btn.classList.replace('bg-green-700','bg-green-500'); }, 2000);
+                } else {
+                    throw new Error(json.error || 'unknown');
+                }
+            } catch (err) {
+                console.error(err);
+                btn.textContent = 'Ошибка';
+                setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 2000);
+            }
+        });
+    }
 });
 </script>
-
 {% endblock %}

@@ -1,6 +1,10 @@
 from django.contrib import admin
-from .models import Certificate, CertificateTemplate
+from .models import Certificate, CertificateTemplate, VolunteerApplication, OrganizerApplication
 from django import forms
+
+
+admin.site.register(VolunteerApplication)
+admin.site.register(OrganizerApplication)
 
 
 @admin.register(Certificate)

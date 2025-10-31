@@ -18,6 +18,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', 'YOUR_BOT_TOKEN_HERE')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', 'YOUR_CHAT_ID_HERE')
+TELEGRAM_ADMIN_PASSWORD = os.getenv(
+    'TELEGRAM_ADMIN_PASSWORD', 'YOUR_TELEGRAM_ADMIN_PASSWORD')
 
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -25,9 +27,13 @@ EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'aza2004mat001@gmail.com')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your-app-password')
+EMAIL_HOST_PASSWORD = os.getenv(
+    'EMAIL_HOST_PASSWORD', 'aza2004mat-mangomarakuya')
 DEFAULT_FROM_EMAIL = os.getenv(
     'DEFAULT_FROM_EMAIL', 'Green Mile <noreply@greenmile.kz>')
+
+
+EMAIL_TIMEOUT = 5  # 5 second timeout instead of default 30
 
 
 SECRET_KEY = env("SECRET_KEY")
